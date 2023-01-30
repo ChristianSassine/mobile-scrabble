@@ -1,16 +1,15 @@
-# mobile
+# Mobile
 
-Scrabble mobile game
+L'application mobile pour PolyScrabble-110
 
-## Getting Started
+Powered by Flutter
 
-This project is a starting point for a Flutter application.
+## Conçu et testé pour un Samsung Galaxy Tab A 2019
 
-A few resources to get you started if this is your first Flutter project:
+### Spécifications:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+-   Taille d’écran: 10.1”
+-   Résolution d’écran: 1920 x 1200 (WUXGA)
+-   Processeur: Octa Core (Dual 1.8GB + Hexa 1.6GHz) Lassen O+ (Exynos 7904A)
+-   Mémoire: 2GB (RAM) + 32GB
+-   Version d’Android: Android 9.0 Pie
