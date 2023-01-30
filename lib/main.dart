@@ -16,7 +16,7 @@ class PolyScrabble extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MenuPage(title: 'PolyScrabble 101 - Prototype'),
+      home: const MenuScreen(title: 'PolyScrabble 101 - Prototype'),
     );
   }
 }

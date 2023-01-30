@@ -1,48 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/screens/chat-screen.dart';
 
-class MenuPage extends StatefulWidget {
-  const MenuPage({super.key, required this.title});
+class MenuScreen extends StatelessWidget {
+  const MenuScreen({super.key, required this.title});
 
   final String title;
-
-  @override
-  State<MenuPage> createState() => _MenuPageState();
-}
-
-class _MenuPageState extends State<MenuPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+          children: [
+            Image.asset("assets/images/scrabble_logo.png", width: 500),
+            const SizedBox(height: 100),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const ChatScreen(title: "Chat rooms")),
+                  );
+                },
+                child: Text("Rejoindre une salle de clavardage")),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

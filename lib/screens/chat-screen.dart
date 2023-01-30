@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class MenuPage extends StatefulWidget {
-  const MenuPage({super.key, required this.title});
+class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MenuPage> createState() => _MenuPageState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _MenuPageState extends State<MenuPage> {
+class _ChatScreenState extends State<ChatScreen> {
   int _counter = 0;
 
   void _incrementCounter() {
