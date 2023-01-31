@@ -1,11 +1,15 @@
 import 'package:rxdart/rxdart.dart';
 
 class ChatboxService {
-  var chat = [];
-  final subject = BehaviorSubject<String>(); // We don't need to send the string but it'll do for now
+  var msgs = ["Entered the chat..."];
+  final subject = BehaviorSubject<String>.seeded('testing'); // We don't need to send the string but it'll do for now
+
+  ChatboxService(){
+    subject.add("2");
+  }
 
   void addMessage(String msg){
-    chat.add(msg);
+    msgs.add(msg);
     subject.add(msg);
   }
 }

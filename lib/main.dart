@@ -3,9 +3,8 @@ import 'package:mobile/screens/menu-screen.dart';
 import 'package:get_it/get_it.dart';
 import 'domain/services/chatbox-service.dart';
 
-final serviceLocator = GetIt.instance; // GetIt.I is also valid
 void setUp(){
-  serviceLocator.registerLazySingleton<ChatboxService>(() => ChatboxService());
+  GetIt.I.registerLazySingleton<ChatboxService>(() => ChatboxService());
 }
 
 void main() {
