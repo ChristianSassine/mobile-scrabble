@@ -15,24 +15,18 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Chatbox(),
-            ChatInput()
-          ],
-
+        appBar: AppBar(
+          title: Text(widget.title),
         ),
-      )
-    );
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[Chatbox(), ChatInput()],
+          ),
+        ));
   }
 }
 
@@ -46,7 +40,6 @@ class ChatInput extends StatefulWidget {
 }
 
 class _ChatInputState extends State<ChatInput> {
-
   final msgController = TextEditingController();
   final chatboxService = GetIt.I.get<ChatboxService>();
 
@@ -68,9 +61,7 @@ class _ChatInputState extends State<ChatInput> {
                 msgController.clear();
               },
               icon: Icon(Icons.send),
-            )
-
-        ),
+            )),
       ),
     );
   }
@@ -92,35 +83,40 @@ class _ChatboxState extends State<Chatbox> {
 
   @override
   Widget build(BuildContext context) {
-    print("In Build");
     // Disgusting implementation
-    if (sub == null){
-      sub = chatboxService.subject.stream.listen((value) {
+    sub ??= chatboxService.subject.stream.listen((value) {
         setState(() {
           messages = chatboxService.msgs;
-          print(messages);
+          print(messages); // For debugging
         });
       });
-    }
 
     return Expanded(
       child: Card(
-        child: ListView(
-          children: [
-            for (var s in messages)
-            Card(
-              child: ListTile(
-                leading: Text("ME : "),
-                title: Text(s),
-              ),
-            )
-          ],
-        ),
         shape: RoundedRectangleBorder(
           side: BorderSide(color: Colors.white70, width: 1),
           borderRadius: BorderRadius.circular(10),
         ),
+        child: ListView(
+          children: [
+            for (var s in messages)
+              Card(
+                child: ListTile(
+                  leading: Text("ME : "),
+                  title: Text(s),
+                ),
+              )
+          ],
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (sub != null) {
+      sub!.cancel();
+    }
   }
 }
