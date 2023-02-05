@@ -20,6 +20,13 @@ class _ChatInputState extends State<ChatInput> {
   final chatboxService = GetIt.I.get<ChatboxService>();
   final _formKey = GlobalKey<FormState>();
 
+  void _submitMessage() {
+    if (_formKey.currentState!.validate()) {
+      chatboxService.submitMessage(msgController.text);
+      msgController.clear();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -32,22 +39,15 @@ class _ChatInputState extends State<ChatInput> {
           return null;
         },
         controller: msgController,
-        onFieldSubmitted: (String msg) {
-          print(_formKey.currentState);
-          if (_formKey.currentState!.validate()) {
-            // chatboxService.addMessage(msgController.text);
-            msgController.clear();
-          }
+        onFieldSubmitted: (String _) {
+          _submitMessage();
         },
         decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: "Write your message here",
             suffixIcon: IconButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // chatboxService.addMessage(msgController.text);
-                  msgController.clear();
-                }
+                _submitMessage();
               },
               icon: Icon(Icons.send),
             )),
@@ -70,6 +70,25 @@ class _ChatboxState extends State<Chatbox> {
   List<ChatMessage> messages = [];
   StreamSubscription? sub;
 
+  Widget buildMessage(ChatMessage c) {
+    if (c.type == 'client') {
+      return Card(
+        child: ListTile(
+          leading: Text(c.username + ' :'),
+          title: Text(c.message),
+          trailing: Text('| ' + DateFormat.jms().format(c.timeStamp)),
+        ),
+      );
+    }
+    return Card(
+      child: ListTile(
+        leading: Text(c.username),
+        title: Center(child: Text(c.message)),
+        trailing: Text('| ' + DateFormat.jms().format(c.timeStamp)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     sub ??= chatboxService.subject.stream.listen((value) {
@@ -86,16 +105,7 @@ class _ChatboxState extends State<Chatbox> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: ListView(
-          children: [
-            for (ChatMessage c in messages)
-              Card(
-                child: ListTile(
-                  leading: Text(c.username + ' :'),
-                  title: Text(c.message),
-                  trailing: Text('| ' + DateFormat.jms().format(c.timeStamp)),
-                ),
-              ),
-          ],
+          children: [for (ChatMessage c in messages) buildMessage(c)],
         ),
       ),
     );
