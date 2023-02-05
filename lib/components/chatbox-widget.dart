@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chatbox-service.dart';
+import 'package:intl/intl.dart';
 
 class ChatInput extends StatefulWidget {
   const ChatInput({
@@ -33,7 +35,7 @@ class _ChatInputState extends State<ChatInput> {
         onFieldSubmitted: (String msg) {
           print(_formKey.currentState);
           if (_formKey.currentState!.validate()) {
-            chatboxService.addMessage(msgController.text);
+            // chatboxService.addMessage(msgController.text);
             msgController.clear();
           }
         },
@@ -43,7 +45,7 @@ class _ChatInputState extends State<ChatInput> {
             suffixIcon: IconButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  chatboxService.addMessage(msgController.text);
+                  // chatboxService.addMessage(msgController.text);
                   msgController.clear();
                 }
               },
@@ -65,12 +67,11 @@ class Chatbox extends StatefulWidget {
 
 class _ChatboxState extends State<Chatbox> {
   final chatboxService = GetIt.I.get<ChatboxService>();
-  var messages = [];
+  List<ChatMessage> messages = [];
   StreamSubscription? sub;
 
   @override
   Widget build(BuildContext context) {
-    // Disgusting implementation
     sub ??= chatboxService.subject.stream.listen((value) {
       setState(() {
         messages = chatboxService.msgs;
@@ -86,11 +87,12 @@ class _ChatboxState extends State<Chatbox> {
         ),
         child: ListView(
           children: [
-            for (var s in messages)
+            for (ChatMessage c in messages)
               Card(
                 child: ListTile(
-                  leading: Text("ME : "),
-                  title: Text(s),
+                  leading: Text(c.username + ' :'),
+                  title: Text(c.message),
+                  trailing: Text('| ' + DateFormat.jms().format(c.timeStamp)),
                 ),
               ),
           ],
