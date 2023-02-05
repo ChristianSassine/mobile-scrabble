@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mobile/services/chatbox-service.dart';
+import 'package:mobile/main.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.title});
@@ -10,13 +15,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,21 +26,101 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Chatbox(),
+            ChatInput()
           ],
+
+        ),
+      )
+    );
+  }
+}
+
+class ChatInput extends StatefulWidget {
+  const ChatInput({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ChatInput> createState() => _ChatInputState();
+}
+
+class _ChatInputState extends State<ChatInput> {
+
+  final msgController = TextEditingController();
+  final chatboxService = GetIt.I.get<ChatboxService>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      child: TextFormField(
+        controller: msgController,
+        onFieldSubmitted: (String msg) {
+          chatboxService.addMessage(msgController.text);
+          msgController.clear();
+        },
+        decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: "Write your message here",
+            suffixIcon: IconButton(
+              onPressed: () {
+                chatboxService.addMessage(msgController.text);
+                msgController.clear();
+              },
+              icon: Icon(Icons.send),
+            )
+
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class Chatbox extends StatefulWidget {
+  const Chatbox({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<Chatbox> createState() => _ChatboxState();
+}
+
+class _ChatboxState extends State<Chatbox> {
+  final chatboxService = GetIt.I.get<ChatboxService>();
+  var messages = [];
+  StreamSubscription? sub;
+
+  @override
+  Widget build(BuildContext context) {
+    print("In Build");
+    // Disgusting implementation
+    if (sub == null){
+      sub = chatboxService.subject.stream.listen((value) {
+        setState(() {
+          messages = chatboxService.msgs;
+          print(messages);
+        });
+      });
+    }
+
+    return Expanded(
+      child: Card(
+        child: ListView(
+          children: [
+            for (var s in messages)
+            Card(
+              child: ListTile(
+                leading: Text("ME : "),
+                title: Text(s),
+              ),
+            )
+          ],
+        ),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white70, width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
     );
   }
 }

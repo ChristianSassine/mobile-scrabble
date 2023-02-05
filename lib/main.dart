@@ -5,9 +5,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/screens/menu-screen.dart';
 import 'package:socket_io_client/socket_io_client.dart';
+import 'services/chatbox-service.dart';
+import 'package:get_it/get_it.dart';
 
 Future<void> setup() async {
   final getIt = GetIt.instance;
+  getIt.registerLazySingleton<ChatboxService>(() => ChatboxService());
 
   await dotenv.load(fileName: 'development.env');
   var serverAddress = dotenv.env["SERVER_URL"];

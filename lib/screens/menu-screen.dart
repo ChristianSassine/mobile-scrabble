@@ -24,7 +24,7 @@ class MenuScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            const ChatScreen(title: "Chat rooms")),
+                            const ChatScreen(title: "Prototype: Salle de clavarage")),
                   );
                 },
                 child: Text("Rejoindre une salle de clavardage")),
