@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chatbox-service.dart';
@@ -66,8 +67,9 @@ class Chatbox extends StatefulWidget {
 }
 
 class _ChatboxState extends State<Chatbox> {
-  final chatboxService = GetIt.I.get<ChatboxService>();
+  final _chatboxService = GetIt.I.get<ChatboxService>();
   List<ChatMessage> messages = [];
+  ScrollController _scrollController = new ScrollController();
   StreamSubscription? sub;
 
   Widget buildMessage(ChatMessage c) {
@@ -91,10 +93,16 @@ class _ChatboxState extends State<Chatbox> {
 
   @override
   Widget build(BuildContext context) {
-    sub ??= chatboxService.subject.stream.listen((value) {
+    sub ??= _chatboxService.subject.stream.listen((value) {
       setState(() {
-        messages = chatboxService.msgs;
-        print(messages); // For debugging
+        messages = _chatboxService.msgs;
+      });
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+        );
       });
     });
 
@@ -104,8 +112,11 @@ class _ChatboxState extends State<Chatbox> {
           side: BorderSide(color: Colors.white70, width: 1),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: ListView(
-          children: [for (ChatMessage c in messages) buildMessage(c)],
+        child: Scrollbar(
+          child: ListView(
+            controller: _scrollController,
+            children: [for (ChatMessage c in messages) buildMessage(c)],
+          ),
         ),
       ),
     );
@@ -113,6 +124,7 @@ class _ChatboxState extends State<Chatbox> {
 
   @override
   void dispose() {
+    print('disposed');
     super.dispose();
     if (sub != null) {
       sub!.cancel();
