@@ -1,7 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:mobile/screens/menu-screen.dart';
+import 'dart:io';
 
-void main() {
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mobile/screens/menu-screen.dart';
+import 'package:socket_io_client/socket_io_client.dart';
+
+Future<void> setup() async {
+  final getIt = GetIt.instance;
+
+  await dotenv.load(fileName: 'development.env');
+  var serverAddress = dotenv.env["SERVER_URL"];
+
+  getIt.registerSingleton(io(serverAddress));
+}
+
+Future<void> main() async {
+  await setup();
   runApp(const PolyScrabble());
 }
 

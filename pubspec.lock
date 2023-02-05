@@ -55,6 +55,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -67,6 +74,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  get_it:
+    dependency: "direct main"
+    description:
+      name: get_it
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "7.2.0"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.5"
   lints:
     dependency: transitive
     description:
@@ -74,6 +95,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.1"
   matcher:
     dependency: transitive
     description:
@@ -107,6 +135,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  socket_io_client:
+    dependency: "direct main"
+    description:
+      name: socket_io_client
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
+  socket_io_common:
+    dependency: transitive
+    description:
+      name: socket_io_common
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   source_span:
     dependency: transitive
     description:
