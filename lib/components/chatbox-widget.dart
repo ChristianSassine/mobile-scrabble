@@ -16,23 +16,36 @@ class ChatInput extends StatefulWidget {
 class _ChatInputState extends State<ChatInput> {
   final msgController = TextEditingController();
   final chatboxService = GetIt.I.get<ChatboxService>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: TextFormField(
+        validator: (value) {
+          if (value == null || value.isEmpty || value.trim() == '') {
+            return 'Entrez quelque chose avant de soumettre';
+          }
+          return null;
+        },
         controller: msgController,
         onFieldSubmitted: (String msg) {
-          chatboxService.addMessage(msgController.text);
-          msgController.clear();
+          print(_formKey.currentState);
+          if (_formKey.currentState!.validate()) {
+            chatboxService.addMessage(msgController.text);
+            msgController.clear();
+          }
         },
         decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: "Write your message here",
             suffixIcon: IconButton(
               onPressed: () {
-                chatboxService.addMessage(msgController.text);
-                msgController.clear();
+                if (_formKey.currentState!.validate()) {
+                  chatboxService.addMessage(msgController.text);
+                  msgController.clear();
+                }
               },
               icon: Icon(Icons.send),
             )),
