@@ -95,7 +95,7 @@ class _ChatboxState extends State<Chatbox> {
   Widget build(BuildContext context) {
     sub ??= _chatboxService.subject.stream.listen((value) {
       setState(() {
-        messages = _chatboxService.msgs;
+        messages = _chatboxService.messages;
       });
       SchedulerBinding.instance.addPostFrameCallback((_) {
         _scrollController.animateTo(
@@ -124,7 +124,6 @@ class _ChatboxState extends State<Chatbox> {
 
   @override
   void dispose() {
-    print('disposed');
     super.dispose();
     if (sub != null) {
       sub!.cancel();
