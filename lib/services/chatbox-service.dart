@@ -1,15 +1,12 @@
+import 'package:mobile/domain/models/chat-models.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ChatboxService {
-  var msgs = ["Entered the chat..."];
-  final subject = BehaviorSubject<String>.seeded('testing'); // We don't need to send the string but it'll do for now
+  List<ChatMessage> messages = [];
+  final subject = BehaviorSubject<bool>.seeded(true); // We don't need to send the string but it'll do for now
 
-  ChatboxService(){
-    subject.add("2");
-  }
-
-  void addMessage(String msg){
-    msgs.add(msg);
-    subject.add(msg);
+  void submitMessage(String msg){
+    messages.add(ChatMessage('????', 'client', msg, DateTime.now()));
+    subject.add(true);
   }
 }
