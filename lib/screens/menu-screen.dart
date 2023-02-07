@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/screens/chat-screen.dart';
-import 'package:mobile/services/chat-service.dart';
+import 'package:mobile/domain/services/chat-service.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key, required this.title});

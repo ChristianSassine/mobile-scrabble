@@ -3,12 +3,13 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 enum RoomSocketEvents {
   JoinHomeRoom('joinHomeRoom'),
-  JoinedHomeRoom('joinedHomeRoom'),
+  UserJoinedRoom('userJoinedRoom'),
   RoomIsFull('roomIsFull'),
-  SendHomeMessage('sendHomeMessage'),
+  SendHomeMessage('sendMessageHome'),
   BroadCastMessageHome('broadcastMessageHome'),
-  LeaveHomeRoom('leaveHomeROOM'),
-  userLeftHomeRoom('userLeftHomeRoom');
+  LeaveHomeRoom('leaveHomeRoom'),
+  userLeftHomeRoom('userLeftHomeRoom'),
+  usernameTaken('usernameTaken');
 
   const RoomSocketEvents(this.event);
 
@@ -39,13 +40,13 @@ class ChatService {
   }
 
   void joinRoom(String username) {
-    socket.on(RoomSocketEvents.JoinedHomeRoom.event, (data) => {});
+    socket.on(RoomSocketEvents.UserJoinedRoom.event, (data) => {});
     socket.on(
         RoomSocketEvents.RoomIsFull.event, (data) => {
           _joinedRoomFailed(RoomJoinFailureReason.FULL)
         });
 
-    socket.on(RoomSocketEvents.JoinedHomeRoom.event, (data) =>
+    socket.on(RoomSocketEvents.UserJoinedRoom.event, (data) =>
     {
       if(data == username){
         _joinedRoomSuccess()
@@ -63,7 +64,9 @@ class ChatService {
     //NEED SERVER IMPLEMENTATION
   }
 
-  void _joinedRoomSuccess() {}
+  void _joinedRoomSuccess() {
+    print("Success to join room!");
+  }
 
   void _joinedRoomFailed(RoomJoinFailureReason reason) {
     switch(reason){
@@ -75,7 +78,9 @@ class ChatService {
     }
   }
 
-  void _receiveMessage(String newMessage) {}
+  void _receiveMessage(String newMessage) {
+
+  }
 
   void _userJoined(String username) {}
 

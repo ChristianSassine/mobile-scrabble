@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mobile/services/chat-service.dart';
-import 'package:mobile/services/chatbox-service.dart';
+import 'package:mobile/domain/services/chat-service.dart';
+import 'package:mobile/domain/services/chatbox-service.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.title});
@@ -13,10 +15,9 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   late ChatService chatService;
 
-  _ChatScreenState(){
+  _ChatScreenState() {
     chatService = GetIt.I<ChatService>();
   }
 
@@ -45,7 +46,6 @@ class ChatInput extends StatefulWidget {
 }
 
 class _ChatInputState extends State<ChatInput> {
-
   final msgController = TextEditingController();
   final chatboxService = GetIt.I<ChatboxService>();
   final chatService = GetIt.I<ChatService>();
@@ -56,7 +56,7 @@ class _ChatInputState extends State<ChatInput> {
       child: TextFormField(
         controller: msgController,
         onFieldSubmitted: (String msg) {
-          chatboxService.addMessage(msgController.text);
+          chatboxService.submitMessage(msgController.text);
           msgController.clear();
         },
         decoration: InputDecoration(
@@ -64,14 +64,12 @@ class _ChatInputState extends State<ChatInput> {
             hintText: "Write your message here",
             suffixIcon: IconButton(
               onPressed: () {
-                chatboxService.addMessage(msgController.text);
+                chatboxService.submitMessage(msgController.text);
                 chatService.sendMessage(msgController.text);
                 msgController.clear();
               },
               icon: Icon(Icons.send),
-            )
-
-        ),
+            )),
       ),
     );
   }
@@ -96,10 +94,10 @@ class _ChatboxState extends State<Chatbox> {
   Widget build(BuildContext context) {
     print("In Build");
     // Disgusting implementation
-    if (sub == null){
+    if (sub == null) {
       sub = chatboxService.subject.stream.listen((value) {
         setState(() {
-          messages = chatboxService.msgs;
+          messages = chatboxService.messages;
           print(messages);
         });
       });
@@ -107,20 +105,20 @@ class _ChatboxState extends State<Chatbox> {
 
     return Expanded(
       child: Card(
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Colors.white70, width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: ListView(
           children: [
             for (var s in messages)
-            Card(
-              child: ListTile(
-                leading: Text("ME : "),
-                title: Text(s),
-              ),
-            )
+              Card(
+                child: ListTile(
+                  leading: Text("${s.username}: "),
+                  title: Text(s.message),
+                ),
+              )
           ],
-        ),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.white70, width: 1),
-          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
