@@ -15,6 +15,11 @@ enum RoomSocketEvents {
   final String event;
 }
 
+enum RoomJoinFailureReason{
+  FULL,
+  USERNAME_TAKEN
+}
+
 class ChatService {
   late Socket socket;
   var username = Null;
@@ -27,7 +32,7 @@ class ChatService {
 
   void initSocketListeners() {
     socket.on(RoomSocketEvents.BroadCastMessageHome.event,
-        (data) => {_receiveMessage(data)});
+            (data) => {_receiveMessage(data)});
     // Missing userJoinedHomeRoom event on server
     socket.on(
         RoomSocketEvents.userLeftHomeRoom.event, (data) => {_userLeft(data)});
@@ -36,7 +41,17 @@ class ChatService {
   void joinRoom(String username) {
     socket.on(RoomSocketEvents.JoinedHomeRoom.event, (data) => {});
     socket.on(
-        RoomSocketEvents.RoomIsFull.event, (data) => {_joinedRoomFailed()});
+        RoomSocketEvents.RoomIsFull.event, (data) => {
+          _joinedRoomFailed(RoomJoinFailureReason.FULL)
+        });
+
+    socket.on(RoomSocketEvents.JoinedHomeRoom.event, (data) =>
+    {
+      if(data == username){
+        _joinedRoomSuccess()
+      }
+    });
+
     socket.emit(RoomSocketEvents.JoinHomeRoom.event, username);
   }
 
@@ -50,7 +65,15 @@ class ChatService {
 
   void _joinedRoomSuccess() {}
 
-  void _joinedRoomFailed() {}
+  void _joinedRoomFailed(RoomJoinFailureReason reason) {
+    switch(reason){
+      case RoomJoinFailureReason.FULL:
+        print("Failed to join room: Room is full!");
+        break;
+      case RoomJoinFailureReason.USERNAME_TAKEN:
+        print("Failed to join room: Username already taken!");
+    }
+  }
 
   void _receiveMessage(String newMessage) {}
 

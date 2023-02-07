@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/services/chat-service.dart';
 import 'package:mobile/services/chatbox-service.dart';
-import 'package:mobile/main.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.title});
@@ -16,6 +16,12 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
 
+  late ChatService chatService;
+
+  _ChatScreenState(){
+    chatService = GetIt.I<ChatService>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: const <Widget>[
             Chatbox(),
             ChatInput()
           ],
@@ -48,7 +54,8 @@ class ChatInput extends StatefulWidget {
 class _ChatInputState extends State<ChatInput> {
 
   final msgController = TextEditingController();
-  final chatboxService = GetIt.I.get<ChatboxService>();
+  final chatboxService = GetIt.I<ChatboxService>();
+  final chatService = GetIt.I<ChatService>();
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +72,7 @@ class _ChatInputState extends State<ChatInput> {
             suffixIcon: IconButton(
               onPressed: () {
                 chatboxService.addMessage(msgController.text);
+                chatService.sendMessage(msgController.text);
                 msgController.clear();
               },
               icon: Icon(Icons.send),
@@ -87,6 +95,7 @@ class Chatbox extends StatefulWidget {
 
 class _ChatboxState extends State<Chatbox> {
   final chatboxService = GetIt.I.get<ChatboxService>();
+  final chatService = GetIt.I<ChatService>();
   var messages = [];
   StreamSubscription? sub;
 

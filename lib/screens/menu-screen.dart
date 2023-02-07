@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mobile/screens/chat-screen.dart';
+import 'package:mobile/services/chat-service.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key, required this.title});
@@ -20,6 +22,7 @@ class MenuScreen extends StatelessWidget {
             const SizedBox(height: 100),
             ElevatedButton(
                 onPressed: () {
+                  GetIt.I<ChatService>().joinRoom("test-user");
                   Navigator.push(
                     context,
                     MaterialPageRoute(
