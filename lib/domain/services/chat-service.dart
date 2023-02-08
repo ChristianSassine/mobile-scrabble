@@ -1,5 +1,8 @@
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:socket_io_client/socket_io_client.dart';
+
+import '../models/chat-models.dart';
 
 enum RoomSocketEvents {
   JoinHomeRoom('joinHomeRoom'),
@@ -16,60 +19,60 @@ enum RoomSocketEvents {
   final String event;
 }
 
-enum RoomJoinFailureReason{
-  FULL,
-  USERNAME_TAKEN
-}
+enum RoomJoinFailureReason { FULL, USERNAME_TAKEN }
 
 class ChatService {
-  late Socket socket;
-  var username = Null;
+  Socket socket = GetIt.I<Socket>();
+  String username = "";
+  ChatBox chatBox = ChatBox();
 
   ChatService() {
-    // Get shared socket
-    socket = GetIt.I<Socket>();
     initSocketListeners();
   }
 
   void initSocketListeners() {
-    socket.on(RoomSocketEvents.BroadCastMessageHome.event,
-            (data) => {_receiveMessage(data)});
-    // Missing userJoinedHomeRoom event on server
     socket.on(
         RoomSocketEvents.userLeftHomeRoom.event, (data) => {_userLeft(data)});
   }
 
   void joinRoom(String username) {
-    socket.on(RoomSocketEvents.UserJoinedRoom.event, (data) => {});
     socket.on(
-        RoomSocketEvents.RoomIsFull.event, (data) => {
-          _joinedRoomFailed(RoomJoinFailureReason.FULL)
-        });
+        RoomSocketEvents.UserJoinedRoom.event, (data) => {_userJoined(data)});
+    socket.on(RoomSocketEvents.RoomIsFull.event,
+        (data) => {_joinedRoomFailed(RoomJoinFailureReason.FULL)});
 
-    socket.on(RoomSocketEvents.UserJoinedRoom.event, (data) =>
-    {
-      if(data == username){
-        _joinedRoomSuccess()
-      }
-    });
+    socket.on(
+        RoomSocketEvents.UserJoinedRoom.event,
+        (data) => {
+              if (data == username) {_joinedRoomSuccess(data)}
+            });
 
     socket.emit(RoomSocketEvents.JoinHomeRoom.event, username);
   }
 
-  void sendMessage(String newMessage) {
+  void submitMessage(String msg) {
+    ChatMessage newMessage =
+        ChatMessage(username, MessageType.CLIENT.value, msg, DateFormat.jms().format(DateTime.now()));
+    chatBox.addMessage(newMessage);
     socket.emit(RoomSocketEvents.SendHomeMessage.event, newMessage);
   }
 
-  void requestFetchMessages() {
-    //NEED SERVER IMPLEMENTATION
-  }
+  // void requestFetchMessages() {
+  //   //NEED SERVER IMPLEMENTATION
+  // }
 
-  void _joinedRoomSuccess() {
+  void _joinedRoomSuccess(String username) {
     print("Success to join room!");
+    this.username = username;
+
+    socket.on(RoomSocketEvents.UserJoinedRoom.event, (data) => {});
+
+    socket.on(RoomSocketEvents.BroadCastMessageHome.event,
+        (data) => {_receivedMessage(data)});
   }
 
   void _joinedRoomFailed(RoomJoinFailureReason reason) {
-    switch(reason){
+    switch (reason) {
       case RoomJoinFailureReason.FULL:
         print("Failed to join room: Room is full!");
         break;
@@ -78,11 +81,17 @@ class ChatService {
     }
   }
 
-  void _receiveMessage(String newMessage) {
-
+  void _receivedMessage(ChatMessage incommingMessage) {
+    if (incommingMessage.username != username) {
+      chatBox.addMessage(incommingMessage);
+    }
   }
 
-  void _userJoined(String username) {}
+  void _userJoined(String username) {
+    if (this.username != username) {
+      chatBox.addMessage(ChatMessage("", MessageType.SYSTEM.value, "${username} has joined the chat", DateFormat.jms().format(DateTime.now())));
+    }
+  }
 
   void _userLeft(String username) {}
 }

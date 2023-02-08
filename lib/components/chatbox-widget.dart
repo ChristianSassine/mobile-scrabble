@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/chat-models.dart';
-import 'package:mobile/domain/services/chatbox-service.dart';
+import 'package:mobile/domain/services/chat-service.dart';
 import 'package:intl/intl.dart';
 
 class ChatInput extends StatefulWidget {
@@ -18,12 +18,12 @@ class ChatInput extends StatefulWidget {
 
 class _ChatInputState extends State<ChatInput> {
   final msgController = TextEditingController();
-  final chatboxService = GetIt.I.get<ChatboxService>();
+  final _chatService = GetIt.I.get<ChatService>();
   final _formKey = GlobalKey<FormState>();
 
   void _submitMessage() {
     if (_formKey.currentState!.validate()) {
-      chatboxService.submitMessage(msgController.text);
+      _chatService.submitMessage(msgController.text);
       msgController.clear();
     }
   }
@@ -67,18 +67,19 @@ class Chatbox extends StatefulWidget {
 }
 
 class _ChatboxState extends State<Chatbox> {
-  final _chatboxService = GetIt.I.get<ChatboxService>();
+  final _chatService = GetIt.I.get<ChatService>();
   List<ChatMessage> messages = [];
   ScrollController _scrollController = new ScrollController();
   StreamSubscription? sub;
 
   Widget buildMessage(ChatMessage c) {
-    if (c.type == 'client') {
+    if (c.type == MessageType.CLIENT.value) {
       return Card(
         child: ListTile(
           leading: Text(c.username + ' :'),
           title: Text(c.message),
-          trailing: Text('| ' + DateFormat.jms().format(c.timeStamp)),
+          // trailing: Text('| ' + DateFormat.jms().format(c.timeStamp)),
+          trailing: Text('| ' + c.timeStamp),
         ),
       );
     }
@@ -86,16 +87,17 @@ class _ChatboxState extends State<Chatbox> {
       child: ListTile(
         leading: Text(c.username),
         title: Center(child: Text(c.message)),
-        trailing: Text('| ' + DateFormat.jms().format(c.timeStamp)),
+        // trailing: Text('| ' + DateFormat.jms().format(c.timeStamp)),
+        trailing: Text('| ' + c.timeStamp),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    sub ??= _chatboxService.subject.stream.listen((value) {
+    sub ??= _chatService.chatBox.subject.stream.listen((value) {
       setState(() {
-        messages = _chatboxService.messages;
+        messages = _chatService.chatBox.messages;
       });
       SchedulerBinding.instance.addPostFrameCallback((_) {
         _scrollController.animateTo(
