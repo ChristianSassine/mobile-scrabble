@@ -22,8 +22,8 @@ enum RoomSocketEvents {
 enum RoomJoinFailureReason { FULL, USERNAME_TAKEN }
 
 class ChatService {
-  Socket socket = GetIt.I<Socket>();
-  String username = "";
+  Socket socket = GetIt.I.get<Socket>();
+  String username = "Gary Anderson";
   ChatBox chatBox = ChatBox();
 
   ChatService() {
@@ -68,7 +68,9 @@ class ChatService {
     socket.on(RoomSocketEvents.UserJoinedRoom.event, (data) => {});
 
     socket.on(RoomSocketEvents.BroadCastMessageHome.event,
-        (data) => {_receivedMessage(data)});
+        (data) => {
+      _receivedMessage(ChatMessage.fromJson(Map.from(data)))
+    });
   }
 
   void _joinedRoomFailed(RoomJoinFailureReason reason) {

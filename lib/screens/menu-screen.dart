@@ -22,7 +22,7 @@ class MenuScreen extends StatelessWidget {
             const SizedBox(height: 100),
             ElevatedButton(
                 onPressed: () {
-                  GetIt.I<ChatService>().joinRoom("test-user");
+                  GetIt.I<ChatService>().joinRoom("Gary Anderson");
                   Navigator.push(
                     context,
                     MaterialPageRoute(
