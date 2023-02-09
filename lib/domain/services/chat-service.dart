@@ -1,23 +1,10 @@
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import '../models/chat-models.dart';
 
-enum RoomSocketEvents {
-  JoinHomeRoom('joinHomeRoom'),
-  UserJoinedRoom('userJoinedRoom'),
-  RoomIsFull('roomIsFull'),
-  SendHomeMessage('sendMessageHome'),
-  BroadCastMessageHome('broadcastMessageHome'),
-  LeaveHomeRoom('leaveHomeRoom'),
-  userLeftHomeRoom('userLeftHomeRoom'),
-  usernameTaken('usernameTaken');
-
-  const RoomSocketEvents(this.event);
-
-  final String event;
-}
 
 enum RoomJoinFailureReason { FULL, USERNAME_TAKEN }
 
