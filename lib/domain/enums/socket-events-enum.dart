@@ -12,3 +12,5 @@ enum RoomSocketEvents {
 
   final String event;
 }
+
+enum RoomJoinFailureReason { FULL, USERNAME_TAKEN }
