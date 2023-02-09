@@ -137,4 +137,12 @@ class _ChatboxState extends State<Chatbox> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    if (sub != null){
+      sub!.cancel();
+    }
+    super.dispose();
+  }
 }
