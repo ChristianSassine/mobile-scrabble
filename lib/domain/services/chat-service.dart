@@ -8,12 +8,12 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 import '../models/chat-models.dart';
 
-
 class ChatService {
   Socket socket = GetIt.I.get<Socket>();
   AuthService authService = GetIt.I.get<AuthService>();
   ChatBox chatBox = ChatBox();
-  StreamSubscription? _subLogin; // There's no destructor method in dart, hopefully this does gets destroyed when the class is destroyed
+  StreamSubscription?
+      _subLogin; // There's no destructor method in dart, hopefully this does gets destroyed when the class is destroyed
 
   ChatService() {
     initSocketListeners();
@@ -30,16 +30,14 @@ class ChatService {
     socket.on(RoomSocketEvents.UserJoinedRoom.event, (data) => {});
 
     socket.on(RoomSocketEvents.BroadCastMessageHome.event,
-            (data) => {
-          _receivedMessage(ChatMessage.fromJson(data))
-        });
+        (data) => {_receivedMessage(ChatMessage.fromJson(data))});
     socket.on(
         RoomSocketEvents.UserJoinedRoom.event, (data) => {_userJoined(data)});
   }
 
   void submitMessage(String msg) {
-    ChatMessage newMessage =
-        ChatMessage(authService.username!, MessageType.CLIENT.value, msg, DateFormat.jms().format(DateTime.now()));
+    ChatMessage newMessage = ChatMessage(authService.username!,
+        MessageType.CLIENT.value, msg, DateFormat.jms().format(DateTime.now()));
     chatBox.addMessage(newMessage);
     socket.emit(RoomSocketEvents.SendHomeMessage.event, newMessage);
   }
@@ -48,7 +46,7 @@ class ChatService {
   //   //NEED SERVER IMPLEMENTATION
   // }
 
-  void _emptyMessages(){
+  void _emptyMessages() {
     chatBox.messages = [];
   }
 
@@ -60,10 +58,14 @@ class ChatService {
 
   void _userJoined(String username) {
     if (authService.username! != username) {
-      chatBox.addMessage(ChatMessage("", MessageType.SYSTEM.value, "${username} has joined the chat", DateFormat.jms().format(DateTime.now())));
+      chatBox.addMessage(ChatMessage(
+          "",
+          MessageType.SYSTEM.value,
+          "${username} has joined the chat",
+          DateFormat.jms().format(DateTime.now())));
     }
   }
 
-  // void _userLeft(String username) {}
+// void _userLeft(String username) {}
 
 }

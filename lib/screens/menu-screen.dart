@@ -23,10 +23,14 @@ class _MenuScreenState extends State<MenuScreen> {
   StreamSubscription? subLogout;
   StreamSubscription? subError;
 
+  // Form objects
   final _msgController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  // SnackBars
   final _loggedInSnackBar = SnackBar(
     content: Text(
-      "Big bear is here!",
+      "Connection réussite!",
       textAlign: TextAlign.center,
     ),
     duration: Duration(seconds: 3),
@@ -34,7 +38,7 @@ class _MenuScreenState extends State<MenuScreen> {
   );
   final _loggedOutSnackBar = SnackBar(
     content: Text(
-      "Big bear is out!",
+      "Déconnection réussite!",
       textAlign: TextAlign.center,
     ),
     duration: Duration(seconds: 3),
@@ -92,7 +96,16 @@ class _MenuScreenState extends State<MenuScreen> {
                     SizedBox(
                       width: 300,
                       child: Form(
+                        key: _formKey,
                         child: TextFormField(
+                          validator: (value) {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value.trim() == '') {
+                              return "Entrez un nom d'utilisateur avant de soumettre";
+                            }
+                            return null;
+                          },
                           controller: _msgController,
                           readOnly: loggedIn,
                           decoration: InputDecoration(
@@ -109,16 +122,19 @@ class _MenuScreenState extends State<MenuScreen> {
                         onPressed: loggedIn
                             ? null
                             : () {
-                                authService.connectUser(_msgController.text);
+                                if (_formKey.currentState!.validate())
+                                  authService.connectUser(_msgController.text);
                               },
                         child: Text("Sign in")),
                     const SizedBox(height: 5),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red),
-                        onPressed: !loggedIn ? null : () {
-                          authService.disconnect();
-                        },
+                        onPressed: !loggedIn
+                            ? null
+                            : () {
+                                authService.disconnect();
+                              },
                         child: Text("Log out")),
                   ],
                 ),
@@ -142,6 +158,7 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     );
   }
+
   @override
   void dispose() {
     if (subError != null) {

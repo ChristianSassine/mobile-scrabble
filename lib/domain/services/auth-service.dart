@@ -8,27 +8,27 @@ import '../enums/socket-events-enum.dart';
 class AuthService {
   String? username = null;
   Socket socket = GetIt.I.get<Socket>();
+
   // I don't like doing a lot of subjects but it works for now
   Subject<bool> notifyLogin = PublishSubject();
   Subject<bool> notifyLogout = PublishSubject();
   Subject<String> notifyError = PublishSubject();
 
-  AuthService(){
+  AuthService() {
     initSockets();
   }
 
   void initSockets() {
     socket.on(
         RoomSocketEvents.UserConnected.event,
-            (data) => {
-          {_joinedRoomSuccess(data)}
-        });
+        (data) => {
+              {_joinedRoomSuccess(data)}
+            });
     socket.on(RoomSocketEvents.RoomIsFull.event,
-            (data) => {_joinedRoomFailed(RoomJoinFailureReason.FULL)});
+        (data) => {_joinedRoomFailed(RoomJoinFailureReason.FULL)});
     socket.on(RoomSocketEvents.usernameTaken.event,
-    (data) => {_joinedRoomFailed(RoomJoinFailureReason.USERNAME_TAKEN)});
+        (data) => {_joinedRoomFailed(RoomJoinFailureReason.USERNAME_TAKEN)});
   }
-
 
   void connectUser(String username) {
     socket.emit(RoomSocketEvents.JoinHomeRoom.event, username);
@@ -41,7 +41,7 @@ class AuthService {
     notifyLogout.add(true);
   }
 
-  bool isConnected () {
+  bool isConnected() {
     return username != null;
   }
 
