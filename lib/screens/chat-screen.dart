@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -93,6 +94,26 @@ class _ChatboxState extends State<Chatbox> {
   var messages = [];
   StreamSubscription? sub;
 
+  Widget _buildMessage(ChatMessage message) {
+    print(message.type);
+    if (message.type == MessageType.CLIENT.value) {
+      return Card(
+        child: ListTile(
+          leading: Text("${message.username}: "),
+          title: Text(message.message),
+          trailing: Text("| ${message.timeStamp}"),
+        ),
+      );
+    }
+    return Card(
+      child: ListTile(
+        leading: Text("${message.username}"),
+        title: Center(child: Text(message.message)),
+        trailing: Text(message.timeStamp),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Disgusting implementation
@@ -111,12 +132,7 @@ class _ChatboxState extends State<Chatbox> {
         child: ListView(
           children: [
             for (var s in messages)
-              Card(
-                child: ListTile(
-                  leading: Text("${s.username}: "),
-                  title: Text(s.message),
-                ),
-              )
+              _buildMessage(s)
           ],
         ),
       ),

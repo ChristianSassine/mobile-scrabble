@@ -69,7 +69,7 @@ class ChatService {
 
     socket.on(RoomSocketEvents.BroadCastMessageHome.event,
         (data) => {
-      _receivedMessage(ChatMessage.fromJson(Map.from(data)))
+      _receivedMessage(ChatMessage.fromJson(data))
     });
   }
 

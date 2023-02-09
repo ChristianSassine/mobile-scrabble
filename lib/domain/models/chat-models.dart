@@ -8,11 +8,12 @@ class ChatMessage {
 
   ChatMessage(this.username, this.type, this.message, this.timeStamp);
 
-  ChatMessage.fromJson(Map<String, dynamic> json)
+  ChatMessage.fromJson(json)
       : username = json['username'],
         type = json['type'],
         message = json['message'],
         timeStamp = json['timeStamp'];
+
 
   Map toJson() => {
         "username": username,

@@ -20,8 +20,14 @@ class MenuScreen extends StatelessWidget {
           children: [
             Image.asset("assets/images/scrabble_logo.png", width: 500),
             const SizedBox(height: 100),
+            // SizedBox(
+            //   width: 300,
+            //   child: TextFormField(
+            //
+            //   ),
+            // ),
             ElevatedButton(
-                onPressed: () {
+                onPressed: false ? null : () {
                   GetIt.I<ChatService>().joinRoom("Gary Anderson");
                   Navigator.push(
                     context,
