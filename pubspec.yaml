@@ -32,3 +32,4 @@ flutter:
     assets:
         - assets/images/scrabble_logo.png
         - development.env
+        - production.env

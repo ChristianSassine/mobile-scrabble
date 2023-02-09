@@ -58,7 +58,7 @@ class _ChatInputState extends State<ChatInput> {
           submitMessage(msgController.text);
         },
         decoration: InputDecoration(
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             hintText: "Write your message here",
             suffixIcon: IconButton(
               onPressed: () {
@@ -70,8 +70,8 @@ class _ChatInputState extends State<ChatInput> {
     );
   }
 
-  submitMessage(String text){
-    if(text.isEmpty) {
+  submitMessage(String text) {
+    if (text.isEmpty) {
       return;
     }
 
@@ -98,7 +98,8 @@ class _ChatboxState extends State<Chatbox> {
     if (message.type == MessageType.CLIENT.value) {
       return Card(
         child: ListTile(
-          leading: Text("${message.username}: "),
+          leading: Text("${message.username}: ",
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           title: Text(message.message),
           trailing: Text("| ${message.timeStamp}"),
         ),
@@ -106,7 +107,8 @@ class _ChatboxState extends State<Chatbox> {
     }
     return Card(
       child: ListTile(
-        leading: Text("${message.username}"),
+        leading: Text(message.username,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         title: Center(child: Text(message.message)),
         trailing: Text(message.timeStamp),
       ),
@@ -117,10 +119,10 @@ class _ChatboxState extends State<Chatbox> {
   Widget build(BuildContext context) {
     // Disgusting implementation
     sub ??= chatService.chatBox.subject.stream.listen((value) {
-        setState(() {
-          messages = chatService.chatBox.messages;
-        });
+      setState(() {
+        messages = chatService.chatBox.messages;
       });
+    });
 
     return Expanded(
       child: Card(
@@ -129,10 +131,7 @@ class _ChatboxState extends State<Chatbox> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: ListView(
-          children: [
-            for (var s in messages)
-              _buildMessage(s)
-          ],
+          children: [for (var s in messages) _buildMessage(s)],
         ),
       ),
     );
@@ -140,7 +139,7 @@ class _ChatboxState extends State<Chatbox> {
 
   @override
   void dispose() {
-    if (sub != null){
+    if (sub != null) {
       sub!.cancel();
     }
     super.dispose();
