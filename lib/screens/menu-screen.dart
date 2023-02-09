@@ -13,6 +13,22 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  var loggedIn = false;
+  final _loggedInSnackBar = SnackBar(
+    content: Text(
+      "Big bear is here!",
+      textAlign: TextAlign.center,
+    ),
+    duration: Duration(seconds: 3),
+  );
+  final _loggedOutSnackBar = SnackBar(
+    content: Text(
+      "Big bear is out!",
+      textAlign: TextAlign.center,
+    ),
+    duration: Duration(seconds: 3),
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,9 +50,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       width: 300,
                       child: Form(
                         child: TextFormField(
-                          onFieldSubmitted: (String msg) {
-                            // submitMessage(msgController.text);
-                          },
+                          readOnly: loggedIn,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: "Ecrivez votre nom d'utilisateur ici",
@@ -45,14 +59,31 @@ class _MenuScreenState extends State<MenuScreen> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () {}, child: Text("Sign in")),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green),
+                        onPressed: loggedIn
+                            ? null
+                            : () {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(_loggedInSnackBar);
+                              },
+                        child: Text("Sign in")),
                     const SizedBox(height: 5),
-                    ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.red), onPressed: () {}, child: Text("Log out")),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red),
+                        onPressed: !loggedIn
+                            ? null
+                            : () {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(_loggedOutSnackBar);
+                              },
+                        child: Text("Log out")),
                   ],
                 ),
               ),
             ),
-
             const SizedBox(height: 30),
             ElevatedButton(
                 onPressed: false
