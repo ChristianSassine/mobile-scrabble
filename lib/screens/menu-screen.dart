@@ -23,12 +23,14 @@ class _MenuScreenState extends State<MenuScreen> {
   StreamSubscription? subLogout;
   StreamSubscription? subError;
 
+  final _msgController = TextEditingController();
   final _loggedInSnackBar = SnackBar(
     content: Text(
       "Big bear is here!",
       textAlign: TextAlign.center,
     ),
     duration: Duration(seconds: 3),
+    backgroundColor: Colors.green,
   );
   final _loggedOutSnackBar = SnackBar(
     content: Text(
@@ -36,6 +38,7 @@ class _MenuScreenState extends State<MenuScreen> {
       textAlign: TextAlign.center,
     ),
     duration: Duration(seconds: 3),
+    backgroundColor: Colors.brown,
   );
 
   @override
@@ -51,7 +54,7 @@ class _MenuScreenState extends State<MenuScreen> {
       setState(() {
         loggedIn = authService.isConnected();
       });
-      ScaffoldMessenger.of(context).showSnackBar(_loggedInSnackBar);
+      ScaffoldMessenger.of(context).showSnackBar(_loggedOutSnackBar);
     });
 
     subError ??= authService.notifyError.stream.listen((event) {
@@ -65,6 +68,7 @@ class _MenuScreenState extends State<MenuScreen> {
           textAlign: TextAlign.center,
         ),
         duration: Duration(seconds: 3),
+        backgroundColor: Colors.red,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(errorSnackBar);
@@ -89,6 +93,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       width: 300,
                       child: Form(
                         child: TextFormField(
+                          controller: _msgController,
                           readOnly: loggedIn,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -104,14 +109,16 @@ class _MenuScreenState extends State<MenuScreen> {
                         onPressed: loggedIn
                             ? null
                             : () {
-
+                                authService.connectUser(_msgController.text);
                               },
                         child: Text("Sign in")),
                     const SizedBox(height: 5),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red),
-                        onPressed: !loggedIn ? null : () {},
+                        onPressed: !loggedIn ? null : () {
+                          authService.disconnect();
+                        },
                         child: Text("Log out")),
                   ],
                 ),
@@ -137,7 +144,6 @@ class _MenuScreenState extends State<MenuScreen> {
   }
   @override
   void dispose() {
-    // TODO: implement dispose
     if (subError != null) {
       subError!.cancel();
     }

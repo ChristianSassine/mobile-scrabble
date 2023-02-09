@@ -4,31 +4,40 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 import '../enums/socket-events-enum.dart';
 
+// To change in the future to be for an account and not for one chatroom
 class AuthService {
   String? username = null;
   Socket socket = GetIt.I.get<Socket>();
   // I don't like doing a lot of subjects but it works for now
-  Subject<bool> notifyLogin = ReplaySubject(maxSize: 0);
-  Subject<bool> notifyLogout = ReplaySubject(maxSize: 0);
-  Subject<String> notifyError = ReplaySubject(maxSize: 0);
+  Subject<bool> notifyLogin = PublishSubject();
+  Subject<bool> notifyLogout = PublishSubject();
+  Subject<String> notifyError = PublishSubject();
+
+  AuthService(){
+    initSockets();
+  }
 
   void initSockets() {
     socket.on(
         RoomSocketEvents.UserJoinedRoom.event,
             (data) => {
-          if (data == username) {_joinedRoomSuccess(data)}
+          {_joinedRoomSuccess(data)}
         });
     socket.on(RoomSocketEvents.RoomIsFull.event,
             (data) => {_joinedRoomFailed(RoomJoinFailureReason.FULL)});
+    socket.on(RoomSocketEvents.usernameTaken.event,
+    (data) => {_joinedRoomFailed(RoomJoinFailureReason.USERNAME_TAKEN)});
   }
 
-  // To change in the future to be more general
+
   void connectUser(String username) {
     socket.emit(RoomSocketEvents.JoinHomeRoom.event, username);
+    print("connecting");
   }
 
   void disconnect() {
     socket.emit(RoomSocketEvents.LeaveHomeRoom.event);
+    username = null;
     notifyLogout.add(true);
   }
 
@@ -44,6 +53,7 @@ class AuthService {
   }
 
   void _joinedRoomFailed(RoomJoinFailureReason reason) {
+    username = null;
     switch (reason) {
       case RoomJoinFailureReason.FULL:
         const message = "Failed to join room: Room is full!";
