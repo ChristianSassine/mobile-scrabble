@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/chat-screen.dart';
-import 'package:mobile/domain/services/chat-service.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key, required this.title});
@@ -13,7 +15,14 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  final authService = GetIt.I.get<AuthService>();
   var loggedIn = false;
+
+  // Subscriptions
+  StreamSubscription? subLogin;
+  StreamSubscription? subLogout;
+  StreamSubscription? subError;
+
   final _loggedInSnackBar = SnackBar(
     content: Text(
       "Big bear is here!",
@@ -31,6 +40,36 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    subLogin ??= authService.notifyLogin.stream.listen((event) {
+      setState(() {
+        loggedIn = authService.isConnected();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(_loggedInSnackBar);
+    });
+
+    subLogout ??= authService.notifyLogout.stream.listen((event) {
+      setState(() {
+        loggedIn = authService.isConnected();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(_loggedInSnackBar);
+    });
+
+    subError ??= authService.notifyError.stream.listen((event) {
+      setState(() {
+        loggedIn = authService.isConnected();
+      });
+
+      var errorSnackBar = SnackBar(
+        content: Text(
+          event,
+          textAlign: TextAlign.center,
+        ),
+        duration: Duration(seconds: 3),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(errorSnackBar);
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -65,20 +104,14 @@ class _MenuScreenState extends State<MenuScreen> {
                         onPressed: loggedIn
                             ? null
                             : () {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(_loggedInSnackBar);
+
                               },
                         child: Text("Sign in")),
                     const SizedBox(height: 5),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red),
-                        onPressed: !loggedIn
-                            ? null
-                            : () {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(_loggedOutSnackBar);
-                              },
+                        onPressed: !loggedIn ? null : () {},
                         child: Text("Log out")),
                   ],
                 ),
@@ -86,10 +119,9 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-                onPressed: false
+                onPressed: !loggedIn
                     ? null
                     : () {
-                        GetIt.I<ChatService>().joinRoom("Gary Anderson");
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -102,5 +134,21 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
       ),
     );
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    if (subError != null) {
+      subError!.cancel();
+    }
+
+    if (subLogin != null) {
+      subLogin!.cancel();
+    }
+
+    if (subLogout != null) {
+      subLogout!.cancel();
+    }
+    super.dispose();
   }
 }
