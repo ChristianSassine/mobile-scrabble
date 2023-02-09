@@ -6,6 +6,7 @@ enum RoomSocketEvents {
   BroadCastMessageHome('broadcastMessageHome'),
   LeaveHomeRoom('leaveHomeRoom'),
   userLeftHomeRoom('userLeftHomeRoom'),
+  UserConnected('userConnected'),
   usernameTaken('usernameTaken');
 
   const RoomSocketEvents(this.event);

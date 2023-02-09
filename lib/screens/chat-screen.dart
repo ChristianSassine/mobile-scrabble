@@ -95,7 +95,6 @@ class _ChatboxState extends State<Chatbox> {
   StreamSubscription? sub;
 
   Widget _buildMessage(ChatMessage message) {
-    print(message.type);
     if (message.type == MessageType.CLIENT.value) {
       return Card(
         child: ListTile(

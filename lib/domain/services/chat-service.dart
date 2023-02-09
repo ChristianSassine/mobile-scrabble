@@ -27,7 +27,6 @@ class ChatService {
         });
     socket.on(
         RoomSocketEvents.UserJoinedRoom.event, (data) => {_userJoined(data)});
-
   }
 
   void submitMessage(String msg) {
@@ -42,6 +41,7 @@ class ChatService {
   // }
 
   void _receivedMessage(ChatMessage incommingMessage) {
+    print(incommingMessage);
     if (incommingMessage.username != authService.username!) {
       chatBox.addMessage(incommingMessage);
     }

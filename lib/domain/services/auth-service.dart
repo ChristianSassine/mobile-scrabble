@@ -19,7 +19,7 @@ class AuthService {
 
   void initSockets() {
     socket.on(
-        RoomSocketEvents.UserJoinedRoom.event,
+        RoomSocketEvents.UserConnected.event,
             (data) => {
           {_joinedRoomSuccess(data)}
         });
