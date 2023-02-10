@@ -113,6 +113,12 @@ class _MenuScreenState extends State<MenuScreen> {
                               border: OutlineInputBorder(),
                               hintText: "Ecrivez votre nom d'utilisateur ici",
                             ),
+                            onFieldSubmitted: (String _) {
+                              if (_formKey.currentState!.validate()) {
+                                authService
+                                    .connectUser(_msgController.text);
+                              }
+                            },
                           ),
                         ),
                       ),
@@ -128,7 +134,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                         .connectUser(_msgController.text);
                                   }
                                 },
-                          child: const Text("Sign in")),
+                          child: const Text("Se connecter")),
                       const SizedBox(height: 5),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -138,7 +144,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               : () {
                                   authService.disconnect();
                                 },
-                          child: const Text("Log out")),
+                          child: const Text("Se deconnecter")),
                     ],
                   ),
                 ),
