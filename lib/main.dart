@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -10,7 +11,12 @@ import 'package:socket_io_client/socket_io_client.dart';
 Future<void> setup() async {
   final getIt = GetIt.instance;
 
-  await dotenv.load(fileName: 'development.env');
+  String envFile = kDebugMode ? 'development.env' : 'production.env';
+
+  // kDebugMode = APK, so hardcoding it for now
+  envFile = 'production.env';
+
+  await dotenv.load(fileName: envFile);
   var serverAddress = dotenv.env["SERVER_URL"];
 
   getIt.registerLazySingleton<Socket>(() =>
@@ -18,7 +24,9 @@ Future<void> setup() async {
 
   Socket socket = getIt<Socket>();
   socket.onConnect((_) {
-    print('connect');
+    if (kDebugMode) {
+      print('Socket connection established');
+    }
   });
 
   getIt.registerLazySingleton<ChatService>(() => ChatService());

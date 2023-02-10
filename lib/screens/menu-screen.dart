@@ -28,7 +28,7 @@ class _MenuScreenState extends State<MenuScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // SnackBars
-  final _loggedInSnackBar = SnackBar(
+  final _loggedInSnackBar = const SnackBar(
     content: Text(
       "Connection réussite!",
       textAlign: TextAlign.center,
@@ -36,7 +36,7 @@ class _MenuScreenState extends State<MenuScreen> {
     duration: Duration(seconds: 3),
     backgroundColor: Colors.green,
   );
-  final _loggedOutSnackBar = SnackBar(
+  final _loggedOutSnackBar = const SnackBar(
     content: Text(
       "Déconnection réussite!",
       textAlign: TextAlign.center,
@@ -71,7 +71,7 @@ class _MenuScreenState extends State<MenuScreen> {
           event,
           textAlign: TextAlign.center,
         ),
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
         backgroundColor: Colors.red,
       );
 
@@ -109,7 +109,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             },
                             controller: _msgController,
                             readOnly: loggedIn,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: "Ecrivez votre nom d'utilisateur ici",
                             ),
@@ -123,10 +123,12 @@ class _MenuScreenState extends State<MenuScreen> {
                           onPressed: loggedIn
                               ? null
                               : () {
-                                  if (_formKey.currentState!.validate())
-                                    authService.connectUser(_msgController.text);
+                                  if (_formKey.currentState!.validate()) {
+                                    authService
+                                        .connectUser(_msgController.text);
+                                  }
                                 },
-                          child: Text("Sign in")),
+                          child: const Text("Sign in")),
                       const SizedBox(height: 5),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -136,7 +138,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               : () {
                                   authService.disconnect();
                                 },
-                          child: Text("Log out")),
+                          child: const Text("Log out")),
                     ],
                   ),
                 ),
@@ -153,7 +155,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                     title: "Prototype: Salle de clavarage")),
                           );
                         },
-                  child: Text("Rejoindre une salle de clavardage")),
+                  child: const Text("Rejoindre une salle de clavardage")),
             ],
           ),
         ),
