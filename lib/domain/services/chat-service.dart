@@ -25,7 +25,6 @@ class ChatService {
   }
 
   void initSocketListeners() {
-    print("test");
     // When left service is undefined (user is not connected to a username) the client crashes because data is null
     // socket.on(
     //     RoomSocketEvents.userLeftHomeRoom.event, (data) => {_userLeft(data)});

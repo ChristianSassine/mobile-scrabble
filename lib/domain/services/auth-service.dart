@@ -23,17 +23,25 @@ class AuthService {
 
   void initSockets() {
     socket.on(
-        RoomSocketEvents.UserConnected.event,
+        RoomSocketEvents.UserJoinedRoom.event,
         (data) => {
               {_joinedRoomSuccess(data)}
             });
+
     socket.on(RoomSocketEvents.RoomIsFull.event,
         (data) => {_joinedRoomFailed(RoomJoinFailureReason.FULL)});
+
     socket.on(RoomSocketEvents.usernameTaken.event,
         (data) => {_joinedRoomFailed(RoomJoinFailureReason.USERNAME_TAKEN)});
+
+    socket.on(RoomSocketEvents.userLeftHomeRoom.event,
+            (data) => {_leaveRoom(data)});
   }
 
   void connectUser(String username) {
+    // Might need to consider changing this so that we don't need to store the username
+    // I think username should be assigned to us from the server when we login
+    this.username = username;
     socket.emit(RoomSocketEvents.JoinHomeRoom.event, username);
     if (kDebugMode) {
       print("connecting");
@@ -42,19 +50,28 @@ class AuthService {
 
   void disconnect() {
     socket.emit(RoomSocketEvents.LeaveHomeRoom.event);
-    username = null;
-    notifyLogout.add(true);
+
   }
 
   bool isConnected() {
     return username != null;
   }
 
+  void _leaveRoom(String? leavingUser) {
+    print("${leavingUser} left");
+    if ((leavingUser != null) & (leavingUser == username)) {
+      username = null;
+      notifyLogout.add(true);
+    }
+  }
+
   // Joined rooms in the future will just be for connecting the users and not the rooms
-  void _joinedRoomSuccess(String username) {
-    print("Success to join room!");
-    this.username = username;
-    notifyLogin.add(true);
+  void _joinedRoomSuccess(String joinedUser) {
+    if (joinedUser == username) {
+      print("Success to join room!");
+      this.username = username;
+      notifyLogin.add(true);
+    }
   }
 
   void _joinedRoomFailed(RoomJoinFailureReason reason) {
