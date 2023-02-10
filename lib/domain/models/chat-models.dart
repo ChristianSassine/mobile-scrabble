@@ -24,9 +24,9 @@ class ChatMessage {
 }
 
 enum MessageType {
-  CLIENT("CLIENT"),
-  SYSTEM("SYSTEM"),
-  COMMAND("COMMAND");
+  CLIENT("client"),
+  SYSTEM("system"),
+  COMMAND("command");
 
   const MessageType(this.value);
 

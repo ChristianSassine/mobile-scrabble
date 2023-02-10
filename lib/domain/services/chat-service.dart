@@ -38,7 +38,7 @@ class ChatService {
 
   void submitMessage(String msg) {
     ChatMessage newMessage = ChatMessage(authService.username!,
-        MessageType.CLIENT.value, msg, DateFormat.jms().format(DateTime.now()));
+        MessageType.CLIENT.value, msg, DateFormat.Hms().format(DateTime.now()));
     chatBox.addMessage(newMessage);
     socket.emit(RoomSocketEvents.SendHomeMessage.event, newMessage);
   }
@@ -63,7 +63,7 @@ class ChatService {
           "",
           MessageType.SYSTEM.value,
           "${username} has joined the chat",
-          DateFormat.jms().format(DateTime.now())));
+          DateFormat.Hms().format(DateTime.now())));
     }
   }
 
