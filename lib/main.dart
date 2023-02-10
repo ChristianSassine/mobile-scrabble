@@ -39,8 +39,9 @@ class PolyScrabble extends StatelessWidget {
     return MaterialApp(
       title: 'PolyScrabble 110',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
+      debugShowCheckedModeBanner: false,
       home: const MenuScreen(title: 'PolyScrabble 101 - Prototype'),
     );
   }

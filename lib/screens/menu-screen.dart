@@ -82,78 +82,80 @@ class _MenuScreenState extends State<MenuScreen> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset("assets/images/scrabble_logo.png", width: 500),
-            const SizedBox(height: 100),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: 300,
-                      child: Form(
-                        key: _formKey,
-                        child: TextFormField(
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                value.trim() == '') {
-                              return "Entrez un nom d'utilisateur avant de soumettre";
-                            }
-                            return null;
-                          },
-                          controller: _msgController,
-                          readOnly: loggedIn,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: "Ecrivez votre nom d'utilisateur ici",
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("assets/images/scrabble_logo.png", width: 500),
+              const SizedBox(height: 100),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: Form(
+                          key: _formKey,
+                          child: TextFormField(
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value.trim() == '') {
+                                return "Entrez un nom d'utilisateur avant de soumettre";
+                              }
+                              return null;
+                            },
+                            controller: _msgController,
+                            readOnly: loggedIn,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: "Ecrivez votre nom d'utilisateur ici",
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green),
-                        onPressed: loggedIn
-                            ? null
-                            : () {
-                                if (_formKey.currentState!.validate())
-                                  authService.connectUser(_msgController.text);
-                              },
-                        child: Text("Sign in")),
-                    const SizedBox(height: 5),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red),
-                        onPressed: !loggedIn
-                            ? null
-                            : () {
-                                authService.disconnect();
-                              },
-                        child: Text("Log out")),
-                  ],
+                      const SizedBox(height: 5),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green),
+                          onPressed: loggedIn
+                              ? null
+                              : () {
+                                  if (_formKey.currentState!.validate())
+                                    authService.connectUser(_msgController.text);
+                                },
+                          child: Text("Sign in")),
+                      const SizedBox(height: 5),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red),
+                          onPressed: !loggedIn
+                              ? null
+                              : () {
+                                  authService.disconnect();
+                                },
+                          child: Text("Log out")),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-                onPressed: !loggedIn
-                    ? null
-                    : () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ChatScreen(
-                                  title: "Prototype: Salle de clavarage")),
-                        );
-                      },
-                child: Text("Rejoindre une salle de clavardage")),
-          ],
+              const SizedBox(height: 30),
+              ElevatedButton(
+                  onPressed: !loggedIn
+                      ? null
+                      : () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ChatScreen(
+                                    title: "Prototype: Salle de clavarage")),
+                          );
+                        },
+                  child: Text("Rejoindre une salle de clavardage")),
+            ],
+          ),
         ),
       ),
     );
