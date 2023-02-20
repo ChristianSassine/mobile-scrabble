@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/chat-screen.dart';
+import 'package:mobile/screens/signin-screen.dart';
 
 import 'login-screen.dart';
 
@@ -92,18 +93,24 @@ class _MenuScreenState extends State<MenuScreen> {
                         Text(
                             authService.isConnected()
                                 ? "Bienvenue ${authService.username!}"
-                                : "Aucune connetion",
+                                : "Aucune connection",
                             style:
                                 const TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 10),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green),
-                            onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginScreen(
-                                        title: "Page de connection"))),
+                            onPressed: loggedIn
+                                ? null
+                                : () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const LoginScreen(
+                                                    title:
+                                                        "Page de connection")));
+                                  },
                             child: const Text("Se connecter")),
                         const SizedBox(height: 5),
                         ElevatedButton(
@@ -115,6 +122,16 @@ class _MenuScreenState extends State<MenuScreen> {
                                     authService.disconnect();
                                   },
                             child: const Text("Se deconnecter")),
+                        const SizedBox(height: 5),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue),
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SigninScreen(
+                                        title: "Création de compte"))),
+                            child: const Text("Créer un compte")),
                       ]))),
               const SizedBox(height: 30),
               ElevatedButton(

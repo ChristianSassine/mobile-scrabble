@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
 import '../domain/services/auth-service.dart';
@@ -20,11 +19,25 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameFieldController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  void _validateAndConnect() {
+    if (_formKey.currentState!.validate()) {
+      authService.connectUser(_usernameFieldController.text);
+      Navigator.pop(context);
+    }
+  }
+
+  String? _validateUsername(username) {
+    if (username == null || username.isEmpty || username.trim() == '') {
+      return "Entrez un nom d'utilisateur avant de soumettre";
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Page de connection"),
+        title: Text(widget.title),
       ),
       body: Center(
         child: Column(
@@ -32,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(30.0),
+                padding: const EdgeInsets.all(25.0),
                 child: Column(
                   children: [
                     SizedBox(
@@ -40,37 +53,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Form(
                         key: _formKey,
                         child: TextFormField(
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                value.trim() == '') {
-                              return "Entrez un nom d'utilisateur avant de soumettre";
-                            }
-                            return null;
-                          },
+                          validator: _validateUsername,
                           controller: _usernameFieldController,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             hintText: "Ecrivez votre nom d'utilisateur ici",
                           ),
-                          onFieldSubmitted: (String _) {
-                            if (_formKey.currentState!.validate()) {
-                              authService.connectUser(_usernameFieldController.text);
-                            }
-                          },
+                          onFieldSubmitted: (_) => _validateAndConnect(),
                         ),
                         //TODO: Add text field for password
                       ),
                     ),
+                    const SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          authService.connectUser(_usernameFieldController.text);
-                          Navigator.pop(context);
-                        }
-                        //TODO: Validate all form information => Return to menu if successful
-                      },
-                      child: Text("Se connecter"),
+                      onPressed: _validateAndConnect,
+                      child: const Text("Se connecter"),
                     )
                   ],
                 ),
