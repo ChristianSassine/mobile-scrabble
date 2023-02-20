@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/chat-screen.dart';
+import 'package:mobile/screens/create-game-screen.dart';
 import 'package:mobile/screens/signin-screen.dart';
 
 import 'login-screen.dart';
@@ -84,7 +85,7 @@ class _MenuScreenState extends State<MenuScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset("assets/images/scrabble_logo.png", width: 500),
-              const SizedBox(height: 100),
+              const SizedBox(height: 50),
               Card(
                   child: Padding(
                       padding: const EdgeInsets.only(
@@ -134,18 +135,42 @@ class _MenuScreenState extends State<MenuScreen> {
                             child: const Text("Créer un compte")),
                       ]))),
               const SizedBox(height: 30),
-              ElevatedButton(
-                  onPressed: !loggedIn
-                      ? null
-                      : () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ChatScreen(
-                                    title: "Prototype: Salle de clavarage")),
-                          );
-                        },
-                  child: const Text("Rejoindre une salle de clavardage")),
+              SizedBox(
+                  width: 250,
+                  child: ElevatedButton(
+                      onPressed: !loggedIn
+                          ? null
+                          : () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const GameCreationScreen(
+                                          title: "Création d'une partie"))),
+                      child: const Text("Créer une partie"))),
+              SizedBox(
+                  width: 250,
+                  child: ElevatedButton(
+                      onPressed: !loggedIn
+                          ? null
+                          : () => {},
+                      child: const Text("Rejoindre une partie"))),
+
+              // TO BE REMOVED
+              SizedBox(
+                  width: 250,
+                  child: ElevatedButton(
+                      onPressed: !loggedIn
+                          ? null
+                          : () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const ChatScreen(
+                                        title:
+                                            "Prototype: Salle de clavarage")),
+                              );
+                            },
+                      child: const Text("Rejoindre une salle de clavardage"))),
             ],
           ),
         ),
