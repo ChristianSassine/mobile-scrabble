@@ -137,40 +137,40 @@ class _MenuScreenState extends State<MenuScreen> {
               const SizedBox(height: 30),
               SizedBox(
                   width: 250,
-                  child: ElevatedButton(
-                      onPressed: !loggedIn
-                          ? null
-                          : () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const GameCreationScreen(
-                                          title: "Création d'une partie"))),
-                      child: const Text("Créer une partie"))),
-              SizedBox(
-                  width: 250,
-                  child: ElevatedButton(
-                      onPressed: !loggedIn
-                          ? null
-                          : () => {},
-                      child: const Text("Rejoindre une partie"))),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ElevatedButton(
+                          onPressed: !loggedIn
+                              ? null
+                              : () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const GameCreationScreen(
+                                              title: "Création d'une partie"))),
+                          child: const Text("Créer une partie")),
+                      ElevatedButton(
+                          onPressed: !loggedIn ? null : () => {},
+                          child: const Text("Rejoindre une partie")),
 
-              // TO BE REMOVED
-              SizedBox(
-                  width: 250,
-                  child: ElevatedButton(
-                      onPressed: !loggedIn
-                          ? null
-                          : () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const ChatScreen(
-                                        title:
-                                            "Prototype: Salle de clavarage")),
-                              );
-                            },
-                      child: const Text("Rejoindre une salle de clavardage"))),
+                      // TO BE REMOVED
+                      ElevatedButton(
+                          onPressed: !loggedIn
+                              ? null
+                              : () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const ChatScreen(
+                                            title:
+                                                "Prototype: Salle de clavarage")),
+                                  );
+                                },
+                          child:
+                              const Text("Rejoindre une salle de clavardage"))
+                    ],
+                  )),
             ],
           ),
         ),

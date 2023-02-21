@@ -23,11 +23,8 @@ Future<void> setup() async {
       io(serverAddress, OptionBuilder().setTransports(["websocket"]).build()));
 
   Socket socket = getIt<Socket>();
-  socket.onConnect((_) {
-    if (kDebugMode) {
-      print('Socket connection established');
-    }
-  });
+  socket.onConnect((_) => debugPrint('Socket connection established'));
+  socket.onDisconnect((data) => debugPrint('Socket connection lost'));
 
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
