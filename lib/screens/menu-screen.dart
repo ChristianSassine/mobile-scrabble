@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/chat-screen.dart';
 import 'package:mobile/screens/create-game-screen.dart';
+import 'package:mobile/screens/room-selection-screen.dart';
 import 'package:mobile/screens/signin-screen.dart';
 
 import 'login-screen.dart';
@@ -151,7 +152,17 @@ class _MenuScreenState extends State<MenuScreen> {
                                               title: "Création d'une partie"))),
                           child: const Text("Créer une partie")),
                       ElevatedButton(
-                          onPressed: !loggedIn ? null : () => {},
+                          onPressed: !loggedIn
+                              ? null
+                              : () => {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const RoomSelectionScreen(
+                                                  "Prototype: Salle de clavarage")),
+                                    )
+                                  },
                           child: const Text("Rejoindre une partie")),
 
                       // TO BE REMOVED

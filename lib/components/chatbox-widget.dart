@@ -71,7 +71,7 @@ class _ChatboxState extends State<Chatbox> {
   final _chatService = GetIt.I.get<ChatService>();
   final _authService = GetIt.I.get<AuthService>();
   List<ChatMessage> messages = [];
-  ScrollController _scrollController = new ScrollController();
+  final ScrollController _scrollController = ScrollController();
   StreamSubscription? sub;
 
   Widget _buildMessage(ChatMessage message) {
@@ -99,7 +99,7 @@ class _ChatboxState extends State<Chatbox> {
     }
     return Card(
       child: ListTile(
-        leading: Text("${message.username}"),
+        leading: Text(message.username),
         title: Center(child: Text(message.message)),
         trailing: Text(message.timeStamp),
       ),
