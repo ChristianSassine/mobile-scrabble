@@ -9,16 +9,17 @@ class RoomService {
   List<Room> roomList = [];
   Room? selectedRoom;
   Subject<List<Room>> notifyNewRoomList = PublishSubject();
+  Subject<Room> notifyRoomMemberList = PublishSubject();
 
   RoomService() {
     // FOR TESTING
-    roomList.add(Room("TEST ROOM", RoomType.PUBLIC));
+    roomList.add(Room("TEST ROOM", RoomType.PUBLIC, ["TEST PLAYER"]));
 
     initSocketListeners();
   }
 
   void initSocketListeners() {
-    // TODO
+    // TODO SERVER IMPLEMENTATION
   }
 
   void updateRoomList() {

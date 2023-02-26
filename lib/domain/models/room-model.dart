@@ -1,16 +1,23 @@
-import 'package:rxdart/rxdart.dart';
+import 'dart:core';
 
+// TODO: To be adapted to the server room implementation.
+// TEMPORARY IMPLEMENTATION FOR UI
 class Room {
   final String name;
   final RoomType type;
+  List<String> playerList;
 
-  Room(this.name, this.type);
+  Room(this.name, this.type, this.playerList);
 
   Room.fromJson(json)
       : name = json['name'],
-        type = json['type'];
+        type = json['type'],
+        playerList = json['memberList'];
 
-  Map toJson() => {"name": name, "type": type};
+  Map toJson() =>
+      {"name": name,
+        "type": type,
+        "memberList": playerList};
 }
 
 enum RoomType {

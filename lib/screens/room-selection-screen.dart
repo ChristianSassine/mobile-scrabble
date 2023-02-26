@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
+import 'package:mobile/screens/waiting-room-screen.dart';
 
 class RoomSelectionScreen extends StatefulWidget {
   final String title;
@@ -23,16 +24,28 @@ class _RoomListState extends State<RoomSelectionScreen> {
   final ScrollController _scrollController = ScrollController();
   StreamSubscription? sub;
 
-  _RoomListState()
-  {
+  _RoomListState() {
     roomList = _roomService.roomList;
+  }
+
+  void _joinRoom(Room room) {
+    _roomService.joinRoom(room);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              const WaitingRoomScreen("Salle d'attente")),
+    );
   }
 
   Widget _buildRoomCard(Room room) {
     return Card(
       child: ListTile(
         title: Text(room.name),
-
+        trailing: IconButton(
+            icon: const Icon(Icons.login),
+            color: Colors.green,
+            onPressed: () => _joinRoom(room)),
       ),
     );
   }
