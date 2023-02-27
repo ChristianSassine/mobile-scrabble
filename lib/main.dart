@@ -1,13 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/themes.dart';
 import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/theme-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 import 'package:socket_io_client/socket_io_client.dart';
-
 
 Future<void> setup() async {
   final getIt = GetIt.instance;
@@ -32,6 +34,7 @@ Future<void> setup() async {
 
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
+  getIt.registerLazySingleton<ThemeService>(() => ThemeService());
 }
 
 Future<void> main() async {
@@ -39,15 +42,27 @@ Future<void> main() async {
   runApp(const PolyScrabble());
 }
 
-class PolyScrabble extends StatelessWidget {
+class PolyScrabble extends StatefulWidget {
   const PolyScrabble({super.key});
+
+  @override
+  State<PolyScrabble> createState() => _PolyScrabbleState();
+}
+
+class _PolyScrabbleState extends State<PolyScrabble> {
+  final themeService = GetIt.I.get<ThemeService>();
+  StreamSubscription? themeSub;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    themeSub ??= themeService.notifyThemeChange.stream.listen((event) {
+      setState(() {});
+    });
+
     return MaterialApp(
       title: 'PolyScrabble 110',
-      theme: Themes.light,
+      theme: themeService.getTheme(),
       debugShowCheckedModeBanner: false,
       home: const MenuScreen(title: 'PolyScrabble 101 - Prototype'),
     );
