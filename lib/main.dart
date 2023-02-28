@@ -61,7 +61,7 @@ class _PolyScrabbleState extends State<PolyScrabble> {
 
     return MaterialApp(
       title: 'PolyScrabble 110',
-      theme: themeService.getTheme(), // Light mode is default when in static themes
+      theme: themeService.getTheme(), // Static mode, will be light theme in dynamic
       darkTheme: themeService.getDarkMode(), // Dark mode will be used only in dynamic mode
       themeMode: themeService.isDynamic ? ThemeMode.system : ThemeMode.light,
       debugShowCheckedModeBanner: false,

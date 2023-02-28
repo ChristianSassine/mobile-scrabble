@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/enums/themes.dart';
 import 'package:mobile/domain/extensions/string-extensions.dart';
 import 'package:mobile/domain/services/theme-service.dart';
 
@@ -14,34 +15,27 @@ class ThemeDropdown extends StatefulWidget {
 
 class _ThemeDropdownState extends State<ThemeDropdown> {
   final themeService = GetIt.I.get<ThemeService>();
-  String? dropdownValue;
+  MobileTheme? dropdownValue;
 
   @override
   Widget build(BuildContext context) {
     dropdownValue ??= themeService.currentTheme;
-    var itemsList = themeService.themes.map<DropdownMenuItem<String>>((
-        String value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value.capitalize()),
-      );
-    }).toList();
-    itemsList.add(
-        DropdownMenuItem<String>(
-          value: 'dynamic',
-          child: Text('dynamic'.capitalize()),
-        )
-    );
 
-    return DropdownButton<String>(
+    return DropdownButton<MobileTheme>(
       value: dropdownValue,
       elevation: 16,
       underline: Container(
         height: 2,
         color: Colors.black,
       ),
-      items: itemsList,
-      onChanged: (String? value) {
+      items: MobileTheme.values.map<DropdownMenuItem<MobileTheme>>((
+          MobileTheme theme) {
+        return DropdownMenuItem<MobileTheme>(
+          value: theme,
+          child: Text(theme.value.capitalize()),
+        );
+      }).toList(),
+      onChanged: (MobileTheme? value) {
         setState(() {
           dropdownValue = value;
         });

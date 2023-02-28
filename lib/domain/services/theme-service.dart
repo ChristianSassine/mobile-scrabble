@@ -4,11 +4,11 @@ import 'package:rxdart/rxdart.dart';
 
 class ThemeService {
   Subject<bool> notifyThemeChange = PublishSubject();
-  String currentTheme = 'light';
+  MobileTheme currentTheme = MobileTheme.Light;
   bool isDynamic = false;
 
-  switchTheme(String value) {
-    isDynamic = value == 'dynamic';
+  switchTheme(MobileTheme value) {
+    isDynamic = value == MobileTheme.Dynamic;
     if (!isDynamic) currentTheme = value;
 
     notifyThemeChange.add(true);
@@ -18,9 +18,9 @@ class ThemeService {
     if (isDynamic) return Themes.light;
 
     switch (currentTheme) {
-      case "dark":
+      case MobileTheme.Light:
         return Themes.dark;
-      case "light":
+      case MobileTheme.Dark:
         return Themes.light;
       default:
         return Themes.light;
@@ -30,6 +30,4 @@ class ThemeService {
   ThemeData getDarkMode() {
     return Themes.dark;
   }
-
-  get themes => Themes.list;
 }
