@@ -5,6 +5,8 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
 
+import 'game-screen.dart';
+
 class WaitingRoomScreen extends StatefulWidget {
   final String title;
 
@@ -28,12 +30,12 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   }
 
   _startGame() {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (context) =>
-    //       const GameScreen("Partie")),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+          const GameScreen(title: 'Partie',)),
+    );
   }
 
   Widget _buildRoomMemberCard(String playerName) {
