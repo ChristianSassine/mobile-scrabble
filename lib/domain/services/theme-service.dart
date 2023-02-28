@@ -19,9 +19,9 @@ class ThemeService {
 
     switch (currentTheme) {
       case MobileTheme.Light:
-        return Themes.dark;
-      case MobileTheme.Dark:
         return Themes.light;
+      case MobileTheme.Dark:
+        return Themes.dark;
       default:
         return Themes.light;
     }

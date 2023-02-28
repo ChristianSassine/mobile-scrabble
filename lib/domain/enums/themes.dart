@@ -10,13 +10,13 @@ enum MobileTheme {
 }
 
 class Themes {
-  static get dark => ThemeData(
-    primarySwatch: Colors.red,
-    brightness: Brightness.dark,
-  );
-
   static get light => ThemeData(
     primarySwatch: Colors.green,
+  );
+
+  static get dark => ThemeData(
+    primarySwatch: Colors.green,
+    brightness: Brightness.dark,
   );
 }
 
