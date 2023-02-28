@@ -59,6 +59,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
     });
 
     return Scaffold(
+      appBar: AppBar(title: Text("Rejoindre une partie")),
       body: Center(
         child: SizedBox(
           width: 500,

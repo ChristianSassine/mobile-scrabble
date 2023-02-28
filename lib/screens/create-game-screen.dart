@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/screens/waiting-room-screen.dart';
 
 import '../domain/services/auth-service.dart';
+import '../domain/services/room-service.dart';
 
 class GameCreationScreen extends StatefulWidget {
   const GameCreationScreen({super.key, required this.title});
@@ -20,9 +23,12 @@ const List<Widget> gameVisibilities = <Widget>[
 ];
 
 class _GameCreationScreenState extends State<GameCreationScreen> {
+  final _roomService = GetIt.I.get<RoomService>();
+
   // Form objects
   final _formKey = GlobalKey<FormState>();
   final List<bool> _selectedVisibility = <bool>[true, false];
+  final TextEditingController _roomNameFieldController = TextEditingController();
 
   void _chooseVisibility(index) {
     setState(() {
@@ -33,9 +39,23 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
     });
   }
 
-  void _createGame() {
-    //TODO: Validation?
+  String? _validateRoomName(roomName) {
+    if (roomName == null || roomName.isEmpty || roomName.trim() == '') {
+      return "Entrez un nom de salle avant de soumettre";
+    }
+    return null;
+  }
 
+  void _createGame() {
+    if (_formKey.currentState!.validate()) {
+      Room room = Room(_roomNameFieldController.text,
+          _selectedVisibility[0] ? RoomType.PUBLIC : RoomType.PRIVATE, []);
+      _roomService.createRoom(room);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WaitingRoomScreen("Salle d'attente")));
+    }
   }
 
   @override
@@ -59,6 +79,15 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                         key: _formKey,
                         child: Column(
                           children: [
+                            TextFormField(
+                              validator: _validateRoomName,
+                              controller: _roomNameFieldController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: "Ecrivez votre nom d'utilisateur ici",
+                              ),
+                              onFieldSubmitted: (_) => _createGame(),
+                            ),
                             const Text('Visibilité de la partie: '),
                             const SizedBox(height: 5),
                             ToggleButtons(
