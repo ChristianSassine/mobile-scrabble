@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mobile/domain/enums/themes.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
@@ -62,7 +61,9 @@ class _PolyScrabbleState extends State<PolyScrabble> {
 
     return MaterialApp(
       title: 'PolyScrabble 110',
-      theme: themeService.getTheme(),
+      theme: themeService.getTheme(), // Light mode is default when in static themes
+      darkTheme: themeService.getDarkMode(), // Dark mode will be used only in dynamic mode
+      themeMode: themeService.isDynamic ? ThemeMode.system : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       home: const MenuScreen(title: 'PolyScrabble 101 - Prototype'),
     );

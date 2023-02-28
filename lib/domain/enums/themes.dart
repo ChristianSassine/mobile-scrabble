@@ -6,6 +6,7 @@ class Themes {
 
   static get dark => ThemeData(
     primarySwatch: Colors.red,
+    brightness: Brightness.dark,
   );
 
   static get light => ThemeData(
