@@ -85,8 +85,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _startGame,
-        tooltip: 'Démarer la partie',
-        child: Icon(Icons.play_arrow),
+        tooltip: 'Changer la langue',
+        child: const Icon(Icons.language),
       ),
     );
   }

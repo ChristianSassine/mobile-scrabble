@@ -16,9 +16,9 @@ dependencies:
     cupertino_icons: ^1.0.2
     get_it: ^7.2.0
     rxdart: ^0.27.7
-    intl: ^0.18.0
     socket_io_client: ^2.0.1
     flutter_dotenv: ^5.0.2
+    flutter_i18n: ^0.10.1
 
 dev_dependencies:
     flutter_test:
@@ -33,3 +33,4 @@ flutter:
         - assets/images/scrabble_logo.png
         - development.env
         - production.env
+        - assets/flutter_i18n/

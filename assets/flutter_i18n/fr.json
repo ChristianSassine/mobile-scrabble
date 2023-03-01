@@ -1,0 +1,16 @@
+{
+    "menu_screen": {
+        "welcome": "Bienvenue",
+        "no_connection": "Aucune connection",
+        "login": "Se connecter",
+        "login_screen": "Page de connection",
+        "disconnect": "Se déconnecter",
+        "sign_in": "Créer un compte",
+        "sign_in_screen": "Création de compte",
+        "create_game": "Créer une partie",
+        "join_game": "Rejoindre une partie",
+        "join_chat": "Rejoindre une salle de clavardage",
+        "chat_room": "Salle de clavardage",
+        "change_language": "Changer la langue"
+    }
+}
