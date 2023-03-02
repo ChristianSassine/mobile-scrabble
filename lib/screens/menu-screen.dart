@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/settings-widget.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/chat-screen.dart';
 import 'package:mobile/screens/create-game-screen.dart';
@@ -81,6 +82,7 @@ class _MenuScreenState extends State<MenuScreen> {
     });
 
     return Scaffold(
+      floatingActionButton: Settings(),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
