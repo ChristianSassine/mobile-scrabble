@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 
 import '../domain/services/auth-service.dart';
@@ -28,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? _validateUsername(username) {
     if (username == null || username.isEmpty || username.trim() == '') {
-      return "Entrez un nom d'utilisateur avant de soumettre";
+      return FlutterI18n.translate(context, "form.missing_username");
     }
     return null;
   }
@@ -55,9 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: TextFormField(
                           validator: _validateUsername,
                           controller: _usernameFieldController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            hintText: "Ecrivez votre nom d'utilisateur ici",
+                            hintText: FlutterI18n.translate(
+                                context, "form.username_field"),
                           ),
                           onFieldSubmitted: (_) => _validateAndConnect(),
                         ),
@@ -67,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: _validateAndConnect,
-                      child: const Text("Se connecter"),
+                      child: Text(FlutterI18n.translate(context, "form.login")),
                     )
                   ],
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key, required this.title});
@@ -25,7 +26,7 @@ class _SigninScreenState extends State<SigninScreen> {
 
   String? _validateUsername(username) {
     if (username == null || username.isEmpty || username.trim() == '') {
-      return "Entrez un nom d'utilisateur avant de soumettre";
+      return FlutterI18n.translate(context, "form.missing_username");
     }
     return null;
   }
@@ -52,9 +53,9 @@ class _SigninScreenState extends State<SigninScreen> {
                         child: TextFormField(
                           validator: _validateUsername,
                           controller: _usernameFieldController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            hintText: "Ecrivez votre nom d'utilisateur ici",
+                            hintText: FlutterI18n.translate(context, "form.username_field"),
                           ),
                           onFieldSubmitted: (_) => _validateAndCreateAccount(),
                         ),
@@ -64,7 +65,7 @@ class _SigninScreenState extends State<SigninScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: _validateAndCreateAccount,
-                      child: const Text("Créer un compte"),
+                      child: Text(FlutterI18n.translate(context, "form.sign_in")),
                     )
                   ],
                 ),

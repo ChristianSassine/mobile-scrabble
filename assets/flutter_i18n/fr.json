@@ -12,5 +12,15 @@
         "join_chat": "Rejoindre une salle de clavardage",
         "chat_room": "Salle de clavardage",
         "change_language": "Changer la langue"
+    },
+    "form": {
+        "username_field": "Ecrivez votre nom d'utilisateur ici",
+        "missing_username": "Entrez un nom d'utilisateur avant de soumettre",
+        "password": "Mot de passe",
+        "missing_password": "Entrez un mot de passe avant de soumettre",
+        "email": "Adresse courriel",
+        "missing_email": "Entrez une adresse courriel avant de soumettre",
+        "login": "Se connecter",
+        "sign_in": "Créer un compte"
     }
 }

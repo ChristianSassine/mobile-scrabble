@@ -12,5 +12,15 @@
         "join_chat": "Join a chat room",
         "chat_room": "Chat room",
         "change_language": "Change language"
+    },
+    "form": {
+        "username_field": "Enter your username here",
+        "missing_username": "Enter a username before submitting",
+        "password": "Password",
+        "missing_password": "Enter a password before submitting",
+        "email": "Email address",
+        "missing_email": "Enter a email address before submitting",
+        "login": "Login",
+        "sign_in": "Sign in"
     }
 }
