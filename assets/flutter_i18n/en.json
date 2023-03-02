@@ -1,5 +1,6 @@
 {
     "menu_screen": {
+        "screen_name": "Main menu",
         "welcome": "Welcome",
         "no_connection": "No connection",
         "login": "Login",
