@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
@@ -34,7 +35,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-          const GameScreen(title: 'Partie',)),
+          GameScreen(title: FlutterI18n.translate(context, "waiting_room.game"))),
     );
   }
 
@@ -60,7 +61,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(currentRoom.name, style: const TextStyle(fontSize: 50)),
           const SizedBox(height: 100),
-          const Text("Joueurs", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+          Text(FlutterI18n.translate(context, "waiting_room.players"), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           SizedBox(
             width: 500,
@@ -85,8 +86,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _startGame,
-        tooltip: 'Changer la langue',
-        child: const Icon(Icons.language),
+        tooltip: FlutterI18n.translate(context, "waiting_room.start_game"),
+        child: const Icon(Icons.play_arrow),
       ),
     );
   }

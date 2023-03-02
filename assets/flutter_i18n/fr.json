@@ -1,5 +1,6 @@
 {
     "menu_screen": {
+        "screen_name": "Menu principale",
         "welcome": "Bienvenue",
         "no_connection": "Aucune connection",
         "login": "Se connecter",
@@ -21,6 +22,21 @@
         "email": "Adresse courriel",
         "missing_email": "Entrez une adresse courriel avant de soumettre",
         "login": "Se connecter",
-        "sign_in": "Créer un compte"
+        "sign_in": "Créer un compte",
+        "missing_room_name": "Entrez un nom de salle avant de soumettre",
+        "game_visibility": "Visibilité de la partie",
+        "private": "Privée",
+        "public":  "Public",
+        "create_game": "Créer une partie"
+    },
+    "waiting_room": {
+        "screen_name": "Salle d'attente",
+        "players": "Joueurs",
+        "start_game": "Démarrer la partie",
+        "game": "Partie"
+    },
+    "end_game": {
+        "game_ended": "Fin de la partie",
+        "return_to_menu": "Retour au menu principale"
     }
 }

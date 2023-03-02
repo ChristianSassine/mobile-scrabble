@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/chat-screen.dart';
@@ -31,7 +32,7 @@ class _EndGameScreenState extends State<EndGameScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Fin de la partie", style: TextStyle(fontWeight: FontWeight.bold),),
+              Text(FlutterI18n.translate(context, "end_game.game_ended"), style: TextStyle(fontWeight: FontWeight.bold),),
               SizedBox(
                   width: 250,
                   child: Column(
@@ -42,9 +43,9 @@ class _EndGameScreenState extends State<EndGameScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                  const MenuScreen(
-                                      title: "Menu principal"))),
-                          child: const Text("Retour au menu principal"))
+                                  MenuScreen(
+                                      title: FlutterI18n.translate(context, "menu_screen.screen_name")))),
+                          child: Text(FlutterI18n.translate(context, "end_game.return_to_menu")))
                     ],
                   )),
             ],

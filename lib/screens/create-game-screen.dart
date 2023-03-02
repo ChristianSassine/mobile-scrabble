@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/screens/waiting-room-screen.dart';
 
-import '../domain/services/auth-service.dart';
 import '../domain/services/room-service.dart';
 
 class GameCreationScreen extends StatefulWidget {
@@ -17,18 +17,21 @@ class GameCreationScreen extends StatefulWidget {
 
 const List<Widget> gameModes = <Widget>[Text('4 Joueurs')];
 
-const List<Widget> gameVisibilities = <Widget>[
-  Text('Privée'),
-  Text('Publique')
-];
-
 class _GameCreationScreenState extends State<GameCreationScreen> {
   final _roomService = GetIt.I.get<RoomService>();
 
   // Form objects
   final _formKey = GlobalKey<FormState>();
   final List<bool> _selectedVisibility = <bool>[true, false];
-  final TextEditingController _roomNameFieldController = TextEditingController();
+  final TextEditingController _roomNameFieldController =
+      TextEditingController();
+
+  List<Widget> _getGameVisibilities() {
+    return <Widget>[
+      Text(FlutterI18n.translate(context, "form.private")),
+      Text(FlutterI18n.translate(context, "form.public"))
+    ];
+  }
 
   void _chooseVisibility(index) {
     setState(() {
@@ -41,7 +44,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
 
   String? _validateRoomName(roomName) {
     if (roomName == null || roomName.isEmpty || roomName.trim() == '') {
-      return "Entrez un nom de salle avant de soumettre";
+      return FlutterI18n.translate(context, "form.missing_room_name");
     }
     return null;
   }
@@ -54,7 +57,8 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => WaitingRoomScreen("Salle d'attente")));
+              builder: (context) => WaitingRoomScreen(
+                  FlutterI18n.translate(context, "waiting_room.screen_name"))));
     }
   }
 
@@ -82,13 +86,13 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                             TextFormField(
                               validator: _validateRoomName,
                               controller: _roomNameFieldController,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 border: OutlineInputBorder(),
-                                hintText: "Ecrivez votre nom d'utilisateur ici",
+                                hintText: FlutterI18n.translate(context, "form.username_field"),
                               ),
                               onFieldSubmitted: (_) => _createGame(),
                             ),
-                            const Text('Visibilité de la partie: '),
+                            Text(FlutterI18n.translate(context, "form.game_visibility")),
                             const SizedBox(height: 5),
                             ToggleButtons(
                               onPressed: _chooseVisibility,
@@ -103,7 +107,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                 minWidth: 80.0,
                               ),
                               isSelected: _selectedVisibility,
-                              children: gameVisibilities,
+                              children: _getGameVisibilities(),
                             ),
                           ],
                         ),
@@ -113,7 +117,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: _createGame,
-                      child: const Text("Créer la partie"),
+                      child: Text(FlutterI18n.translate(context, "form.create_game")),
                     )
                   ],
                 ),

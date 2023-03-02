@@ -21,6 +21,21 @@
         "email": "Email address",
         "missing_email": "Enter a email address before submitting",
         "login": "Login",
-        "sign_in": "Sign in"
+        "sign_in": "Sign in",
+        "missing_room_name": "Enter a room name before submitting",
+        "game_visibility": "Game visibility",
+        "private": "Private",
+        "public": "Public",
+        "create_game": "Create a game"
+    },
+    "waiting_room": {
+        "screen_name": "Waiting room",
+        "players": "Players",
+        "start_game": "Start the game",
+        "game": "Game"
+    },
+    "end_game": {
+        "game_ended": "Game ended",
+        "return_to_menu": "Return to menu"
     }
 }

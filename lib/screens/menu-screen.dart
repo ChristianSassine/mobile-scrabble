@@ -163,7 +163,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               RoomSelectionScreen(
-                                                  FlutterI18n.translate(context, "menu_screen.join_room_screen"))),
+                                                  FlutterI18n.translate(context, "menu_screen.join_game"))),
                                     )
                                   },
                           child: Text(FlutterI18n.translate(context, "menu_screen.join_game"))),
