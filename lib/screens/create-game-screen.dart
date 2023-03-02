@@ -1,0 +1,127 @@
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/screens/waiting-room-screen.dart';
+
+import '../domain/services/auth-service.dart';
+import '../domain/services/room-service.dart';
+
+class GameCreationScreen extends StatefulWidget {
+  const GameCreationScreen({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<GameCreationScreen> createState() => _GameCreationScreenState();
+}
+
+const List<Widget> gameModes = <Widget>[Text('4 Joueurs')];
+
+const List<Widget> gameVisibilities = <Widget>[
+  Text('Privée'),
+  Text('Publique')
+];
+
+class _GameCreationScreenState extends State<GameCreationScreen> {
+  final _roomService = GetIt.I.get<RoomService>();
+
+  // Form objects
+  final _formKey = GlobalKey<FormState>();
+  final List<bool> _selectedVisibility = <bool>[true, false];
+  final TextEditingController _roomNameFieldController = TextEditingController();
+
+  void _chooseVisibility(index) {
+    setState(() {
+      // The button that is tapped is set to true, and the others to false.
+      for (int i = 0; i < _selectedVisibility.length; i++) {
+        _selectedVisibility[i] = i == index;
+      }
+    });
+  }
+
+  String? _validateRoomName(roomName) {
+    if (roomName == null || roomName.isEmpty || roomName.trim() == '') {
+      return "Entrez un nom de salle avant de soumettre";
+    }
+    return null;
+  }
+
+  void _createGame() {
+    if (_formKey.currentState!.validate()) {
+      Room room = Room(_roomNameFieldController.text,
+          _selectedVisibility[0] ? RoomType.PUBLIC : RoomType.PRIVATE, []);
+      _roomService.createRoom(room);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => WaitingRoomScreen("Salle d'attente")));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              validator: _validateRoomName,
+                              controller: _roomNameFieldController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: "Ecrivez votre nom d'utilisateur ici",
+                              ),
+                              onFieldSubmitted: (_) => _createGame(),
+                            ),
+                            const Text('Visibilité de la partie: '),
+                            const SizedBox(height: 5),
+                            ToggleButtons(
+                              onPressed: _chooseVisibility,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
+                              selectedBorderColor: Colors.green[700],
+                              selectedColor: Colors.white,
+                              fillColor: Colors.green[200],
+                              color: Colors.green[400],
+                              constraints: const BoxConstraints(
+                                minHeight: 40.0,
+                                minWidth: 80.0,
+                              ),
+                              isSelected: _selectedVisibility,
+                              children: gameVisibilities,
+                            ),
+                          ],
+                        ),
+                        //TODO: Add fields for gamemode selection,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _createGame,
+                      child: const Text("Créer la partie"),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/chat-service.dart';
+import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
-import 'package:mobile/domain/services/chat-service.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 Future<void> setup() async {
@@ -25,15 +26,13 @@ Future<void> setup() async {
       io(serverAddress, OptionBuilder().setTransports(["websocket"]).build()));
 
   Socket socket = getIt<Socket>();
-  socket.onConnect((_) {
-    if (kDebugMode) {
-      print('Socket connection established');
-    }
-  });
+  socket.onConnect((_) => debugPrint('Socket connection established'));
+  socket.onDisconnect((data) => debugPrint('Socket connection lost'));
 
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<ThemeService>(() => ThemeService());
+  getIt.registerLazySingleton<RoomService>(() => RoomService());
 }
 
 Future<void> main() async {
@@ -61,8 +60,10 @@ class _PolyScrabbleState extends State<PolyScrabble> {
 
     return MaterialApp(
       title: 'PolyScrabble 110',
-      theme: themeService.getTheme(), // Static mode, will be light theme in dynamic
-      darkTheme: themeService.getDarkMode(), // Dark mode will be used only in dynamic mode
+      theme: themeService
+          .getTheme(), // Static mode, will be light theme in dynamic
+      darkTheme: themeService
+          .getDarkMode(), // Dark mode will be used only in dynamic mode
       themeMode: themeService.isDynamic ? ThemeMode.system : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       home: const MenuScreen(title: 'PolyScrabble 101 - Prototype'),

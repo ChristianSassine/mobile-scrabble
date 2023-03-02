@@ -34,8 +34,8 @@ class AuthService {
     socket.on(RoomSocketEvents.usernameTaken.event,
         (data) => {_joinedRoomFailed(RoomJoinFailureReason.USERNAME_TAKEN)});
 
-    socket.on(RoomSocketEvents.userLeftHomeRoom.event,
-            (data) => {_leaveRoom(data)});
+    socket.on(
+        RoomSocketEvents.userLeftHomeRoom.event, (data) => {_leaveRoom(data)});
   }
 
   void connectUser(String username) {
@@ -43,14 +43,12 @@ class AuthService {
     // I think username should be assigned to us from the server when we login
     this.username = username;
     socket.emit(RoomSocketEvents.JoinHomeRoom.event, username);
-    if (kDebugMode) {
-      print("connecting");
-    }
+
+    debugPrint("Connecting");
   }
 
   void disconnect() {
     socket.emit(RoomSocketEvents.LeaveHomeRoom.event);
-
   }
 
   bool isConnected() {
@@ -58,7 +56,8 @@ class AuthService {
   }
 
   void _leaveRoom(String? leavingUser) {
-    print("${leavingUser} left");
+    debugPrint("$leavingUser left");
+
     if ((leavingUser != null) & (leavingUser == username)) {
       username = null;
       notifyLogout.add(true);
@@ -68,28 +67,28 @@ class AuthService {
   // Joined rooms in the future will just be for connecting the users and not the rooms
   void _joinedRoomSuccess(String joinedUser) {
     if (joinedUser == username) {
-      print("Success to join room!");
-      this.username = username;
+      username = joinedUser;
       notifyLogin.add(true);
+
+      debugPrint("Success to join room!");
     }
   }
 
   void _joinedRoomFailed(RoomJoinFailureReason reason) {
     username = null;
+
     switch (reason) {
       case RoomJoinFailureReason.FULL:
         const message = "Failed to join room: Room is full!";
+
         notifyError.add(message);
-        if (kDebugMode) {
-          print(message);
-        }
+        debugPrint(message);
         break;
       case RoomJoinFailureReason.USERNAME_TAKEN:
         const message = "Failed to join room: Username already taken!";
+
         notifyError.add(message);
-        if (kDebugMode) {
-          print(message);
-        }
+          debugPrint(message);
     }
   }
 }
