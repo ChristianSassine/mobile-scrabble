@@ -38,5 +38,12 @@
     "end_game": {
         "game_ended": "Fin de la partie",
         "return_to_menu": "Retour au menu principale"
+    },
+    "setting": {
+        "theme": "Thème",
+        "light": "Clair",
+        "dark": "Sombre",
+        "dynamic": "Dynamique",
+        "language": "Langue"
     }
 }

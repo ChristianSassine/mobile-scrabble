@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/themes.dart';
 import 'package:mobile/domain/extensions/string-extensions.dart';
@@ -32,7 +33,7 @@ class _ThemeDropdownState extends State<ThemeDropdown> {
           MobileTheme theme) {
         return DropdownMenuItem<MobileTheme>(
           value: theme,
-          child: Text(theme.value.capitalize()),
+          child: Text(FlutterI18n.translate(context, theme.value)),
         );
       }).toList(),
       onChanged: (MobileTheme? value) {
