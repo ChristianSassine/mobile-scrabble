@@ -1,33 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/domain/enums/themes.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 
-class ThemeService {
-  Subject<bool> notifyThemeChange = PublishSubject();
-  MobileTheme currentTheme = MobileTheme.Light;
-  bool isDynamic = false;
+class LanguageService {
+  Locale currentLocale = const Locale("fr");
 
-  switchTheme( value) {
-    isDynamic = value == MobileTheme.Dynamic;
-    if (!isDynamic) currentTheme = value;
-
-    notifyThemeChange.add(true);
-  }
-
-  ThemeData getTheme() {
-    if (isDynamic) return Themes.light;
-
-    switch (currentTheme) {
-      case MobileTheme.Light:
-        return Themes.light;
-      case MobileTheme.Dark:
-        return Themes.dark;
-      default:
-        return Themes.light;
-    }
-  }
-
-  ThemeData getDarkMode() {
-    return Themes.dark;
+  switchLocale(context, newLocale) {
+    currentLocale = newLocale;
+    FlutterI18n.refresh(context, newLocale);
   }
 }
