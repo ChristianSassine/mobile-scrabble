@@ -32,7 +32,7 @@ class _SettingsState extends State<Settings> {
                         SizedBox(width: 5),
                         LanguageDropdown(notifyParent: () {
                           setState(() => {});
-                          debugPrint(FlutterI18n.currentLocale(context).languageCode);
+                          debugPrint(FlutterI18n.currentLocale(context)!.languageCode);
                           widget.notifyParent();
                         })
                       ],

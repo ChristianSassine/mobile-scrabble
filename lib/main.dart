@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
+import 'package:mobile/domain/services/language-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
@@ -33,6 +35,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<ThemeService>(() => ThemeService());
+  getIt.registerLazySingleton<LanguageService>(() => LanguageService());
   getIt.registerLazySingleton<RoomService>(() => RoomService());
 }
 
@@ -49,27 +52,33 @@ class PolyScrabble extends StatefulWidget {
 }
 
 class _PolyScrabbleState extends State<PolyScrabble> {
-  final themeService = GetIt.I.get<ThemeService>();
+  final _themeService = GetIt.I.get<ThemeService>();
+  final _languageService = GetIt.I.get<LanguageService>();
   StreamSubscription? themeSub;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    themeSub ??= themeService.notifyThemeChange.stream.listen((event) {
+    themeSub ??= _themeService.notifyThemeChange.stream.listen((event) {
       setState(() {});
     });
 
     return MaterialApp(
       title: 'PolyScrabble 110',
-      theme: themeService
+      theme: _themeService
           .getTheme(), // Static mode, will be light theme in dynamic
-      darkTheme: themeService
+      darkTheme: _themeService
           .getDarkMode(), // Dark mode will be used only in dynamic mode
-      themeMode: themeService.isDynamic ? ThemeMode.system : ThemeMode.light,
+      themeMode: _themeService.isDynamic ? ThemeMode.system : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       home: const MenuScreen(title: 'PolyScrabble 101 - Prototype'),
       localizationsDelegates: [
-        FlutterI18nDelegate()
+        FlutterI18nDelegate(
+          translationLoader: FileTranslationLoader(forcedLocale: _languageService.currentLocale),
+          missingTranslationHandler: (key, locale) {
+            debugPrint("--- Missing Key: $key, languageCode: ${locale!.languageCode}");
+          },
+        )
       ],
     );
   }

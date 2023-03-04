@@ -3,6 +3,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/themes.dart';
 import 'package:mobile/domain/extensions/string-extensions.dart';
+import 'package:mobile/domain/services/language-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
 
 class LanguageDropdown extends StatefulWidget {
@@ -17,6 +18,7 @@ class LanguageDropdown extends StatefulWidget {
 }
 
 class _LanguageDropdownState extends State<LanguageDropdown> {
+  final _languageService = GetIt.I.get<LanguageService>();
   String? dropdownValue;
 
   // Those labels don't need to be translated (We want the language name in the language itself)
@@ -27,7 +29,7 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
   ];
 
   void _changeLanguage(Locale locale) {
-    FlutterI18n.refresh(context, locale);
+    _languageService.switchLocale(context, locale);
     setState(() {
       dropdownValue = locale.languageCode;
     });
@@ -36,7 +38,7 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    dropdownValue ??= FlutterI18n.currentLocale(context).languageCode;
+    dropdownValue ??= FlutterI18n.currentLocale(context)!.languageCode;
 
     return DropdownButton<String>(
       value: dropdownValue,
