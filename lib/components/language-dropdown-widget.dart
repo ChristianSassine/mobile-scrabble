@@ -36,7 +36,7 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    dropdownValue ??= FlutterI18n.currentLocale(context).languageCode;
+    dropdownValue ??= FlutterI18n.currentLocale(context)!.languageCode;
 
     return DropdownButton<String>(
       value: dropdownValue,
