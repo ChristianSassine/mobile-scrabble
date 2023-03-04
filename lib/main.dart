@@ -4,10 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
+import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/language-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
@@ -37,6 +37,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<ThemeService>(() => ThemeService());
   getIt.registerLazySingleton<LanguageService>(() => LanguageService());
   getIt.registerLazySingleton<RoomService>(() => RoomService());
+  getIt.registerLazySingleton<GameService>(() => GameService());
 }
 
 Future<void> main() async {

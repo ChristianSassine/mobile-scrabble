@@ -1,10 +1,16 @@
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
 
-class BoardService {
+class GameService {
 
   final Board gameboard = Board(15);
   final Easel easel = Easel(7);
+
+  GameService(){
+    easel.addLetter(Letter.A);
+    easel.addLetter(Letter.B);
+    easel.addLetter(Letter.C);
+  }
 
   void placeLetterOnBoard(int x, int y, Letter letter){
     gameboard.placeLetter(x, y, letter);
