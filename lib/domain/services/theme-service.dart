@@ -5,9 +5,11 @@ import 'package:rxdart/rxdart.dart';
 class ThemeService {
   Subject<bool> notifyThemeChange = PublishSubject();
   MobileTheme currentTheme = MobileTheme.Light;
+  MobileTheme lightMode = MobileTheme.Light;
+  MobileTheme darkMode = MobileTheme.Dark;
   bool isDynamic = false;
 
-  switchTheme(MobileTheme value) {
+  switchMainTheme(MobileTheme value) {
     isDynamic = value == MobileTheme.Dynamic;
     if (!isDynamic) currentTheme = value;
 
@@ -15,9 +17,16 @@ class ThemeService {
   }
 
   ThemeData getTheme() {
-    if (isDynamic) return Themes.light;
+    if (isDynamic) return _extractTheme(lightMode);
+    return _extractTheme(currentTheme);
+  }
 
-    switch (currentTheme) {
+  ThemeData getDarkMode() {
+    return _extractTheme(darkMode);
+  }
+
+  ThemeData _extractTheme(MobileTheme theme) {
+    switch (theme) {
       case MobileTheme.Light:
         return Themes.light;
       case MobileTheme.Dark:
@@ -25,9 +34,5 @@ class ThemeService {
       default:
         return Themes.light;
     }
-  }
-
-  ThemeData getDarkMode() {
-    return Themes.dark;
   }
 }

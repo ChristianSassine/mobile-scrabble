@@ -40,7 +40,7 @@ class _ThemeDropdownState extends State<ThemeDropdown> {
         setState(() {
           dropdownValue = value;
         });
-        themeService.switchTheme(value!);
+        themeService.switchMainTheme(value!);
       },
     );
   }
