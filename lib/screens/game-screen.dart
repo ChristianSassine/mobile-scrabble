@@ -39,27 +39,31 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              onPressed: _abandonGame,
-              child: const Icon(Icons.flag))
-        ],
-      ),
       body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          BoardWidget(dragKey: _draggableKey)
+          Expanded(
+            child: InteractiveViewer(
+              panEnabled: false,
+              // Set it to false to prevent panning.
+              boundaryMargin: EdgeInsets.zero,
+              minScale: 1,
+              maxScale: 4,
+              child: BoardWidget(dragKey: _draggableKey),
+            ),
+          ),
         ],
       )),
       bottomNavigationBar: BottomAppBar(
           child: Container(
               child: EaselWidget(
-                dragKey: _draggableKey,
-              ))),
+        dragKey: _draggableKey,
+      ))),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.red,
+          child: const Icon(Icons.flag), onPressed: () => _abandonGame()),
     );
   }
 }

@@ -10,17 +10,18 @@ class LetterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(
+          left: 6.0, right: 6.0, top: 2.0, bottom: 0.0),
       child: SizedBox(
-          height: 75,
-          width: 75,
-          child: Card(
-              color: Colors.orangeAccent[100],
-              child: Center(
-                  child: Text(value, style: const TextStyle(fontSize: 30, color: Colors.black), )),
-          ),
+      height: 75,
+      width: 75,
+      child: Card(
+        color: Colors.orangeAccent[100],
+        child: Center(
+            child: Text(value,
+              style: const TextStyle(fontSize: 30, color: Colors.black),)),
       ),
-    );
+    ),);
   }
 }
 

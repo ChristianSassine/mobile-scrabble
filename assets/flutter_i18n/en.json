@@ -45,5 +45,11 @@
         "dark": "Dark",
         "dynamic": "Dynamic",
         "language": "Language"
+    },
+    "board": {
+        "double_letter": "DOUBLE\nLETTER",
+        "triple_letter": "TRIPLE\nLETTER",
+        "double_word": "DOUBLE\nWORD",
+        "triple_word": "TRIPLE\nWORD"
     }
 }

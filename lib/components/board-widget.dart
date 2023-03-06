@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/game-service.dart';
 
@@ -16,16 +17,15 @@ class BoardWidget extends StatefulWidget {
 class _BoardState extends State<BoardWidget> {
   final _gameService = GetIt.I.get<GameService>();
 
-
   @override
   Widget build(BuildContext context) {
     int boardSize = _gameService.gameboard.size;
     return Card(
-        child: Row(
+        child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
                 boardSize,
-                (vIndex) => Column(
+                (vIndex) => Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
                           boardSize,
@@ -41,8 +41,9 @@ class SlotWidget extends StatelessWidget {
 
   const SlotWidget({super.key, required this.value});
 
-  getCardFromModifier(value) {
+  getCardFromModifier(context, value) {
     Color? color;
+    String labelKey = "";
     switch (value) {
       case Modifier.NONE:
         color = Colors.brown[100];
@@ -52,25 +53,34 @@ class SlotWidget extends StatelessWidget {
         break;
       case Modifier.DOUBLE_LETTER:
         color = Colors.blue[100];
+        labelKey = "board.double_letter";
         break;
       case Modifier.TRIPLE_LETTER:
         color = Colors.blue[400];
+        labelKey = "board.triple_letter";
         break;
       case Modifier.DOUBLE_WORD:
         color = Colors.red[200];
+        labelKey = "board.double_word";
         break;
       case Modifier.TRIPLE_WORD:
         color = Colors.red[800];
+        labelKey = "board.triple_word";
         break;
     }
-    return Card(color: color, child: Center());
+    return Card(
+        color: color,
+        margin: EdgeInsets.zero,
+        shape: Border.all(color: Colors.black45, width: 0.05),
+        child: Center(
+            child: Text(
+          FlutterI18n.translate(context, labelKey),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 9), textAlign: TextAlign.center,
+        )));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(0.5),
-      child: SizedBox(height: 30, width: 30, child: getCardFromModifier(value)),
-    );
+    return SizedBox(height: 35, width: 35, child: getCardFromModifier(context, value));
   }
 }
