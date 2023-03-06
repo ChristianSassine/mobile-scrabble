@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/board-widget.dart';
 import 'package:mobile/components/easel-widget.dart';
 import 'package:mobile/components/letter-widget.dart';
 import 'package:mobile/domain/services/auth-service.dart';
@@ -51,7 +52,7 @@ class _GameScreenState extends State<GameScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("The board will be comming here..."),
+          BoardWidget(dragKey: _draggableKey)
         ],
       )),
       bottomNavigationBar: BottomAppBar(

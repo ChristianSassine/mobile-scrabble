@@ -18,8 +18,9 @@ class GameService {
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
   }
 
-  void removeLetterOnBoard(int x, int y){
-    gameboard.removeLetter(x, y);
+  /// @return the removed letter
+  Letter? removeLetterFromBoard(int x, int y){
+    return gameboard.removeLetter(x, y);
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
   }
