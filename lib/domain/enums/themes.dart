@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 
+enum MobileThemeMode {
+  Main("setting.main"),
+  Dark("setting.dark"),
+  Light("setting.light");
+
+  const MobileThemeMode(this.value);
+  final String value;
+}
+
 enum MobileTheme {
   Light("setting.light"),
-  Dark("setting.dark"),
-  Dynamic("setting.dynamic");
+  Dark("setting.dark");
 
   const MobileTheme(this.value);
   final String value;

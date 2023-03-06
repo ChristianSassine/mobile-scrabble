@@ -43,6 +43,7 @@
         "theme": "Theme",
         "light": "Light",
         "dark": "Dark",
+        "main": "Main",
         "dynamic": "Dynamic",
         "language": "Language"
     }

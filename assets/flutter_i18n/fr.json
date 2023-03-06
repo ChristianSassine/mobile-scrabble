@@ -43,6 +43,7 @@
         "theme": "Thème",
         "light": "Clair",
         "dark": "Sombre",
+        "main": "Principal",
         "dynamic": "Dynamique",
         "language": "Langue"
     }

@@ -9,10 +9,13 @@ class ThemeService {
   MobileTheme darkMode = MobileTheme.Dark;
   bool isDynamic = false;
 
-  switchMainTheme(MobileTheme value) {
-    isDynamic = value == MobileTheme.Dynamic;
-    if (!isDynamic) currentTheme = value;
+  switchMode(bool dynamic){
+    isDynamic = dynamic;
+    notifyThemeChange.add(true);
+  }
 
+  switchMainTheme(MobileTheme value) {
+    currentTheme = value;
     notifyThemeChange.add(true);
   }
 
