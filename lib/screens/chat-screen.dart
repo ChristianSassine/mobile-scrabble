@@ -13,12 +13,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late ChatService chatService;
-
-  _ChatScreenState() {
-    chatService = GetIt.I<ChatService>();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
