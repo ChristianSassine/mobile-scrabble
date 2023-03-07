@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/game-service.dart';
@@ -15,14 +17,23 @@ class EaselWidget extends StatefulWidget {
 class _EaselState extends State<EaselWidget> {
   final _gameService = GetIt.I.get<GameService>();
 
+  StreamSubscription? easelUpdapte;
+
+
+
   @override
   Widget build(BuildContext context) {
+    easelUpdapte ??=
+        _gameService.easel.notifyEaselChanged.stream.listen((event) {
+          setState(() {});
+        });
+
     return Card(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
             children: _gameService.easel
                 .getLetterList()
-                .map((letter) => EaselLetter(value: letter, dragKey: widget.dragKey, widgetSize: 75,))
+                .asMap().entries.map((letter) => EaselLetter(value: letter.value, index: letter.key, dragKey: widget.dragKey, widgetSize: 75,))
                 .toList()
             ));
   }

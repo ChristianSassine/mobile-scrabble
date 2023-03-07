@@ -23,9 +23,9 @@ class _BoardState extends State<BoardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    boardUpdate ??= _gameService.gameboard.notifyBoardChanged.stream.listen((event) {
-      setState(() {
-      });
+    boardUpdate ??=
+        _gameService.gameboard.notifyBoardChanged.stream.listen((event) {
+      setState(() {});
     });
 
     int boardSize = _gameService.gameboard.size;
@@ -50,8 +50,8 @@ class _BoardState extends State<BoardWidget> {
                               boardSize,
                               (hIndex) =>
                                   // _gameService.gameboard
-                              //                                   //         .isSlotEmpty(vIndex, hIndex)
-                              //                                   //     ?
+                                  //                                   //         .isSlotEmpty(vIndex, hIndex)
+                                  //                                   //     ?
                                   Stack(children: [
                                     SlotWidget(
                                         value: _gameService.gameboard.layout
@@ -59,8 +59,13 @@ class _BoardState extends State<BoardWidget> {
                                         x: vIndex,
                                         y: hIndex),
                                     !_gameService.gameboard
-                                             .isSlotEmpty(vIndex, hIndex)
-                                         ? LetterWidget(value: _gameService.gameboard.getSlot(vIndex, hIndex)!.value, widgetSize: 35) : SizedBox.shrink()
+                                            .isSlotEmpty(vIndex, hIndex)
+                                        ? BoardLetter(
+                                            value: _gameService.gameboard
+                                                .getSlot(vIndex, hIndex)!,
+                                            dragKey: widget.dragKey,
+                                            widgetSize: 35)
+                                        : const SizedBox.shrink()
                                   ])
                               // : BoardLetter(
                               //     value: _gameService.gameboard

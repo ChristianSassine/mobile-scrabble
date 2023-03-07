@@ -10,6 +10,10 @@ class GameService {
     easel.addLetter(Letter.A);
     easel.addLetter(Letter.B);
     easel.addLetter(Letter.C);
+    easel.addLetter(Letter.D);
+    easel.addLetter(Letter.E);
+    easel.addLetter(Letter.F);
+    easel.addLetter(Letter.G);
   }
 
   void placeLetterOnBoard(int x, int y, Letter letter){
