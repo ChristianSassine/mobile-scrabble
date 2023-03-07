@@ -1,6 +1,8 @@
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
 
+import '../enums/letter-enum.dart';
+
 class GameService {
 
   final Board gameboard = Board(15);
@@ -30,7 +32,9 @@ class GameService {
   }
 
   void addLetterInEasel(Letter letter){
+    easel.addLetter(letter);
 
+    //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
   }
 
   /// @return null if index is out of bound

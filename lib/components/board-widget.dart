@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/letter-widget.dart';
+import 'package:mobile/domain/enums/letter-enum.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/models/board-models.dart';
 
@@ -48,11 +49,7 @@ class _BoardState extends State<BoardWidget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(
                               boardSize,
-                              (hIndex) =>
-                                  // _gameService.gameboard
-                                  //                                   //         .isSlotEmpty(vIndex, hIndex)
-                                  //                                   //     ?
-                                  Stack(children: [
+                              (hIndex) => Stack(children: [
                                     SlotWidget(
                                         value: _gameService.gameboard.layout
                                             .layoutMatrix[hIndex][vIndex],
@@ -64,7 +61,9 @@ class _BoardState extends State<BoardWidget> {
                                             value: _gameService.gameboard
                                                 .getSlot(vIndex, hIndex)!,
                                             dragKey: widget.dragKey,
-                                            widgetSize: 35)
+                                            widgetSize: 35,
+                                            x: vIndex,
+                                            y: hIndex)
                                         : const SizedBox.shrink()
                                   ])
                               // : BoardLetter(
@@ -132,10 +131,11 @@ class SlotWidget extends StatelessWidget {
       height: 35,
       width: 35,
       child: DragTarget<Letter>(
-          builder: (context, letters, rejectedItems) {
-            return getCardFromModifier(context, value);
-          },
-          onAccept: (letter) => _gameService.placeLetterOnBoard(x, y, letter)),
+        builder: (context, letters, rejectedItems) {
+          return getCardFromModifier(context, value);
+        },
+        onAccept: (letter) => _gameService.placeLetterOnBoard(x, y, letter),
+      ),
     );
   }
 }

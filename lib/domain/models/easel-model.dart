@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../enums/letter-enum.dart';
+
 class Easel{
 
   Subject<bool> notifyEaselChanged = PublishSubject();
@@ -20,6 +22,7 @@ class Easel{
     }
 
     _letters.add(letter);
+    notifyEaselChanged.add(true);
   }
 
   Letter? removeLetterAt(int index){
@@ -27,7 +30,10 @@ class Easel{
       debugPrint("You tried to remove letter at index $index, but the easel contains only ${_letters.length} letters");
       return null;
     }
-    return _letters.removeAt(index);
+
+    Letter letter = _letters.removeAt(index);
+    notifyEaselChanged.add(true);
+    return letter;
   }
 
   Letter? removeLetter(Letter letter){
@@ -35,7 +41,9 @@ class Easel{
       debugPrint("You tried to remove letter '$letter', but only have those letters: ${_letters.toString()}");
       return null;
     }
+
     _letters.remove(letter);
+    notifyEaselChanged.add(true);
     return letter;
   }
 
