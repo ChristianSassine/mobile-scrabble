@@ -22,7 +22,7 @@ class _EaselState extends State<EaselWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
             children: _gameService.easel
                 .getLetterList()
-                .map((letter) => DraggableLetter(value: letter, dragKey: widget.dragKey))
+                .map((letter) => EaselLetter(value: letter, dragKey: widget.dragKey, widgetSize: 75,))
                 .toList()
             ));
   }
