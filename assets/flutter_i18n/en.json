@@ -44,7 +44,11 @@
         "light": "Light",
         "dark": "Dark",
         "main": "Main",
+        "static": "Static",
         "dynamic": "Dynamic",
+        "main_mode": "Main Theme",
+        "light_mode": "Light Mode Theme",
+        "dark_mode": "Dark Mode Theme",
         "language": "Language"
     }
 }

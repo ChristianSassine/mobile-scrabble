@@ -4,24 +4,44 @@ import 'package:rxdart/rxdart.dart';
 
 class ThemeService {
   Subject<bool> notifyThemeChange = PublishSubject();
-  MobileTheme currentTheme = MobileTheme.Light;
+  MobileTheme mainTheme = MobileTheme.Light;
   MobileTheme lightMode = MobileTheme.Light;
   MobileTheme darkMode = MobileTheme.Dark;
   bool isDynamic = false;
 
-  switchMode(bool dynamic){
+  switchMode(bool dynamic) {
     isDynamic = dynamic;
     notifyThemeChange.add(true);
   }
 
-  switchMainTheme(MobileTheme value) {
-    currentTheme = value;
+  switchMainTheme(MobileThemeMode mode, MobileTheme value) {
+    switch (mode) {
+      case MobileThemeMode.Light:
+        lightMode = value;
+        break;
+      case MobileThemeMode.Dark:
+        darkMode = value;
+        break;
+      default:
+        mainTheme = value;
+    }
     notifyThemeChange.add(true);
+  }
+
+  getCurrentTheme(MobileThemeMode mode) {
+    switch (mode) {
+      case MobileThemeMode.Light:
+        return lightMode;
+      case MobileThemeMode.Dark:
+        return darkMode;
+      default:
+        return mainTheme;
+    }
   }
 
   ThemeData getTheme() {
     if (isDynamic) return _extractTheme(lightMode);
-    return _extractTheme(currentTheme);
+    return _extractTheme(mainTheme);
   }
 
   ThemeData getDarkMode() {

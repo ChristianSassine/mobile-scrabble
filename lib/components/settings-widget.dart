@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mobile/components/language-dropdown-widget.dart';
-import 'package:mobile/components/theme-dropdown-widget.dart';
-import 'package:mobile/domain/services/theme-service.dart';
+import 'package:mobile/components/theme-settings-widget.dart';
 
 class Settings extends StatefulWidget {
   Function() notifyParent;
@@ -42,57 +40,4 @@ class _SettingsState extends State<Settings> {
   }
 }
 
-class ThemesSettings extends StatefulWidget {
-  const ThemesSettings({
-    Key? key,
-  }) : super(key: key);
 
-  @override
-  State<ThemesSettings> createState() => _ThemesSettingsState();
-}
-
-class _ThemesSettingsState extends State<ThemesSettings> {
-  bool isDynamic = false;
-  final _themeService = GetIt.I.get<ThemeService>();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text("${FlutterI18n.translate(context, "setting.theme")} "),
-        Row(
-          children: [
-            Text("Static"),
-            Switch(
-                value: isDynamic,
-                onChanged: (bool value) {
-                  setState(() {
-                    isDynamic = value;
-                    _themeService.switchMode(value);
-                  });
-                }),
-            Text("Dynamic"),
-          ],
-        ),
-        Row(
-          children: [
-            Text("Thème principale : "),
-            ThemeDropdown(),
-          ],
-        ),
-        Row(
-          children: [
-            Text("Thème mode clair : "),
-            ThemeDropdown(),
-          ],
-        ),
-        Row(
-          children: [
-            Text("Thème mode sombre : "),
-            ThemeDropdown(),
-          ],
-        ),
-      ],
-    );
-  }
-}
