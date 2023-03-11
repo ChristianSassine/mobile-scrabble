@@ -62,8 +62,11 @@ class _SignUpFormState extends State<SignUpForm> {
           TextFormField(
             controller: _emailController,
             validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your email';
+              if (value == null ||
+                  value.isEmpty ||
+                  !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                      .hasMatch(value)) {
+                return 'Please enter correct email';
               }
               return null;
             },
@@ -73,7 +76,10 @@ class _SignUpFormState extends State<SignUpForm> {
           TextFormField(
             controller: _usernameController,
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null ||
+                  value.isEmpty ||
+                  value.length < 3 ||
+                  value.length > 16) {
                 return 'Please enter your username';
               }
               return null;
@@ -85,7 +91,10 @@ class _SignUpFormState extends State<SignUpForm> {
             controller: _passwordController,
             obscureText: true,
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null ||
+                  value.isEmpty ||
+                  value.length < 8 ||
+                  value.length > 16) {
                 return 'Please enter your password';
               }
               return null;
@@ -112,6 +121,7 @@ class _SignUpFormState extends State<SignUpForm> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   // TODO: Submit Form
+                  debugPrint('submitting form ...');
                 }
               },
               child: const Text('Register'),
