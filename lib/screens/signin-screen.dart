@@ -66,7 +66,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   value.isEmpty ||
                   !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                       .hasMatch(value)) {
-                return 'Please enter correct email';
+                return 'Please enter valid email';
               }
               return null;
             },
