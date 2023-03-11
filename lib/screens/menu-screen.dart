@@ -6,7 +6,7 @@ import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/chat-screen.dart';
 import 'package:mobile/screens/create-game-screen.dart';
 import 'package:mobile/screens/room-selection-screen.dart';
-import 'package:mobile/screens/signin-screen.dart';
+import 'package:mobile/screens/signup-screen.dart';
 
 import 'login-screen.dart';
 
