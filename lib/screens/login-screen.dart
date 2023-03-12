@@ -21,14 +21,16 @@ class _LoginScreenState extends State<LoginScreen> {
           title: Text(widget.title),
         ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              SizedBox(
-                width: 500,
-                child: Login(),
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                SizedBox(
+                  width: 500,
+                  child: Login(),
+                ),
+              ],
+            ),
           ),
         ));
   }
