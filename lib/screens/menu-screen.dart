@@ -48,36 +48,36 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    subLogin ??= authService.notifyLogin.stream.listen((event) {
-      setState(() {
-        loggedIn = authService.isConnected();
-      });
-      ScaffoldMessenger.of(context).showSnackBar(_loggedInSnackBar);
-    });
+    // subLogin ??= authService.notifyLogin.stream.listen((event) {
+    //   setState(() {
+    //     loggedIn = authService.isConnected();
+    //   });
+    //   ScaffoldMessenger.of(context).showSnackBar(_loggedInSnackBar);
+    // });
+    //
+    // subLogout ??= authService.notifyLogout.stream.listen((event) {
+    //   setState(() {
+    //     loggedIn = authService.isConnected();
+    //   });
+    //   ScaffoldMessenger.of(context).showSnackBar(_loggedOutSnackBar);
+    // });
 
-    subLogout ??= authService.notifyLogout.stream.listen((event) {
-      setState(() {
-        loggedIn = authService.isConnected();
-      });
-      ScaffoldMessenger.of(context).showSnackBar(_loggedOutSnackBar);
-    });
+    // subError ??= authService.notifyError.stream.listen((event) {
+    //   setState(() {
+    //     loggedIn = authService.isConnected();
+    //   });
 
-    subError ??= authService.notifyError.stream.listen((event) {
-      setState(() {
-        loggedIn = authService.isConnected();
-      });
+      // var errorSnackBar = SnackBar(
+      //   content: Text(
+      //     event,
+      //     textAlign: TextAlign.center,
+      //   ),
+      //   duration: const Duration(seconds: 3),
+      //   backgroundColor: Colors.red,
+      // );
 
-      var errorSnackBar = SnackBar(
-        content: Text(
-          event,
-          textAlign: TextAlign.center,
-        ),
-        duration: const Duration(seconds: 3),
-        backgroundColor: Colors.red,
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(errorSnackBar);
-    });
+      // ScaffoldMessenger.of(context).showSnackBar(errorSnackBar);
+    // });
 
     return Scaffold(
       body: Center(
@@ -93,7 +93,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           left: 30.0, right: 30, bottom: 15, top: 15),
                       child: Column(children: [
                         Text(
-                            authService.isConnected()
+                            false
                                 ? "Bienvenue ${authService.username!}"
                                 : "Aucune connection",
                             style:
@@ -118,10 +118,9 @@ class _MenuScreenState extends State<MenuScreen> {
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red),
-                            onPressed: !loggedIn
+                            onPressed: false
                                 ? null
                                 : () {
-                                    authService.disconnect();
                                   },
                             child: const Text("Se deconnecter")),
                         const SizedBox(height: 5),
