@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/screens/menu-screen.dart';
 import 'package:provider/provider.dart';
 
 class SignInState extends ChangeNotifier {
@@ -43,9 +45,40 @@ class _ContainerLoginState extends State<ContainerLogin> {
   final passwordController = TextEditingController();
 
   final authService = GetIt.I.get<AuthService>();
+  late final StreamSubscription loginSub;
 
-  SignInUser() {
+  // SnackBars (Might be better to put all of them in one place)
+  final _loggedInSnackBar = const SnackBar(
+    content: Text(
+      "Connection réussite!",
+      textAlign: TextAlign.center,
+    ),
+    duration: Duration(seconds: 3),
+    backgroundColor: Colors.green,
+  );
+
+  void _signInUser() {
     authService.connectUser(usernameController.text, passwordController.text);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    loginSub = authService.notifyLogin.stream.listen((event) {
+      ScaffoldMessenger.of(context).showSnackBar(_loggedInSnackBar);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) =>
+                  const MenuScreen(title: "Page de connection")),
+          (route) => false);
+    });
+  }
+
+  @override
+  dispose() {
+    loginSub.cancel();
+    super.dispose();
   }
 
   @override
@@ -84,7 +117,7 @@ class _ContainerLoginState extends State<ContainerLogin> {
               onPressed: signinState.isValid()
                   ? () {
                       if (_formKey.currentState!.validate()) {
-                        SignInUser();
+                        _signInUser();
                       }
                     }
                   : null,
@@ -125,7 +158,7 @@ class PasswordInput extends StatelessWidget {
       onChanged: (_) =>
           {signinState.updateValidity(formKey.currentState!.validate())},
       onFieldSubmitted: (String _) {
-        formKey.currentState!.validate();
+        signinState.updateValidity(formKey.currentState!.validate());
       },
       decoration: const InputDecoration(
         hintText: "Mot de passe",
@@ -158,7 +191,7 @@ class UsernameInput extends StatelessWidget {
         return null;
       },
       onFieldSubmitted: (String _) {
-        formKey.currentState!.validate();
+        signinState.updateValidity(formKey.currentState!.validate());
       },
       onChanged: (_) =>
           {signinState.updateValidity(formKey.currentState!.validate())},
