@@ -22,13 +22,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: const [
-              Expanded(child: SizedBox()),
               SizedBox(
                 width: 500,
                 child: Login(),
               ),
-              Expanded(child: SizedBox()),
             ],
           ),
         ));

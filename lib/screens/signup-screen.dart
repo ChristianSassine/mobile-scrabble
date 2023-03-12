@@ -18,11 +18,10 @@ class _SigninScreenState extends State<SigninScreen> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: const Scaffold(
+        body: Scaffold(
           body: Center(
             child: SizedBox(
               width: 500,
-              height: 600,
               child: Card(
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
@@ -56,12 +55,20 @@ class _SignUpFormState extends State<SignUpForm> {
       child: Form(
         key: _formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            Text(
+              "Créer un compte",
+              style:
+              DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),
+            ),
             const SizedBox(height: 16),
-            const Text('Email'),
             TextFormField(
               controller: _emailController,
+              decoration: InputDecoration(
+                hintText: "Email",
+              ),
               validator: (value) {
                 if (value == null ||
                     value.isEmpty ||
@@ -73,9 +80,11 @@ class _SignUpFormState extends State<SignUpForm> {
               },
             ),
             const SizedBox(height: 16),
-            const Text('Username'),
             TextFormField(
               controller: _usernameController,
+              decoration: const InputDecoration(
+                hintText: "Username",
+              ),
               validator: (value) {
                 if (value == null ||
                     value.isEmpty ||
@@ -87,9 +96,11 @@ class _SignUpFormState extends State<SignUpForm> {
               },
             ),
             const SizedBox(height: 16),
-            const Text('Password'),
             TextFormField(
               controller: _passwordController,
+              decoration: const InputDecoration(
+                hintText: "Password",
+              ),
               obscureText: true,
               validator: (value) {
                 if (value == null ||
@@ -102,9 +113,11 @@ class _SignUpFormState extends State<SignUpForm> {
               },
             ),
             const SizedBox(height: 16),
-            const Text('Confirm Password'),
             TextFormField(
               controller: _confirmPasswordController,
+              decoration: const InputDecoration(
+                hintText: "Confirm Password",
+              ),
               obscureText: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
