@@ -10,11 +10,11 @@ class HttpHandlerService {
   }
 
   // Auth requests
-  signInRequest(Object body){
+  Future<http.Response> signInRequest(Object body) {
     return client.post(Uri.parse("${baseUrl}/auth/login"), body: body);
   }
 
-  signUpRequest(Object body){
+  Future<http.Response> signUpRequest(Object body) {
     return client.post(Uri.parse("${baseUrl}/auth/signUp"), body: body);
   }
 }

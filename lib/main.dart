@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
 import 'package:mobile/domain/services/chat-service.dart';
@@ -26,7 +27,8 @@ Future<void> setup() async {
   Socket socket = getIt<Socket>();
   socket.onConnect((_) => debugPrint('Socket connection established'));
   socket.onDisconnect((data) => debugPrint('Socket connection lost'));
-
+  
+  getIt.registerLazySingleton<HttpHandlerService>(() => HttpHandlerService(serverAddress!));
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<RoomService>(() => RoomService());
