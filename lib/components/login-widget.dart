@@ -42,27 +42,39 @@ class _ContainerLoginState extends State<ContainerLogin> {
   Widget build(BuildContext context) {
     var signinState = context.watch<SignInState>();
     return Card(
-      child: Column(
-        children: [
-          Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  UsernameInput(
-                    formKey: _formKey,
-                  ),
-                  PasswordInput(formKey: _formKey),
-                ],
-              )),
-          ElevatedButton(
-            onPressed: signinState.isValid()
-                ? () {
-                    if (_formKey.currentState!.validate()) {}
-                  }
-                : null,
-            child: Text('Sign in'),
-          )
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            // Title(color: Colors.black, child: Text("Login")),
+            Text(
+              "Connexion",
+              style:
+                  DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),
+            ),
+            SizedBox(height: 16,),
+            Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    UsernameInput(
+                      formKey: _formKey,
+                    ),
+                    const SizedBox(height: 16),
+                    PasswordInput(formKey: _formKey),
+                  ],
+                )),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: signinState.isValid()
+                  ? () {
+                      if (_formKey.currentState!.validate()) {}
+                    }
+                  : null,
+              child: Text('Sign in'),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -96,8 +108,7 @@ class PasswordInput extends StatelessWidget {
         formKey.currentState!.validate();
       },
       decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        hintText: "Entrez votre mot de passe",
+        hintText: "Mot de passe",
       ),
     );
   }
@@ -129,8 +140,7 @@ class UsernameInput extends StatelessWidget {
       onChanged: (_) =>
           {signinState.updateValidity(formKey.currentState!.validate())},
       decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        hintText: "Entrez votre nom d'utilisateur",
+        hintText: "Nom d'utilisateur",
       ),
     );
   }
