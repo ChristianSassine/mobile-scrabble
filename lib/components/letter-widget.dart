@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/letter-enum.dart';
-import 'package:mobile/domain/models/board-models.dart';
 
 import '../domain/services/game-service.dart';
 
@@ -20,12 +19,12 @@ class LetterWidget extends StatelessWidget {
         height: widgetSize,
         width: widgetSize,
         child: Card(
-          color: Colors.orangeAccent[100],
+          color: Colors.orangeAccent[100]!.withOpacity(character != Letter.EMPTY.character ? 1.0: 0.75),
           child: Stack(
             children: [
               Center(
                   child: Text(
-                character != "_" ? character : "",
+                character != Letter.EMPTY.character ? character : "",
                 style:
                     TextStyle(fontSize: 0.4 * widgetSize, color: Colors.black),
               )),
@@ -93,38 +92,12 @@ class BoardLetter extends StatelessWidget {
   Widget build(BuildContext context) {
     return LongPressDraggable(
       data: value,
+      delay: const Duration(milliseconds: 100),
       feedback: DraggedLetter(value: value, dragKey: dragKey),
       child: LetterWidget(character: value.character, points: value.points, widgetSize: widgetSize),
       onDragStarted: () => _gameService.removeLetterFromBoard(x, y),
       onDraggableCanceled: (_v, _o) =>
           _gameService.placeLetterOnBoard(x, y, value),
-    );
-  }
-}
-
-class EaselLetter extends StatelessWidget {
-  final _gameService = GetIt.I.get<GameService>();
-
-  EaselLetter(
-      {super.key,
-      required this.value,
-      required this.index,
-      required this.dragKey,
-      required this.widgetSize});
-
-  final Letter value;
-  final int index;
-  final GlobalKey dragKey;
-  final double widgetSize;
-
-  @override
-  Widget build(BuildContext context) {
-    return LongPressDraggable(
-      data: value,
-      feedback: DraggedLetter(value: value, dragKey: dragKey),
-      child: LetterWidget(character: value.character, points: value.points, widgetSize: 75),
-      onDragStarted: () => _gameService.removeLetterFromEaselAt(index),
-      onDraggableCanceled: (_v, _o) => _gameService.addLetterInEasel(value),
     );
   }
 }

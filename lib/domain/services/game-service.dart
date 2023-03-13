@@ -37,6 +37,12 @@ class GameService {
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
   }
 
+  void addLetterInEaselAt(int index, Letter letter){
+    easel.addLetterAt(index, letter);
+
+    //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
+  }
+
   /// @return null if index is out of bound
   Letter? removeLetterFromEaselAt(int index){
     Letter? removedLetter = easel.removeLetterAt(index);
@@ -46,6 +52,7 @@ class GameService {
     return removedLetter;
   }
 
+  /// Remove the first letter in the easel from left to right
   /// @return null if letter is not in easel
   Letter? removeLetterFromEasel(Letter letter){
     Letter? removedLetter = easel.removeLetter(letter);
