@@ -1,0 +1,54 @@
+{
+    "menu_screen": {
+        "screen_name": "Menu principale",
+        "welcome": "Bienvenue",
+        "no_connection": "Aucune connection",
+        "login": "Se connecter",
+        "login_screen": "Page de connection",
+        "disconnect": "Se déconnecter",
+        "sign_in": "Créer un compte",
+        "sign_in_screen": "Création de compte",
+        "create_game": "Créer une partie",
+        "join_game": "Rejoindre une partie",
+        "join_chat": "Rejoindre une salle de clavardage",
+        "chat_room": "Salle de clavardage",
+        "change_language": "Changer la langue"
+    },
+    "form": {
+        "username_field": "Ecrivez votre nom d'utilisateur ici",
+        "missing_username": "Entrez un nom d'utilisateur avant de soumettre",
+        "password": "Mot de passe",
+        "missing_password": "Entrez un mot de passe avant de soumettre",
+        "email": "Adresse courriel",
+        "missing_email": "Entrez une adresse courriel avant de soumettre",
+        "login": "Se connecter",
+        "sign_in": "Créer un compte",
+        "missing_room_name": "Entrez un nom de salle avant de soumettre",
+        "game_visibility": "Visibilité de la partie",
+        "private": "Privée",
+        "public":  "Public",
+        "create_game": "Créer une partie"
+    },
+    "waiting_room": {
+        "screen_name": "Salle d'attente",
+        "players": "Joueurs",
+        "start_game": "Démarrer la partie",
+        "game": "Partie"
+    },
+    "end_game": {
+        "game_ended": "Fin de la partie",
+        "return_to_menu": "Retour au menu principale"
+    },
+    "setting": {
+        "theme": "Thème",
+        "light": "Clair",
+        "dark": "Sombre",
+        "main": "Principal",
+        "static": "Statique",
+        "dynamic": "Dynamique",
+        "main_mode": "Thème principale",
+        "light_mode": "Thème Mode Clair",
+        "dark_mode": "Thème Mode Sombre",
+        "language": "Langue"
+    }
+}

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
@@ -34,7 +35,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              const WaitingRoomScreen("Salle d'attente")),
+              WaitingRoomScreen(FlutterI18n.translate(context, "waiting_room.screen_name"))),
     );
   }
 
@@ -59,6 +60,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
     });
 
     return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
       body: Center(
         child: SizedBox(
           width: 500,

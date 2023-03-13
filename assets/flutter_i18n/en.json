@@ -1,0 +1,54 @@
+{
+    "menu_screen": {
+        "screen_name": "Main menu",
+        "welcome": "Welcome",
+        "no_connection": "No connection",
+        "login": "Login",
+        "login_screen": "Connection screen",
+        "disconnect": "Disconnect",
+        "sign_in": "Sign in",
+        "sign_in_screen": "Sign in",
+        "create_game": "Create a game",
+        "join_game": "Join a game",
+        "join_chat": "Join a chat room",
+        "chat_room": "Chat room",
+        "change_language": "Change language"
+    },
+    "form": {
+        "username_field": "Enter your username here",
+        "missing_username": "Enter a username before submitting",
+        "password": "Password",
+        "missing_password": "Enter a password before submitting",
+        "email": "Email address",
+        "missing_email": "Enter a email address before submitting",
+        "login": "Login",
+        "sign_in": "Sign in",
+        "missing_room_name": "Enter a room name before submitting",
+        "game_visibility": "Game visibility",
+        "private": "Private",
+        "public": "Public",
+        "create_game": "Create a game"
+    },
+    "waiting_room": {
+        "screen_name": "Waiting room",
+        "players": "Players",
+        "start_game": "Start the game",
+        "game": "Game"
+    },
+    "end_game": {
+        "game_ended": "Game ended",
+        "return_to_menu": "Return to menu"
+    },
+    "setting": {
+        "theme": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "main": "Main",
+        "static": "Static",
+        "dynamic": "Dynamic",
+        "main_mode": "Main Theme",
+        "light_mode": "Light Mode Theme",
+        "dark_mode": "Dark Mode Theme",
+        "language": "Language"
+    }
+}

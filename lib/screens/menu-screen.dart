@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/settings-widget.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/chat-screen.dart';
 import 'package:mobile/screens/create-game-screen.dart';
@@ -67,16 +69,16 @@ class _MenuScreenState extends State<MenuScreen> {
     //     loggedIn = authService.isConnected();
     //   });
 
-      // var errorSnackBar = SnackBar(
-      //   content: Text(
-      //     event,
-      //     textAlign: TextAlign.center,
-      //   ),
-      //   duration: const Duration(seconds: 3),
-      //   backgroundColor: Colors.red,
-      // );
+    // var errorSnackBar = SnackBar(
+    //   content: Text(
+    //     event,
+    //     textAlign: TextAlign.center,
+    //   ),
+    //   duration: const Duration(seconds: 3),
+    //   backgroundColor: Colors.red,
+    // );
 
-      // ScaffoldMessenger.of(context).showSnackBar(errorSnackBar);
+    // ScaffoldMessenger.of(context).showSnackBar(errorSnackBar);
     // });
 
     return Scaffold(
@@ -94,8 +96,9 @@ class _MenuScreenState extends State<MenuScreen> {
                       child: Column(children: [
                         Text(
                             false
-                                ? "Bienvenue ${authService.username!}"
-                                : "Aucune connection",
+                                ? "${FlutterI18n.translate(context, "menu_screen.welcome")} ${authService.username!}"
+                                : FlutterI18n.translate(
+                                    context, "menu_screen.no_connection"),
                             style:
                                 const TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 10),
@@ -108,21 +111,20 @@ class _MenuScreenState extends State<MenuScreen> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LoginScreen(
-                                                    title:
-                                                        "Page de connection")));
+                                            builder: (context) => LoginScreen(
+                                                title: FlutterI18n.translate(
+                                                    context,
+                                                    "menu_screen.login_screen"))));
                                   },
-                            child: const Text("Se connecter")),
+                            child: Text(FlutterI18n.translate(
+                                context, "menu_screen.login"))),
                         const SizedBox(height: 5),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red),
-                            onPressed: false
-                                ? null
-                                : () {
-                                  },
-                            child: const Text("Se deconnecter")),
+                            onPressed: false ? null : () {},
+                            child: Text(FlutterI18n.translate(
+                                context, "menu_screen.disconnect"))),
                         const SizedBox(height: 5),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -130,9 +132,11 @@ class _MenuScreenState extends State<MenuScreen> {
                             onPressed: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const SigninScreen(
-                                        title: "Création de compte"))),
-                            child: const Text("Créer un compte")),
+                                    builder: (context) => SigninScreen(
+                                        title: FlutterI18n.translate(context,
+                                            "menu_screen.sign_in_screen")))),
+                            child: Text(FlutterI18n.translate(
+                                context, "menu_screen.sign_in"))),
                       ]))),
               const SizedBox(height: 30),
               SizedBox(
@@ -146,10 +150,11 @@ class _MenuScreenState extends State<MenuScreen> {
                               : () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const GameCreationScreen(
-                                              title: "Création d'une partie"))),
-                          child: const Text("Créer une partie")),
+                                      builder: (context) => GameCreationScreen(
+                                          title: FlutterI18n.translate(context,
+                                              "menu_screen.create_game")))),
+                          child: Text(FlutterI18n.translate(
+                              context, "menu_screen.create_game"))),
                       ElevatedButton(
                           onPressed: !loggedIn
                               ? null
@@ -158,11 +163,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const RoomSelectionScreen(
-                                                  "Prototype: Salle de clavarage")),
+                                              RoomSelectionScreen(
+                                                  FlutterI18n.translate(context,
+                                                      "menu_screen.join_game"))),
                                     )
                                   },
-                          child: const Text("Rejoindre une partie")),
+                          child: Text(FlutterI18n.translate(
+                              context, "menu_screen.join_game"))),
 
                       // TO BE REMOVED
                       ElevatedButton(
@@ -172,19 +179,28 @@ class _MenuScreenState extends State<MenuScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const ChatScreen(
-                                            title:
-                                                "Prototype: Salle de clavarage")),
+                                        builder: (context) => ChatScreen(
+                                            title: FlutterI18n.translate(
+                                                context,
+                                                "menu_screen.chat_room"))),
                                   );
                                 },
-                          child:
-                              const Text("Rejoindre une salle de clavardage"))
+                          child: Text(FlutterI18n.translate(
+                              context, "menu_screen.join_chat")))
                     ],
                   )),
             ],
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.settings),
+          onPressed: () {
+            showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) =>
+                    Settings(notifyParent: () => setState(() {})));
+          }),
     );
   }
 
