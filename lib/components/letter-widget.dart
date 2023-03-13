@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/letter-enum.dart';
 
-import '../domain/services/game-service.dart';
 
 /// @brief Model for all letter (Visual widget)
 class LetterWidget extends StatelessWidget {
@@ -72,32 +70,3 @@ class DraggedLetter extends StatelessWidget {
   }
 }
 
-class BoardLetter extends StatelessWidget {
-  final _gameService = GetIt.I.get<GameService>();
-
-  BoardLetter(
-      {super.key,
-      required this.value,
-      required this.dragKey,
-      required this.widgetSize,
-      required this.x,
-      required this.y});
-
-  final Letter value;
-  final GlobalKey dragKey;
-  final double widgetSize;
-  final int x, y;
-
-  @override
-  Widget build(BuildContext context) {
-    return LongPressDraggable(
-      data: value,
-      delay: const Duration(milliseconds: 100),
-      feedback: DraggedLetter(value: value, dragKey: dragKey),
-      child: LetterWidget(character: value.character, points: value.points, widgetSize: widgetSize),
-      onDragStarted: () => _gameService.removeLetterFromBoard(x, y),
-      onDraggableCanceled: (_v, _o) =>
-          _gameService.placeLetterOnBoard(x, y, value),
-    );
-  }
-}

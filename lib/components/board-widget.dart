@@ -31,50 +31,40 @@ class _BoardState extends State<BoardWidget> {
 
     int boardSize = _gameService.gameboard.size;
     return Card(
-        color: Colors.green[900],
-        margin: EdgeInsets.all(10),
-        shape: Border.all(color: Colors.red, width: 2),
-        child: Container(
-          height: 620,
-          width: 620,
-          child: Card(
-            color: Colors.brown[500],
-            margin: EdgeInsets.all(10),
-            shape: Border.all(width: 0),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                    boardSize,
-                    (vIndex) => Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                              boardSize,
-                              (hIndex) => Stack(children: [
-                                    SlotWidget(
-                                        value: _gameService.gameboard.layout
-                                            .layoutMatrix[hIndex][vIndex],
+      color: Colors.green[900],
+      shape: Border.all(width: 0),
+      child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+              boardSize,
+              (vIndex) => Padding(
+                padding: const EdgeInsets.only(left: 25, right: 25),
+                child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                          boardSize,
+                          (hIndex) => Stack(children: [
+                                SlotWidget(
+                                    value: _gameService.gameboard.layout
+                                        .layoutMatrix[hIndex][vIndex],
+                                    x: vIndex,
+                                    y: hIndex),
+                                !_gameService.gameboard
+                                        .isSlotEmpty(vIndex, hIndex)
+                                    ? BoardLetter(
+                                        value: _gameService.gameboard
+                                            .getSlot(vIndex, hIndex)!,
+                                        dragKey: widget.dragKey,
+                                        widgetSize: 35,
                                         x: vIndex,
-                                        y: hIndex),
-                                    !_gameService.gameboard
-                                            .isSlotEmpty(vIndex, hIndex)
-                                        ? BoardLetter(
-                                            value: _gameService.gameboard
-                                                .getSlot(vIndex, hIndex)!,
-                                            dragKey: widget.dragKey,
-                                            widgetSize: 35,
-                                            x: vIndex,
-                                            y: hIndex)
-                                        : const SizedBox.shrink()
-                                  ])
-                              // : BoardLetter(
-                              //     value: _gameService.gameboard
-                              //         .getSlot(vIndex, hIndex)!,
-                              //     dragKey: widget.dragKey,
-                              //   )
-                              ).toList(),
-                        )).toList()),
-          ),
-        ));
+                                        y: hIndex)
+                                    : const SizedBox.shrink()
+                              ])).toList(),
+                    ),
+              )).toList()),
+    );
   }
 }
 
@@ -136,6 +126,39 @@ class SlotWidget extends StatelessWidget {
         },
         onAccept: (letter) => _gameService.placeLetterOnBoard(x, y, letter),
       ),
+    );
+  }
+}
+
+class BoardLetter extends StatelessWidget {
+  final _gameService = GetIt.I.get<GameService>();
+
+  BoardLetter(
+      {super.key,
+      required this.value,
+      required this.dragKey,
+      required this.widgetSize,
+      required this.x,
+      required this.y});
+
+  final Letter value;
+  final GlobalKey dragKey;
+  final double widgetSize;
+  final int x, y;
+
+  @override
+  Widget build(BuildContext context) {
+    return LongPressDraggable(
+      data: value,
+      delay: const Duration(milliseconds: 100),
+      feedback: DraggedLetter(value: value, dragKey: dragKey),
+      child: LetterWidget(
+          character: value.character,
+          points: value.points,
+          widgetSize: widgetSize),
+      onDragStarted: () => _gameService.removeLetterFromBoard(x, y),
+      onDraggableCanceled: (_v, _o) =>
+          _gameService.placeLetterOnBoard(x, y, value),
     );
   }
 }
