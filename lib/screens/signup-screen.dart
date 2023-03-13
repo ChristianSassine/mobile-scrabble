@@ -1,4 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/classes/snackbar-factory.dart';
+import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/screens/menu-screen.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key, required this.title});
@@ -47,6 +53,42 @@ class _SignUpFormState extends State<SignUpForm> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _emailController = TextEditingController();
+
+  final authService = GetIt.I.get<AuthService>();
+  late final StreamSubscription loginSub;
+  late final StreamSubscription errorSub;
+
+  @override
+  void initState() {
+    super.initState();
+
+    loginSub = authService.notifyLogin.stream.listen((event) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBarFactory.greenSnack("Compte créer!"));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) =>
+                  const MenuScreen(title: "Page de connection")),
+          (route) => false);
+    });
+
+    errorSub = authService.notifyError.stream.listen((event) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBarFactory.redSnack("Echec lors de la création du compte!"));
+    });
+  }
+
+  @override
+  void dispose() {
+    loginSub.cancel();
+    errorSub.cancel();
+    super.dispose();
+  }
+
+  void _registerAccount() {
+    authService.createUser(_usernameController.text, _emailController.text,
+        _passwordController.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +192,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 onPressed: _valid
                     ? () {
                         if (_formKey.currentState!.validate()) {
-                          // TODO: Submit Form
+                          _registerAccount();
                           debugPrint('submitting form ...');
                         }
                       }

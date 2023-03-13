@@ -28,4 +28,20 @@ class AuthService {
     }
     notifyError.add("Failed Login");
   }
+
+  Future<void> createUser(String username, String email, String password) async {
+    var response = await httpService
+        .signUpRequest({"username": username, "email":email, "password": password});
+
+    if (response.statusCode == HttpStatus.ok){
+      // JWT token
+      // String? rawCookie = response.headers['set-cookie'];
+      // var parsedCookie = Cookie.fromSetCookieValue(rawCookie!);
+      // print(parsedCookie.value);
+
+      notifyLogin.add(true);
+      return;
+    }
+    notifyError.add("Failed Login");
+  }
 }

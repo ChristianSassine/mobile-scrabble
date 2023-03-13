@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
 import 'package:provider/provider.dart';
@@ -46,16 +47,9 @@ class _ContainerLoginState extends State<ContainerLogin> {
 
   final authService = GetIt.I.get<AuthService>();
   late final StreamSubscription loginSub;
+  late final StreamSubscription errorSub;
 
   // SnackBars (Might be better to put all of them in one place)
-  final _loggedInSnackBar = const SnackBar(
-    content: Text(
-      "Connection réussite!",
-      textAlign: TextAlign.center,
-    ),
-    duration: Duration(seconds: 3),
-    backgroundColor: Colors.green,
-  );
 
   void _signInUser() {
     authService.connectUser(usernameController.text, passwordController.text);
@@ -66,18 +60,24 @@ class _ContainerLoginState extends State<ContainerLogin> {
     super.initState();
 
     loginSub = authService.notifyLogin.stream.listen((event) {
-      ScaffoldMessenger.of(context).showSnackBar(_loggedInSnackBar);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBarFactory.greenSnack("Connection réussite!"));
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
                   const MenuScreen(title: "Page de connection")),
           (route) => false);
     });
+    errorSub = authService.notifyError.stream.listen((event) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBarFactory.redSnack("Echec lors de la connexion!"));
+    });
   }
 
   @override
   dispose() {
     loginSub.cancel();
+    errorSub.cancel();
     super.dispose();
   }
 
