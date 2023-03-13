@@ -7,11 +7,12 @@ import '../domain/services/game-service.dart';
 
 /// @brief Model for all letter (Visual widget)
 class LetterWidget extends StatelessWidget {
-  final String value;
+  final String character;
+  final int points;
   final double widgetSize;
 
   const LetterWidget(
-      {super.key, required this.value, required this.widgetSize});
+      {super.key, required this.character, required this.points, required this.widgetSize});
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +21,26 @@ class LetterWidget extends StatelessWidget {
         width: widgetSize,
         child: Card(
           color: Colors.orangeAccent[100],
-          child: Center(
-              child: Text(
-            value,
-            style: TextStyle(fontSize: 0.4 * widgetSize, color: Colors.black),
-          )),
+          child: Stack(
+            children: [
+              Center(
+                  child: Text(
+                character != "_" ? character : "",
+                style:
+                    TextStyle(fontSize: 0.4 * widgetSize, color: Colors.black),
+              )),
+              Positioned(
+                bottom: widgetSize * 0.1,
+                right: widgetSize * 0.08,
+                child: Text(
+                  points != 0 ? points.toString() : "",
+                  style: TextStyle(
+                    fontSize: 0.3 * widgetSize,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ));
   }
 }
@@ -50,7 +66,8 @@ class DraggedLetter extends StatelessWidget {
                 padding: const EdgeInsets.only(
                     left: 6.0, right: 6.0, top: 2.0, bottom: 0.0),
                 child: LetterWidget(
-                  value: value.value,
+                  character: value.character,
+                  points: value.points,
                   widgetSize: 75,
                 ))));
   }
@@ -77,7 +94,7 @@ class BoardLetter extends StatelessWidget {
     return LongPressDraggable(
       data: value,
       feedback: DraggedLetter(value: value, dragKey: dragKey),
-      child: LetterWidget(value: value.value, widgetSize: widgetSize),
+      child: LetterWidget(character: value.character, points: value.points, widgetSize: widgetSize),
       onDragStarted: () => _gameService.removeLetterFromBoard(x, y),
       onDraggableCanceled: (_v, _o) =>
           _gameService.placeLetterOnBoard(x, y, value),
@@ -105,7 +122,7 @@ class EaselLetter extends StatelessWidget {
     return LongPressDraggable(
       data: value,
       feedback: DraggedLetter(value: value, dragKey: dragKey),
-      child: LetterWidget(value: value.value, widgetSize: 75),
+      child: LetterWidget(character: value.character, points: value.points, widgetSize: 75),
       onDragStarted: () => _gameService.removeLetterFromEaselAt(index),
       onDraggableCanceled: (_v, _o) => _gameService.addLetterInEasel(value),
     );
