@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/domain/enums/letter-enum.dart';
 
-
 /// @brief Model for all letter (Visual widget)
 class LetterWidget extends StatelessWidget {
   final String character;
   final int points;
   final double widgetSize;
+  final double opacity;
 
   const LetterWidget(
-      {super.key, required this.character, required this.points, required this.widgetSize});
+      {super.key,
+      required this.character,
+      required this.points,
+      required this.widgetSize,
+      this.opacity = 1});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +21,7 @@ class LetterWidget extends StatelessWidget {
         height: widgetSize,
         width: widgetSize,
         child: Card(
-          color: Colors.orangeAccent[100]!.withOpacity(character != Letter.EMPTY.character ? 1.0: 0.75),
+          color: Colors.orangeAccent[100]!.withOpacity(opacity),
           child: Stack(
             children: [
               Center(
@@ -70,3 +74,19 @@ class DraggedLetter extends StatelessWidget {
   }
 }
 
+class GhostLetter extends StatelessWidget {
+  GhostLetter({super.key, required this.value, required this.widgetSize});
+
+  final Letter value;
+  final double widgetSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return LetterWidget(
+      character: value.character,
+      points: value.points,
+      widgetSize: widgetSize,
+      opacity: 0.75,
+    );
+  }
+}

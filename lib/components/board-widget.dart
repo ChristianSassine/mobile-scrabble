@@ -122,7 +122,14 @@ class SlotWidget extends StatelessWidget {
       width: 35,
       child: DragTarget<Letter>(
         builder: (context, letters, rejectedItems) {
-          return getCardFromModifier(context, value);
+          if (letters.isEmpty) {
+            return getCardFromModifier(context, value);
+          } else {
+            return Stack(children: [
+              getCardFromModifier(context, value),
+              GhostLetter(value: letters[0]!, widgetSize: 35)
+            ]);
+          }
         },
         onAccept: (letter) => _gameService.placeLetterOnBoard(x, y, letter),
       ),

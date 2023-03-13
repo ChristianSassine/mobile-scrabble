@@ -147,7 +147,7 @@ class EaselLetter extends StatelessWidget {
       data: value,
       delay: const Duration(milliseconds: 100),
       feedback: DraggedLetter(value: value, dragKey: dragKey),
-      child: LetterWidget(character: value.character, points: value.points, widgetSize: 75),
+      child: LetterWidget(character: value.character, points: value.points, widgetSize: 75, opacity: value != Letter.EMPTY ? 1 : 0.75,),
       onDragStarted: () => _gameService.removeLetterFromEaselAt(index),
       onDraggableCanceled: (v, o) => _gameService.addLetterInEasel(value),
     );
