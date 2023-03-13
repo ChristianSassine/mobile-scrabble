@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key, required this.title});
+
   final String title;
 
   @override
@@ -9,16 +10,13 @@ class SigninScreen extends StatefulWidget {
 }
 
 class _SigninScreenState extends State<SigninScreen> {
-  // Form objects
-  final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: Scaffold(
+        body: const Scaffold(
           body: Center(
             child: SizedBox(
               width: 500,
@@ -43,6 +41,7 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
+  bool _valid = false;
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -55,63 +54,74 @@ class _SignUpFormState extends State<SignUpForm> {
       child: Form(
         key: _formKey,
         child: Column(
-
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
               "Créer un compte",
               style:
-              DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),
+                  DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                hintText: "Email",
-              ),
-              validator: (value) {
-                if (value == null ||
-                    value.isEmpty ||
-                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                        .hasMatch(value)) {
-                  return 'Please enter valid email';
-                }
-                return null;
-              },
-            ),
             const SizedBox(height: 16),
             TextFormField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                hintText: "Username",
-              ),
-              validator: (value) {
-                if (value == null ||
-                    value.isEmpty ||
-                    value.length < 3 ||
-                    value.length > 16) {
-                  return 'Please enter your username';
-                }
-                return null;
-              },
-            ),
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  hintText: "Username",
+                ),
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      value.length < 3 ||
+                      value.length > 16) {
+                    return 'Please enter your username';
+                  }
+                  return null;
+                },
+                onChanged: (String _) {
+                  setState(() {
+                    _valid = _formKey.currentState!.validate();
+                  });
+                }),
+            TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  hintText: "Email",
+                ),
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                          .hasMatch(value)) {
+                    return 'Please enter valid email';
+                  }
+                  return null;
+                },
+                onChanged: (String _) {
+                  setState(() {
+                    _valid = _formKey.currentState!.validate();
+                  });
+                }),
             const SizedBox(height: 16),
             TextFormField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                hintText: "Password",
-              ),
-              obscureText: true,
-              validator: (value) {
-                if (value == null ||
-                    value.isEmpty ||
-                    value.length < 8 ||
-                    value.length > 16) {
-                  return 'Please enter your password';
-                }
-                return null;
-              },
-            ),
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  hintText: "Password",
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      value.length < 8 ||
+                      value.length > 16) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
+                onChanged: (String _) {
+                  setState(() {
+                    _valid = _formKey.currentState!.validate();
+                  });
+                }),
             const SizedBox(height: 16),
             TextFormField(
               controller: _confirmPasswordController,
@@ -128,16 +138,23 @@ class _SignUpFormState extends State<SignUpForm> {
                 }
                 return null;
               },
+              onChanged: (String _) {
+                setState(() {
+                  _valid = _formKey.currentState!.validate();
+                });
+              },
             ),
             const SizedBox(height: 32),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // TODO: Submit Form
-                    debugPrint('submitting form ...');
-                  }
-                },
+                onPressed: _valid
+                    ? () {
+                        if (_formKey.currentState!.validate()) {
+                          // TODO: Submit Form
+                          debugPrint('submitting form ...');
+                        }
+                      }
+                    : null,
                 child: const Text('Register'),
               ),
             ),
