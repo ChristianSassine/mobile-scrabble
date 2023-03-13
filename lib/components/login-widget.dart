@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/auth-service.dart';
@@ -60,8 +61,8 @@ class _ContainerLoginState extends State<ContainerLogin> {
     super.initState();
 
     loginSub = authService.notifyLogin.stream.listen((event) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBarFactory.greenSnack("Connection réussite!"));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(
+          FlutterI18n.translate(context, "auth.login.success")));
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
@@ -69,8 +70,8 @@ class _ContainerLoginState extends State<ContainerLogin> {
           (route) => false);
     });
     errorSub = authService.notifyError.stream.listen((event) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBarFactory.redSnack("Echec lors de la connexion!"));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
+          FlutterI18n.translate(context, "auth.login.failure")));
     });
   }
 
@@ -90,7 +91,7 @@ class _ContainerLoginState extends State<ContainerLogin> {
         child: Column(
           children: [
             Text(
-              "Connexion",
+              FlutterI18n.translate(context, "auth.login.title"),
               style:
                   DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),
             ),
@@ -121,7 +122,7 @@ class _ContainerLoginState extends State<ContainerLogin> {
                       }
                     }
                   : null,
-              child: Text('Sign in'),
+              child: Text(FlutterI18n.translate(context, "auth.login.button")),
             )
           ],
         ),
@@ -151,7 +152,7 @@ class PasswordInput extends StatelessWidget {
       autocorrect: false,
       validator: (value) {
         if (value == null || value.isEmpty || value.trim() == '') {
-          return 'Entrez un mot de passe';
+          return FlutterI18n.translate(context, "auth.login.password_error");
         }
         return null;
       },
@@ -160,8 +161,8 @@ class PasswordInput extends StatelessWidget {
       onFieldSubmitted: (String _) {
         signinState.updateValidity(formKey.currentState!.validate());
       },
-      decoration: const InputDecoration(
-        hintText: "Mot de passe",
+      decoration: InputDecoration(
+        hintText: FlutterI18n.translate(context, "auth.login.password_label"),
       ),
     );
   }
@@ -186,7 +187,7 @@ class UsernameInput extends StatelessWidget {
       autocorrect: false,
       validator: (value) {
         if (value == null || value.isEmpty || value.trim() == '') {
-          return "Entrer un nom d'utilisateur";
+          return FlutterI18n.translate(context, "auth.login.username_error");
         }
         return null;
       },
@@ -195,8 +196,8 @@ class UsernameInput extends StatelessWidget {
       },
       onChanged: (_) =>
           {signinState.updateValidity(formKey.currentState!.validate())},
-      decoration: const InputDecoration(
-        hintText: "Nom d'utilisateur",
+      decoration: InputDecoration(
+        hintText: FlutterI18n.translate(context, "auth.login.username_label"),
       ),
     );
   }
