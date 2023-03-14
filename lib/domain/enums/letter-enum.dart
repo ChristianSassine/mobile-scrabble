@@ -26,7 +26,8 @@ enum Letter {
   Y("Y", 10),
   Z("Z", 10),
   STAR("*", 0),
-  EMPTY("_", 0);
+  EMPTY("_", 0),
+  INVALID("-", 0);
 
   const Letter(this.character, this.points);
 
