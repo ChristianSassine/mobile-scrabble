@@ -3,12 +3,11 @@ import 'package:mobile/domain/models/easel-model.dart';
 
 import '../enums/letter-enum.dart';
 
-class LetterPlacement{
+class LetterPlacement {
   final int x, y;
   final Letter letter;
 
   const LetterPlacement(this.x, this.y, this.letter);
-
 }
 
 class GameService {
@@ -31,7 +30,7 @@ class GameService {
 
   void placeLetterOnBoard(int x, int y, Letter letter) {
     if (!_isLetterPlacementValid(x, y, letter)) {
-      if(draggedLetter != null )cancelDragLetterFromEasel(); // Wrong move
+      if (draggedLetter != null) cancelDragLetterFromEasel(); // Wrong move
       return;
     }
 
@@ -51,9 +50,23 @@ class GameService {
       return x == gameboard.size ~/ 2 && y == gameboard.size ~/ 2;
     }
 
+    bool valid = true;
+    if(_pendingLetters.length > 1) {
+      bool xLock = _pendingLetters[0].x == _pendingLetters[1].x, yLock = _pendingLetters[0].y == _pendingLetters[1].y;
+      _pendingLetters.forEach((letter) {
+        // if (!xLock && !yLock) {
+        //   // For first iteration
+        //   xLock = x == letter.x;
+        //   yLock = y == letter.y;
+        //   valid = xLock ^ yLock;
+        // } else {
+          valid &=
+              (xLock ? x == letter.x : true) && (yLock ? y == letter.y : true);
+        // }
+      });
+    }
 
-
-    return placementOrientationValid;
+    return placementOrientationValid && valid;
   }
 
   bool _isPlacementOrientationValid(int x, int y) {
@@ -75,8 +88,9 @@ class GameService {
 
   /// @return the removed letter
   Letter? removeLetterFromBoard(int x, int y) {
-    int pendingLetterIndex = _pendingLetters.indexWhere((letter) => letter.x == x && letter.y == y);
-    if(pendingLetterIndex < 0){
+    int pendingLetterIndex =
+        _pendingLetters.indexWhere((letter) => letter.x == x && letter.y == y);
+    if (pendingLetterIndex < 0) {
       return null; //Letter not in pending letters
     }
     _pendingLetters.removeAt(pendingLetterIndex);
