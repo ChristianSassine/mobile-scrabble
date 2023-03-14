@@ -43,7 +43,12 @@
         "theme": "Thème",
         "light": "Clair",
         "dark": "Sombre",
+        "main": "Principal",
+        "static": "Statique",
         "dynamic": "Dynamique",
+        "main_mode": "Thème principale",
+        "light_mode": "Thème Mode Clair",
+        "dark_mode": "Thème Mode Sombre",
         "language": "Langue"
     },
     "board": {
