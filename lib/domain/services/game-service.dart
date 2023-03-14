@@ -8,6 +8,8 @@ class GameService {
   final Board gameboard = Board(15);
   final Easel easel = Easel(7);
 
+  Letter? draggedLetter;
+
   GameService(){
     easel.addLetter(Letter.A);
     easel.addLetter(Letter.B);
@@ -50,6 +52,16 @@ class GameService {
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
 
     return removedLetter;
+  }
+
+  Letter? dragLetterFromEasel(int index){
+    draggedLetter = removeLetterFromEaselAt(index);
+    return draggedLetter;
+  }
+
+  void cancelDragLetterFromEasel(){
+    addLetterInEasel(draggedLetter!);
+    draggedLetter = null;
   }
 
   /// Remove the first letter in the easel from left to right

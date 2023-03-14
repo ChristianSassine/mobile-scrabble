@@ -26,15 +26,14 @@ class _EaselState extends State<EaselWidget> {
     _visualLetters = _gameService.easel.getLetterList().toList();
   }
 
-  void _switchLetterWithGhostLetterAt(int index) {
+  void _moveGhostLetterAt(int index) {
     int ghostLetterIndex = _visualLetters.indexOf(Letter.EMPTY);
     if (ghostLetterIndex == index) return;
 
     if (ghostLetterIndex >= 0) {
       setState(() {
-        var temp = _visualLetters[index];
-        _visualLetters[index] = _visualLetters[ghostLetterIndex];
-        _visualLetters[ghostLetterIndex] = temp;
+        Letter ghostLetter = _visualLetters.removeAt(ghostLetterIndex);
+        _visualLetters.insert(index, ghostLetter);
       });
     } else if (_visualLetters.length < _gameService.easel.maxSize) {
       setState(() {
@@ -44,7 +43,7 @@ class _EaselState extends State<EaselWidget> {
   }
 
   void _moveGhostLetterFromDragOffset(Offset offset) {
-    _switchLetterWithGhostLetterAt(
+    _moveGhostLetterAt(
         offset.dx < MediaQuery.of(context).size.width / 2
             ? 0
             : _visualLetters.length - 1);
@@ -113,7 +112,7 @@ class _EaselState extends State<EaselWidget> {
                               );
                             },
                             onMove: (_) => // For when dragged letter is held on top of easel letter
-                                _switchLetterWithGhostLetterAt(letter.key),
+                                _moveGhostLetterAt(letter.key),
                             onAccept: _onEaselDrop,
                           ),
                         )
@@ -148,8 +147,8 @@ class EaselLetter extends StatelessWidget {
       delay: const Duration(milliseconds: 100),
       feedback: DraggedLetter(value: value, dragKey: dragKey),
       child: LetterWidget(character: value.character, points: value.points, widgetSize: 75, opacity: value != Letter.EMPTY ? 1 : 0.75,),
-      onDragStarted: () => _gameService.removeLetterFromEaselAt(index),
-      onDraggableCanceled: (v, o) => _gameService.addLetterInEasel(value),
+      onDragStarted: () => _gameService.dragLetterFromEasel(index),
+      onDraggableCanceled: (v, o) => _gameService.cancelDragLetterFromEasel(),
     );
   }
 }
