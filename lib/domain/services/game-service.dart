@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
 
@@ -29,6 +30,7 @@ class GameService {
   }
 
   void placeLetterOnBoard(int x, int y, Letter letter) {
+    debugPrint("[GAME SERVICE] Place letter to the board: board[$x][$y] = $letter");
     if (!_isLetterPlacementValid(x, y, letter)) {
       if (draggedLetter != null) cancelDragLetterFromEasel(); // Wrong move
       return;
@@ -88,6 +90,7 @@ class GameService {
 
   /// @return the removed letter
   Letter? removeLetterFromBoard(int x, int y) {
+    debugPrint("[GAME SERVICE] Remove letter from the board: board[$x][$y] = ${gameboard.getSlot(x, y)}");
     int pendingLetterIndex =
         _pendingLetters.indexWhere((letter) => letter.x == x && letter.y == y);
     if (pendingLetterIndex < 0) {
@@ -101,6 +104,7 @@ class GameService {
   }
 
   void addLetterInEasel(Letter letter) {
+    debugPrint("[GAME SERVICE] Add letter to the end of easel: easel[${easel.getLetterList().length}] = $letter");
     easel.addLetter(letter);
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
@@ -108,6 +112,7 @@ class GameService {
 
   void addLetterInEaselAt(int index, Letter letter) {
     easel.addLetterAt(index, letter);
+    debugPrint("[GAME SERVICE] Add letter to easel[$index] = $letter");
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
   }
@@ -115,6 +120,7 @@ class GameService {
   /// @return null if index is out of bound
   Letter? removeLetterFromEaselAt(int index) {
     Letter? removedLetter = easel.removeLetterAt(index);
+    debugPrint("[GAME SERVICE] Remove letter from easel[$index] - $removedLetter");
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
 
@@ -122,11 +128,13 @@ class GameService {
   }
 
   Letter? dragLetterFromEasel(int index) {
+    debugPrint("[GAME SERVICE] Start drag from easel");
     draggedLetter = removeLetterFromEaselAt(index);
     return draggedLetter;
   }
 
   void cancelDragLetterFromEasel() {
+    debugPrint("[GAME SERVICE] Cancel drag from easel");
     addLetterInEasel(draggedLetter!);
     draggedLetter = null;
   }
