@@ -71,12 +71,14 @@ class _PolyScrabbleState extends State<PolyScrabble> {
           .getDarkMode(), // Dark mode will be used only in dynamic mode
       themeMode: _themeService.isDynamic ? ThemeMode.system : ThemeMode.light,
       debugShowCheckedModeBanner: false,
-      home: const MenuScreen(title: 'PolyScrabble 101 - Prototype'),
+      home: const MenuScreen(title: 'PolyScrabble 110 - Prototype'),
       localizationsDelegates: [
         FlutterI18nDelegate(
-          translationLoader: FileTranslationLoader(forcedLocale: _languageService.currentLocale),
+          translationLoader: FileTranslationLoader(
+              forcedLocale: _languageService.currentLocale),
           missingTranslationHandler: (key, locale) {
-            debugPrint("--- Missing Key: $key, languageCode: ${locale!.languageCode}");
+            debugPrint(
+                "--- Missing Key: $key, languageCode: ${locale!.languageCode}");
           },
         )
       ],
