@@ -19,7 +19,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
   final List<String> _defaultImages = [
     'assets/images/test.png',
     'assets/images/test.png',
-    'assets/images/test.png',
+    'assets/images/scrabble_logo.png',
   ];
   late final Function(File, int) _selectedAvatar;
 
@@ -40,32 +40,59 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: const Text('AlertDialog Title'),
-        content: Center(
-          heightFactor: 1,
-          child: Row(
-            children: [
-              for (int i = 0; i < _defaultImages.length; i++)
-                Expanded(
-                    child: GestureDetector(
-                  onTap: () => selectedAvatar(i),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 3,
-                            color: _selectedImageIndex == i
-                                ? Colors.green
-                                : Colors.transparent)),
-                    child: Image.asset(
-                      _defaultImages[i],
-                      width: 50,
-                      height: 50,
-                    ),
-                  ),
-                )),
-            ],
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, 'Choisir');
+            },
+            child: Text('Choisir'),
           ),
-        ));
+        ],
+        title: const Text('Choisis ton avatar'),
+        content: Center(
+            heightFactor: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    for (int i = 0; i < _defaultImages.length; i++)
+                      Expanded(
+                          child: GestureDetector(
+                        onTap: () => selectedAvatar(i),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  width: 3,
+                                  color: _selectedImageIndex == i
+                                      ? Colors.green
+                                      : Colors.transparent)),
+                          child: Image.asset(
+                            _defaultImages[i],
+                            width: 50,
+                            height: 50,
+                          ),
+                        ),
+                      )),
+                  ],
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10.0),
+                ),
+                Row(children: const <Widget>[
+                  Expanded(child: Divider()),
+                  Text("OU"),
+                  Expanded(child: Divider()),
+                ]),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10.0),
+                ),
+                ElevatedButton(
+                    onPressed: () => print('hi'),
+                    child: Text('Prendre une photo'))
+              ],
+            )));
   }
 }
 
@@ -114,9 +141,17 @@ class _AvatarSelectorState extends State<AvatarSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => openAvatarSelector(),
-      child: const Text('Profil Picture'),
+    return InkWell(
+      onTap: () => openAvatarSelector(),
+      child: CircleAvatar(
+        radius: 30.0,
+        backgroundImage: _selectedImageFile != null
+            ? AssetImage(_selectedImageFile!.path)
+            : null,
+        child: _selectedImageFile == null
+            ? const Icon(Icons.add, color: Colors.white, size: 30.0)
+            : null,
+      ),
     );
   }
 }
