@@ -36,12 +36,7 @@ class AuthService {
         .signUpRequest({"username": username, "email":email, "password": password});
 
     if (response.statusCode == HttpStatus.ok){
-      // JWT token
-      String? rawCookie = response.headers['set-cookie'];
-      cookie = Cookie.fromSetCookieValue(rawCookie!);
-      debugPrint("Connected with cookie : $cookie");
-
-      notifyLogin.add(true);
+      await connectUser(username, password);
       return;
     }
     notifyError.add("Failed Login");
