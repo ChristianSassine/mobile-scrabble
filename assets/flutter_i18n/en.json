@@ -6,6 +6,7 @@
         "login": "Login",
         "login_screen": "Connection screen",
         "disconnect": "Disconnect",
+        "sign_up_screen": "Account Creation screen",
         "sign_up": "Sign up",
         "create_game": "Create a game",
         "join_game": "Join a game",
