@@ -5,8 +5,10 @@ import 'package:mobile/domain/enums/themes.dart';
 import 'package:mobile/domain/services/theme-service.dart';
 
 class ThemeDropdown extends StatefulWidget {
+  final MobileThemeMode mode;
   const ThemeDropdown({
     Key? key,
+    required MobileThemeMode this.mode,
   }) : super(key: key);
 
   @override
@@ -14,12 +16,15 @@ class ThemeDropdown extends StatefulWidget {
 }
 
 class _ThemeDropdownState extends State<ThemeDropdown> {
+  MobileThemeMode? mode;
   final themeService = GetIt.I.get<ThemeService>();
+
   MobileTheme? dropdownValue;
 
   @override
   Widget build(BuildContext context) {
-    dropdownValue ??= themeService.currentTheme;
+    mode ??= widget.mode;
+    dropdownValue ??= themeService.getCurrentTheme(mode!);
 
     return DropdownButton<MobileTheme>(
       value: dropdownValue,
@@ -39,7 +44,7 @@ class _ThemeDropdownState extends State<ThemeDropdown> {
         setState(() {
           dropdownValue = value;
         });
-        themeService.switchTheme(value!);
+        themeService.switchMainTheme(mode!, value!);
       },
     );
   }

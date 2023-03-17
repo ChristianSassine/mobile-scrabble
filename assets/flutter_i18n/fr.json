@@ -6,8 +6,7 @@
         "login": "Se connecter",
         "login_screen": "Page de connection",
         "disconnect": "Se déconnecter",
-        "sign_in": "Créer un compte",
-        "sign_in_screen": "Création de compte",
+        "sign_up": "Créer un compte",
         "create_game": "Créer une partie",
         "join_game": "Rejoindre une partie",
         "join_chat": "Rejoindre une salle de clavardage",
@@ -40,11 +39,43 @@
         "game_ended": "Fin de la partie",
         "return_to_menu": "Retour au menu principale"
     },
+    "auth": {
+        "login": {
+            "title" : "Authentification de compte",
+            "username_label": "Nom d'utilisateur",
+            "username_error": "Entrez votre nom d'utilisateur",
+            "password_label": "Mot de passe",
+            "password_error": "Entez votre mot de passe",
+            "button": "S'identifier",
+            "success": "Succès d'identification!",
+            "failure" : "Erreur lors de l'identification!"
+        },
+        "signup": {
+            "title" : "Création de compte",
+            "username_label": "Nom d'utilisateur",
+            "username_error": "Entrez un nom d'utilisateur",
+            "email_label": "Courriel",
+            "email_error": "Entrez un courriel valide",
+            "password_label": "Mot de passe",
+            "password_error": "Entez un mot de passe",
+            "password_confirm_label": "Mot de passe de confirmation",
+            "password_confirm_empty": "Entez un mot de passe",
+            "password_confirm_error": "Les mots de passes sont différents",
+            "button": "Créer",
+            "success": "Succès de création de compte!",
+            "failure" : "Erreur dans la création du compte!"
+        }
+    },
     "setting": {
         "theme": "Thème",
         "light": "Clair",
         "dark": "Sombre",
+        "main": "Principal",
+        "static": "Statique",
         "dynamic": "Dynamique",
+        "main_mode": "Thème principale",
+        "light_mode": "Thème Mode Clair",
+        "dark_mode": "Thème Mode Sombre",
         "language": "Langue"
     },
     "board": {

@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
+import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/language-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
@@ -20,7 +21,7 @@ Future<void> setup() async {
   String envFile = kDebugMode ? 'development.env' : 'production.env';
 
   // kDebugMode = APK, so hardcoding it for now
-  envFile = 'production.env';
+  // envFile = 'production.env';
 
   await dotenv.load(fileName: envFile);
   var serverAddress = dotenv.env["SERVER_URL"];
@@ -32,6 +33,8 @@ Future<void> setup() async {
   socket.onConnect((_) => debugPrint('Socket connection established'));
   socket.onDisconnect((data) => debugPrint('Socket connection lost'));
 
+  getIt.registerLazySingleton<HttpHandlerService>(
+      () => HttpHandlerService(serverAddress!));
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<ThemeService>(() => ThemeService());
@@ -75,9 +78,11 @@ class _PolyScrabbleState extends State<PolyScrabble> {
       home: const MenuScreen(title: 'PolyScrabble 101 - Prototype'),
       localizationsDelegates: [
         FlutterI18nDelegate(
-          translationLoader: FileTranslationLoader(forcedLocale: _languageService.currentLocale),
+          translationLoader: FileTranslationLoader(
+              forcedLocale: _languageService.currentLocale),
           missingTranslationHandler: (key, locale) {
-            debugPrint("--- Missing Key: $key, languageCode: ${locale!.languageCode}");
+            debugPrint(
+                "--- Missing Key: $key, languageCode: ${locale!.languageCode}");
           },
         )
       ],

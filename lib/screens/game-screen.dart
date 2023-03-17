@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
@@ -10,10 +8,6 @@ import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/chat-screen.dart';
 import 'package:mobile/screens/create-game-screen.dart';
 import 'package:mobile/screens/end-game-screen.dart';
-import 'package:mobile/screens/room-selection-screen.dart';
-import 'package:mobile/screens/signin-screen.dart';
-
-import 'login-screen.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key, required this.title});

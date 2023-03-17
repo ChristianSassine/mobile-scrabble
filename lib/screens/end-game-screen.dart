@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:mobile/screens/menu-screen.dart';
 
-import 'login-screen.dart';
 
 class EndGameScreen extends StatefulWidget {
   const EndGameScreen({super.key});
