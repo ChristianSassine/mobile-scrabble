@@ -123,10 +123,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ChatScreen(
-                                            title: FlutterI18n.translate(
-                                                context,
-                                                "menu_screen.chat_room"))),
+                                        builder: (context) => ChatScreen()),
                                   );
                                 },
                           child: Text(FlutterI18n.translate(
