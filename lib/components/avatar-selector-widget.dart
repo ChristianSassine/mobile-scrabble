@@ -45,7 +45,12 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
             onPressed: () {
               Navigator.pop(context, 'Choisir');
             },
-            child: Text('Choisir'),
+            child: const Text(
+              'Choisir',
+              // style: TextStyle(
+              //   color: Colors.black,
+              // ),
+            ),
           ),
         ],
         title: const Text('Choisis ton avatar'),
