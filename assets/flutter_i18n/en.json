@@ -36,6 +36,7 @@
         "game": "Game"
     },
     "end_game": {
+        "screen_name": "End of game",
         "game_ended": "Game ended",
         "return_to_menu": "Return to menu"
     },

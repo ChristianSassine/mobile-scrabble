@@ -36,6 +36,7 @@
         "game": "Partie"
     },
     "end_game": {
+        "screen_name": "Fin de la partie",
         "game_ended": "Fin de la partie",
         "return_to_menu": "Retour au menu principale"
     },
