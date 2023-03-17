@@ -1,14 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
+
+const AVATAR_FROM_CAMERA = -1;
 
 class AvatarSelectorDialog extends StatefulWidget {
-  final Function(File, int) selectedAvatar;
+  final Function(File, int) selectAvatarFromList;
+  final Function() selectAvatarFromCamera;
   int? selectedImageIndex;
 
-  AvatarSelectorDialog(
-      {required this.selectedAvatar, required this.selectedImageIndex});
+  AvatarSelectorDialog({
+    required this.selectAvatarFromList,
+    required this.selectAvatarFromCamera,
+    this.selectedImageIndex,
+  });
 
   @override
   _AvatarSelectorDialogState createState() => _AvatarSelectorDialogState();
@@ -21,17 +27,23 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
     'assets/images/test.png',
     'assets/images/scrabble_logo.png',
   ];
-  late final Function(File, int) _selectedAvatar;
+  late final Function(File, int) _selectAvatarFromList;
+  late final Function() _selectAvatarFromCamera;
 
   @override
   void initState() {
     super.initState();
-    _selectedAvatar = widget.selectedAvatar;
+    _selectAvatarFromList = widget.selectAvatarFromList;
+    _selectAvatarFromCamera = widget.selectAvatarFromCamera;
     _selectedImageIndex = widget.selectedImageIndex;
   }
 
-  void selectedAvatar(int index) {
-    _selectedAvatar(File(_defaultImages[index]), index);
+  void selectAvatar(int index) {
+    if (index >= 0) {
+      _selectAvatarFromList(File(_defaultImages[index]), index);
+    } else {
+      _selectAvatarFromCamera();
+    }
     setState(() {
       _selectedImageIndex = index;
     });
@@ -65,7 +77,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                     for (int i = 0; i < _defaultImages.length; i++)
                       Expanded(
                           child: GestureDetector(
-                        onTap: () => selectedAvatar(i),
+                        onTap: () => selectAvatar(i),
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(
@@ -94,7 +106,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                   margin: EdgeInsets.symmetric(vertical: 10.0),
                 ),
                 ElevatedButton(
-                    onPressed: () => print('hi'),
+                    onPressed: () => selectAvatar(AVATAR_FROM_CAMERA),
                     child: Text('Prendre une photo'))
               ],
             )));
@@ -118,31 +130,46 @@ class _AvatarSelectorState extends State<AvatarSelector> {
   //   'assets/images/test.png',
   // ];
 
-  // Future selectAvatar() async {
-  //   try {
-  //     final image = await picker.pickImage(source: ImageSource.camera);
-  //     if (image == null) return;
-  //     setState(() {
-  //       _selectedImageFile = File(image.path);
-  //     });
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-  void selectedAvatar(File selectedAvatar, int index) {
-    print('here');
+  Future selectAvatarFromCamera() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.camera);
+      if (image == null) return;
+      setState(() {
+        _selectedImageFile = File(image.path);
+        _selectedImageIndex = AVATAR_FROM_CAMERA;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void selectAvatarFromList(File selectedAvatar, int index) {
     setState(() {
       _selectedImageFile = selectedAvatar;
       _selectedImageIndex = index;
     });
   }
 
-  Future openAvatarSelector() => showDialog(
-      context: context,
-      builder: (BuildContext context) => AvatarSelectorDialog(
-            selectedAvatar: selectedAvatar,
-            selectedImageIndex: _selectedImageIndex,
-          ));
+  Future openAvatarSelector() async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AvatarSelectorDialog(
+              selectAvatarFromList: selectAvatarFromList,
+              selectAvatarFromCamera: selectAvatarFromCamera,
+              selectedImageIndex: _selectedImageIndex,
+            ));
+  }
+
+  setAvatar() {
+    if (_selectedImageFile == null) {
+      return null;
+    } else if (_selectedImageFile != null &&
+        _selectedImageIndex! != AVATAR_FROM_CAMERA) {
+      return AssetImage(_selectedImageFile!.path);
+    } else {
+      return FileImage(_selectedImageFile!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,9 +177,7 @@ class _AvatarSelectorState extends State<AvatarSelector> {
       onTap: () => openAvatarSelector(),
       child: CircleAvatar(
         radius: 30.0,
-        backgroundImage: _selectedImageFile != null
-            ? AssetImage(_selectedImageFile!.path)
-            : null,
+        backgroundImage: setAvatar(),
         child: _selectedImageFile == null
             ? const Icon(Icons.add, color: Colors.white, size: 30.0)
             : null,
