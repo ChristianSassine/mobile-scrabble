@@ -54,11 +54,8 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
       Room room = Room(_roomNameFieldController.text,
           _selectedVisibility[0] ? RoomType.PUBLIC : RoomType.PRIVATE, []);
       _roomService.createRoom(room);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => WaitingRoomScreen(
-                  FlutterI18n.translate(context, "waiting_room.screen_name"))));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => WaitingRoomScreen()));
     }
   }
 
@@ -88,11 +85,13 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                               controller: _roomNameFieldController,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
-                                hintText: FlutterI18n.translate(context, "form.username_field"),
+                                hintText: FlutterI18n.translate(
+                                    context, "form.username_field"),
                               ),
                               onFieldSubmitted: (_) => _createGame(),
                             ),
-                            Text(FlutterI18n.translate(context, "form.game_visibility")),
+                            Text(FlutterI18n.translate(
+                                context, "form.game_visibility")),
                             const SizedBox(height: 5),
                             ToggleButtons(
                               onPressed: _chooseVisibility,
@@ -117,7 +116,8 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: _createGame,
-                      child: Text(FlutterI18n.translate(context, "form.create_game")),
+                      child: Text(
+                          FlutterI18n.translate(context, "form.create_game")),
                     )
                   ],
                 ),

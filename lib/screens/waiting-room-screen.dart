@@ -9,12 +9,8 @@ import 'package:mobile/domain/services/room-service.dart';
 import 'game-screen.dart';
 
 class WaitingRoomScreen extends StatefulWidget {
-  final String title;
 
-  const WaitingRoomScreen(
-    this.title, {
-    Key? key,
-  }) : super(key: key);
+  const WaitingRoomScreen({Key? key}) : super(key: key);
 
   @override
   State<WaitingRoomScreen> createState() => _WaitingRoomState();
@@ -34,8 +30,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-          GameScreen(title: FlutterI18n.translate(context, "waiting_room.game"))),
+          builder: (context) => GameScreen(
+              title: FlutterI18n.translate(context, "waiting_room.game"))),
     );
   }
 
@@ -56,12 +52,13 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(title: Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(currentRoom.name, style: const TextStyle(fontSize: 50)),
           const SizedBox(height: 100),
-          Text(FlutterI18n.translate(context, "waiting_room.players"), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+          Text(FlutterI18n.translate(context, "waiting_room.players"),
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           SizedBox(
             width: 500,

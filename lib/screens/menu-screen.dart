@@ -58,7 +58,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                             builder: (context) => LoginScreen(
                                                 title: FlutterI18n.translate(
                                                     context,
-                                                    "menu_screen.login_screen"))));
+                                                    "menu_screen.login"))));
                                   },
                             child: Text(FlutterI18n.translate(
                                 context, "menu_screen.login"))),
@@ -76,9 +76,8 @@ class _MenuScreenState extends State<MenuScreen> {
                             onPressed: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SignupScreen(
-                                        title: FlutterI18n.translate(context,
-                                            "menu_screen.sign_up_screen")))),
+                                    builder: (context) => SignupScreen(title: FlutterI18n.translate(
+                                        context, "menu_screen.sign_up")))),
                             child: Text(FlutterI18n.translate(
                                 context, "menu_screen.sign_up"))),
                       ]))),
@@ -107,9 +106,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              RoomSelectionScreen(
-                                                  FlutterI18n.translate(context,
-                                                      "menu_screen.join_game"))),
+                                              const RoomSelectionScreen()),
                                     )
                                   },
                           child: Text(FlutterI18n.translate(
