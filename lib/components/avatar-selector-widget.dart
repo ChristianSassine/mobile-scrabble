@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile/domain/services/avatar-service.dart';
 
 const AVATAR_FROM_CAMERA = -1;
 
@@ -125,6 +127,16 @@ class AvatarSelector extends StatefulWidget {
 class _AvatarSelectorState extends State<AvatarSelector> {
   File? _selectedImageFile;
   int? _selectedImageIndex;
+  final _avatarService = GetIt.I.get<AvatarService>();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      // Call your async function here
+      await getDefaultAvatar();
+    });
+  }
 
   Future selectAvatarFromCamera() async {
     try {
@@ -165,6 +177,10 @@ class _AvatarSelectorState extends State<AvatarSelector> {
     } else {
       return FileImage(_selectedImageFile!);
     }
+  }
+
+  getDefaultAvatar() async {
+    await _avatarService.defaultAvatars();
   }
 
   @override
