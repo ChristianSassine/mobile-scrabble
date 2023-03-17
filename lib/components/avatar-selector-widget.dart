@@ -11,6 +11,7 @@ class AvatarSelectorDialog extends StatefulWidget {
   int? selectedImageIndex;
 
   AvatarSelectorDialog({
+    super.key,
     required this.selectAvatarFromList,
     required this.selectAvatarFromCamera,
     this.selectedImageIndex,
@@ -43,6 +44,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
       _selectAvatarFromList(File(_defaultImages[index]), index);
     } else {
       _selectAvatarFromCamera();
+      Navigator.pop(context, 'Choisir');
     }
     setState(() {
       _selectedImageIndex = index;
@@ -95,7 +97,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                   ],
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 10.0),
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
                 ),
                 Row(children: const <Widget>[
                   Expanded(child: Divider()),
@@ -103,18 +105,18 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                   Expanded(child: Divider()),
                 ]),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 10.0),
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
                 ),
                 ElevatedButton(
                     onPressed: () => selectAvatar(AVATAR_FROM_CAMERA),
-                    child: Text('Prendre une photo'))
+                    child: const Text('Prendre une photo'))
               ],
             )));
   }
 }
 
 class AvatarSelector extends StatefulWidget {
-  AvatarSelector({Key? key}) : super(key: key);
+  const AvatarSelector({Key? key}) : super(key: key);
 
   @override
   _AvatarSelectorState createState() => _AvatarSelectorState();
@@ -123,12 +125,6 @@ class AvatarSelector extends StatefulWidget {
 class _AvatarSelectorState extends State<AvatarSelector> {
   File? _selectedImageFile;
   int? _selectedImageIndex;
-  // final picker = ImagePicker();
-  // final List<String> _defaultImages = [
-  //   'assets/images/test.png',
-  //   'assets/images/test.png',
-  //   'assets/images/test.png',
-  // ];
 
   Future selectAvatarFromCamera() async {
     try {
