@@ -4,11 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
+import 'package:mobile/domain/services/game-service.dart';
+import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/language-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
@@ -21,7 +22,7 @@ Future<void> setup() async {
   String envFile = kDebugMode ? 'development.env' : 'production.env';
 
   // kDebugMode = APK, so hardcoding it for now
-  envFile = 'production.env';
+  // envFile = 'production.env';
 
   await dotenv.load(fileName: envFile);
   var serverAddress = dotenv.env["SERVER_URL"];
@@ -33,12 +34,15 @@ Future<void> setup() async {
   socket.onConnect((_) => debugPrint('Socket connection established'));
   socket.onDisconnect((data) => debugPrint('Socket connection lost'));
 
+  getIt.registerLazySingleton<HttpHandlerService>(
+      () => HttpHandlerService(serverAddress!));
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<ThemeService>(() => ThemeService());
   getIt.registerLazySingleton<LanguageService>(() => LanguageService());
   getIt.registerLazySingleton<RoomService>(() => RoomService());
   getIt.registerLazySingleton<AvatarService>(() => AvatarService());
+  getIt.registerLazySingleton<GameService>(() => GameService());
 }
 
 Future<void> main() async {

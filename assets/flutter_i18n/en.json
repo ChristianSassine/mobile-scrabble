@@ -6,8 +6,7 @@
         "login": "Login",
         "login_screen": "Connection screen",
         "disconnect": "Disconnect",
-        "sign_in": "Sign in",
-        "sign_in_screen": "Sign in",
+        "sign_up": "Sign up",
         "create_game": "Create a game",
         "join_game": "Join a game",
         "join_chat": "Join a chat room",
@@ -36,8 +35,36 @@
         "game": "Game"
     },
     "end_game": {
+        "screen_name": "End of game",
         "game_ended": "Game ended",
         "return_to_menu": "Return to menu"
+    },
+    "auth": {
+        "login": {
+            "title" : "Account authentification",
+            "username_label": "Username",
+            "username_error": "Enter a username",
+            "password_label": "Password",
+            "password_error": "Enter a password",
+            "button": "Sign in",
+            "success": "Successful sign in!",
+            "failure" : "Error while signing in!"
+        },
+        "signup": {
+            "title" : "Account Creation",
+            "username_label": "Username",
+            "username_error": "Please enter a username",
+            "email_label": "Email",
+            "email_error": "Please enter a valid email",
+            "password_label": "Password",
+            "password_error": "Please enter a password",
+            "password_confirm_label": "Password Confirmation",
+            "password_confirm_empty": "Please enter a password",
+            "password_confirm_error": "The passwords do not match",
+            "button": "Register",
+            "success": "Successful sign up!",
+            "failure" : "Error while signing up!"
+        }
     },
     "setting": {
         "theme": "Theme",
@@ -50,5 +77,11 @@
         "light_mode": "Light Mode Theme",
         "dark_mode": "Dark Mode Theme",
         "language": "Language"
+    },
+    "board": {
+        "double_letter": "DOUBLE\nLETTER",
+        "triple_letter": "TRIPLE\nLETTER",
+        "double_word": "DOUBLE\nWORD",
+        "triple_word": "TRIPLE\nWORD"
     }
 }
