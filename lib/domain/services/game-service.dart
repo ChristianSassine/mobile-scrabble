@@ -32,7 +32,7 @@ class GameService {
   void placeLetterOnBoard(int x, int y, Letter letter) {
     debugPrint("[GAME SERVICE] Place letter to the board: board[$x][$y] = $letter");
     if (!_isLetterPlacementValid(x, y, letter)) {
-      if (draggedLetter != null) cancelDragLetterFromEasel(); // Wrong move
+      if (draggedLetter != null) cancelDragLetter(); // Wrong move
       return;
     }
 
@@ -151,7 +151,13 @@ class GameService {
     return draggedLetter;
   }
 
-  void cancelDragLetterFromEasel() {
+  Letter? dragLetterFromBoard(int x, int y) {
+    debugPrint("[GAME SERVICE] Start drag from board");
+    draggedLetter = removeLetterFromBoard(x, y);
+    return draggedLetter;
+  }
+
+  void cancelDragLetter() {
     debugPrint("[GAME SERVICE] Cancel drag");
     addLetterInEasel(draggedLetter!);
     draggedLetter = null;

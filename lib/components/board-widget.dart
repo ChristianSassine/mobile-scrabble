@@ -178,8 +178,8 @@ class PendingBoardLetter extends StatelessWidget {
               widgetSize: widgetSize,
               highlighted: true,
             ),
-            onDragStarted: () => _gameService.removeLetterFromBoard(x, y),
-            onDraggableCanceled: (_v, _o) => _gameService.placeLetterOnBoard(x, y, value),
+            onDragStarted: () => _gameService.dragLetterFromBoard(x, y),
+            onDraggableCanceled: (_v, _o) => _gameService.cancelDragLetter(),
           )
         : LetterWidget(
             character: value.character,
