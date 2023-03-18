@@ -24,12 +24,16 @@ class AvatarSelectorDialog extends StatefulWidget {
 }
 
 class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
+  final _avatarService = GetIt.I.get<AvatarService>();
+  late Future<dynamic> _images;
+
   int? _selectedImageIndex;
   final List<String> _defaultImages = [
     'assets/images/test.png',
     'assets/images/test.png',
     'assets/images/scrabble_logo.png',
   ];
+
   late final Function(File, int) _selectAvatarFromList;
   late final Function() _selectAvatarFromCamera;
 
@@ -39,11 +43,12 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
     _selectAvatarFromList = widget.selectAvatarFromList;
     _selectAvatarFromCamera = widget.selectAvatarFromCamera;
     _selectedImageIndex = widget.selectedImageIndex;
+    _images = _avatarService.getDefaultAvatars();
   }
 
-  void selectAvatar(int index) {
-    if (index >= 0) {
-      _selectAvatarFromList(File(_defaultImages[index]), index);
+  void selectAvatar(int index, [String? imageURL]) {
+    if (index >= 0 && imageURL!.isNotEmpty) {
+      _selectAvatarFromList(File(imageURL), index);
     } else {
       _selectAvatarFromCamera();
       Navigator.pop(context, 'Choisir');
@@ -79,23 +84,31 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                 Row(
                   children: [
                     for (int i = 0; i < _defaultImages.length; i++)
-                      Expanded(
-                          child: GestureDetector(
-                        onTap: () => selectAvatar(i),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 3,
-                                  color: _selectedImageIndex == i
-                                      ? Colors.green
-                                      : Colors.transparent)),
-                          child: Image.asset(
-                            _defaultImages[i],
-                            width: 50,
-                            height: 50,
-                          ),
-                        ),
-                      )),
+                      FutureBuilder<dynamic>(
+                        future: _images,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Expanded(
+                                child: GestureDetector(
+                              onTap: () => selectAvatar(
+                                  i, snapshot.data!['default-spongebob'][0]),
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 3,
+                                          color: _selectedImageIndex == i
+                                              ? Colors.green
+                                              : Colors.transparent)),
+                                  child: Image.network(
+                                    snapshot.data!['default-spongebob'][0],
+                                    width: 50,
+                                    height: 50,
+                                  )),
+                            ));
+                          }
+                          return const CircularProgressIndicator();
+                        },
+                      )
                   ],
                 ),
                 Container(
@@ -111,7 +124,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                 ),
                 ElevatedButton(
                     onPressed: () => selectAvatar(AVATAR_FROM_CAMERA),
-                    child: const Text('Prendre une photo'))
+                    child: const Text('Prendre une photo')),
               ],
             )));
   }
@@ -127,15 +140,10 @@ class AvatarSelector extends StatefulWidget {
 class _AvatarSelectorState extends State<AvatarSelector> {
   File? _selectedImageFile;
   int? _selectedImageIndex;
-  final _avatarService = GetIt.I.get<AvatarService>();
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () async {
-      // Call your async function here
-      await getDefaultAvatar();
-    });
   }
 
   Future selectAvatarFromCamera() async {
@@ -173,27 +181,29 @@ class _AvatarSelectorState extends State<AvatarSelector> {
       return null;
     } else if (_selectedImageFile != null &&
         _selectedImageIndex! != AVATAR_FROM_CAMERA) {
-      return AssetImage(_selectedImageFile!.path);
+      return NetworkImage(_selectedImageFile!.path);
     } else {
       return FileImage(_selectedImageFile!);
     }
-  }
-
-  getDefaultAvatar() async {
-    await _avatarService.defaultAvatars();
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => openAvatarSelector(),
+      mouseCursor: SystemMouseCursors.click,
       child: CircleAvatar(
-        radius: 30.0,
-        backgroundImage: setAvatar(),
-        child: _selectedImageFile == null
-            ? const Icon(Icons.add, color: Colors.white, size: 30.0)
-            : null,
-      ),
+          radius: 32.0,
+          backgroundColor: Colors.black,
+          child: CircleAvatar(
+            radius: 30.0,
+            backgroundImage: setAvatar(),
+            backgroundColor:
+                _selectedImageFile == null ? Colors.blue : Colors.transparent,
+            child: _selectedImageFile == null
+                ? const Icon(Icons.add, color: Colors.white, size: 30.0)
+                : null,
+          )),
     );
   }
 }

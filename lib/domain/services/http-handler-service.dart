@@ -17,4 +17,11 @@ class HttpHandlerService {
   Future<http.Response> signUpRequest(Object body) {
     return client.post(Uri.parse("${baseUrl}/auth/signUp"), body: body);
   }
+
+  // Profile Avatar requests
+  Future<http.Response> getDefaultAvatarsRequest() {
+    return client.get(
+      Uri.parse("${baseUrl}/image/default-pictures"),
+    );
+  }
 }

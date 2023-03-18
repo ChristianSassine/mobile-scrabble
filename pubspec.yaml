@@ -22,7 +22,6 @@ dependencies:
     http: ^0.13.5
     flutter_i18n: ^0.32.1
     image_picker: ^0.8.7
-    http: ^0.13.5
 
 dev_dependencies:
     flutter_test:
