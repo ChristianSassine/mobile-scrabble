@@ -4,12 +4,9 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/settings-widget.dart';
 import 'package:mobile/domain/services/auth-service.dart';
-import 'package:mobile/screens/chat-screen.dart';
 import 'package:mobile/screens/create-game-screen.dart';
 import 'package:mobile/screens/room-selection-screen.dart';
-import 'package:mobile/screens/signup-screen.dart';
 
-import 'login-screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key, required this.title});
@@ -72,10 +69,16 @@ class _MenuScreenState extends State<MenuScreen> {
         Positioned(
           top: MediaQuery.of(context).size.height * 0.1,
           child: Container(
-            color: Colors.red,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(100),
+                bottomRight: Radius.circular(100),
+              ),
+              color: Theme.of(context).backgroundColor,
+            ),
             child: IconButton(
                 onPressed: () => _scaffoldKey.currentState!.openDrawer(),
-                icon: Icon(CupertinoIcons.arrow_right)),
+                icon: const Icon(CupertinoIcons.chat_bubble)),
           ),
         ),
         Center(
