@@ -31,13 +31,13 @@ class _EaselState extends State<EaselWidget> {
     if (ghostLetterIndex == index) return;
 
     if (ghostLetterIndex >= 0) {
-      debugPrint("[EASEL WIDGET] Ghost letter will be created at $index");
+      debugPrint("[EASEL WIDGET] Ghost letter will be moved from ${_visualLetters.indexOf(Letter.EMPTY)} to $index");
       setState(() {
         Letter ghostLetter = _visualLetters.removeAt(ghostLetterIndex);
         _visualLetters.insert(index, ghostLetter);
       });
     } else if (_visualLetters.length < _gameService.easel.maxSize) {
-      debugPrint("[EASEL WIDGET] Ghost letter will be moved from ${_visualLetters.indexOf(Letter.EMPTY)} to $index");
+      debugPrint("[EASEL WIDGET] Ghost letter will be created at $index");
       setState(() {
         _visualLetters.insert(index, Letter.EMPTY);
       });
@@ -75,12 +75,7 @@ class _EaselState extends State<EaselWidget> {
       setState(() {
         List<Letter> actualEasel = _gameService.easel.getLetterList();
 
-        // Letter added to easel or
-        if (actualEasel.length >= _visualLetters.length) {
           _visualLetters = actualEasel.toList();
-        } else {
-          _visualLetters[letterIndex] = Letter.EMPTY;
-        }
       });
     });
 

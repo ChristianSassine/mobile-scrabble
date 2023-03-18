@@ -25,6 +25,17 @@ class Board {
     return (0 <= x && x < size && 0 <= y && y < size);
   }
 
+  bool isEmpty(){
+    for(int x = 0; x < size; ++x){
+      for(int y = 0; y < size; ++y){
+        if(_boardMatrix[x][y] != null) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   Letter? getSlot(int x, int y) {
     return isSlotValid(x, y) ? _boardMatrix[x][y] : Letter.INVALID;
   }

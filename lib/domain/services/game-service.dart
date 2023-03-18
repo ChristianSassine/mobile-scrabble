@@ -46,13 +46,8 @@ class GameService {
   bool _isLetterPlacementValid(int x, int y, Letter letter) {
     if (!gameboard.isSlotEmpty(x, y)) return false;
 
-    if (gameboard.isSlotEmpty(gameboard.size ~/ 2, gameboard.size ~/ 2)) {
-      // For the first move
-      return x == gameboard.size ~/ 2 || y == gameboard.size ~/ 2;
-    }
-
     if (_pendingLetters.isEmpty) {
-      return _isAdjacentToOtherLetters(x, y);
+      return _isAdjacentToOtherLetters(x, y) || gameboard.isEmpty();
     }
 
     LetterPlacement lastPlacement = _pendingLetters.last;
@@ -63,7 +58,7 @@ class GameService {
       if (_pendingLetters.any((placement) => placement.x != x)) {
         return false; // Not all on the same column
       }
-      for (int checkY = lastPlacement.y; checkY != y; checkY += y.compareTo(lastPlacement.y)) {
+      for (int checkY = lastPlacement.y; (y - checkY).abs() > 0; checkY += y.compareTo(lastPlacement.y)) {
         if (gameboard.isSlotEmpty(x, checkY)) {
           return false; // Empty slot between last placement
         }
@@ -73,7 +68,7 @@ class GameService {
         return false; // Not all on the same row
       }
       for (int checkX = lastPlacement.x;
-          (x - checkX).abs() > 1;
+          (x - checkX).abs() > 0;
           checkX += x.compareTo(lastPlacement.x)) {
         if (gameboard.isSlotEmpty(checkX, y)) {
           return false; // Empty slot between last placement
@@ -157,7 +152,7 @@ class GameService {
   }
 
   void cancelDragLetterFromEasel() {
-    debugPrint("[GAME SERVICE] Cancel drag from easel");
+    debugPrint("[GAME SERVICE] Cancel drag");
     addLetterInEasel(draggedLetter!);
     draggedLetter = null;
   }
