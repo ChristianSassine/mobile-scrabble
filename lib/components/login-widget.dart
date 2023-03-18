@@ -65,8 +65,9 @@ class _ContainerLoginState extends State<ContainerLogin> {
           FlutterI18n.translate(context, "auth.login.success")));
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) =>
-                  const MenuScreen(title: "Page de connection")),
+              builder: (context) => MenuScreen(
+                  title: FlutterI18n.translate(
+                      context, "menu_screen.screen_name"))),
           (route) => false);
     });
     errorSub = authService.notifyError.stream.listen((event) {
