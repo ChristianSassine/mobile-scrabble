@@ -38,6 +38,7 @@ class GameService {
 
     gameboard.placeLetter(x, y, letter);
     _pendingLetters.add(LetterPlacement(x, y, letter));
+    _pendingLetters.sort((a, b) => a.x.compareTo(b.x) + a.y.compareTo(b.y));
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
   }
@@ -45,33 +46,44 @@ class GameService {
   bool _isLetterPlacementValid(int x, int y, Letter letter) {
     if (!gameboard.isSlotEmpty(x, y)) return false;
 
-    bool placementOrientationValid = _isPlacementOrientationValid(x, y);
-
-    if (!placementOrientationValid) {
-      //If not valid, letter is not connected to any letter. The only valid move is the starting move
-      return x == gameboard.size ~/ 2 && y == gameboard.size ~/ 2;
+    if (gameboard.isSlotEmpty(gameboard.size ~/ 2, gameboard.size ~/ 2)) {
+      // For the first move
+      return x == gameboard.size ~/ 2 || y == gameboard.size ~/ 2;
     }
 
-    bool valid = true;
-    if(_pendingLetters.length > 1) {
-      bool xLock = _pendingLetters[0].x == _pendingLetters[1].x, yLock = _pendingLetters[0].y == _pendingLetters[1].y;
-      _pendingLetters.forEach((letter) {
-        // if (!xLock && !yLock) {
-        //   // For first iteration
-        //   xLock = x == letter.x;
-        //   yLock = y == letter.y;
-        //   valid = xLock ^ yLock;
-        // } else {
-          valid &=
-              (xLock ? x == letter.x : true) && (yLock ? y == letter.y : true);
-        // }
-      });
+    if (_pendingLetters.isEmpty) {
+      return _isAdjacentToOtherLetters(x, y);
     }
 
-    return placementOrientationValid && valid;
+    LetterPlacement lastPlacement = _pendingLetters.last;
+    bool sameColumn = lastPlacement.x == x, sameRow = lastPlacement.y == y;
+    if (!(sameColumn || sameRow)) return false;
+
+    if (sameColumn) {
+      if (_pendingLetters.any((placement) => placement.x != x)) {
+        return false; // Not all on the same column
+      }
+      for (int checkY = lastPlacement.y; checkY != y; checkY += y.compareTo(lastPlacement.y)) {
+        if (gameboard.isSlotEmpty(x, checkY)) {
+          return false; // Empty slot between last placement
+        }
+      }
+    } else {
+      if (_pendingLetters.any((placement) => placement.y != y)) {
+        return false; // Not all on the same row
+      }
+      for (int checkX = lastPlacement.x;
+          (x - checkX).abs() > 1;
+          checkX += x.compareTo(lastPlacement.x)) {
+        if (gameboard.isSlotEmpty(checkX, y)) {
+          return false; // Empty slot between last placement
+        }
+      }
+    }
+    return true;
   }
 
-  bool _isPlacementOrientationValid(int x, int y) {
+  bool _isAdjacentToOtherLetters(int x, int y) {
     if (!gameboard.isSlotEmpty(x, y)) return false;
 
     Letter? left = gameboard.getSlot(x - 1, y),
@@ -79,32 +91,43 @@ class GameService {
         top = gameboard.getSlot(x, y - 1),
         down = gameboard.getSlot(x, y + 1);
 
-    bool leftRightPlacement = (left != null && left != Letter.INVALID) ||
-        (right != null && right != Letter.INVALID);
-
-    bool topDownPlacement = (top != null && top != Letter.INVALID) ||
-        (down != null && down != Letter.INVALID);
-
-    return leftRightPlacement ^ topDownPlacement;
+    return left != null || right != null || top != null || down != null;
   }
 
   /// @return the removed letter
   Letter? removeLetterFromBoard(int x, int y) {
-    debugPrint("[GAME SERVICE] Remove letter from the board: board[$x][$y] = ${gameboard.getSlot(x, y)}");
-    int pendingLetterIndex =
-        _pendingLetters.indexWhere((letter) => letter.x == x && letter.y == y);
-    if (pendingLetterIndex < 0) {
-      return null; //Letter not in pending letters
-    }
-    _pendingLetters.removeAt(pendingLetterIndex);
-
-    return gameboard.removeLetter(x, y);
-
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
+
+    if (isPlacedLetterRemovalValid(x, y)) {
+      _pendingLetters.removeWhere((placement) => placement.x == x && placement.y == y);
+
+      debugPrint(
+          "[GAME SERVICE] Remove letter from the board: board[$x][$y] = ${gameboard.getSlot(x, y)}");
+
+      return gameboard.removeLetter(x, y);
+    } else {
+      return null;
+    }
+  }
+
+  bool isPlacedLetterRemovalValid(int x, int y) {
+    int pendingLetterIndex = _pendingLetters.indexWhere((letter) => letter.x == x && letter.y == y);
+
+    if (pendingLetterIndex < 0) {
+      return false; //Letter not in pending letters
+    }
+
+    // These are the extremities of the letter placement since the list is sorted
+    return pendingLetterIndex == 0 || pendingLetterIndex == _pendingLetters.length - 1;
+  }
+
+  bool isPendingLetter(int x, int y) {
+    return _pendingLetters.indexWhere((placement) => placement.x == x && placement.y == y) >= 0;
   }
 
   void addLetterInEasel(Letter letter) {
-    debugPrint("[GAME SERVICE] Add letter to the end of easel: easel[${easel.getLetterList().length}] = $letter");
+    debugPrint(
+        "[GAME SERVICE] Add letter to the end of easel: easel[${easel.getLetterList().length}] = $letter");
     easel.addLetter(letter);
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
