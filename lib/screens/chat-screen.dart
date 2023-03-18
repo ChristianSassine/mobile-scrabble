@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:mobile/components/chatbox-widget.dart';
-import 'package:mobile/domain/services/chat-service.dart';
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key, required this.title});
+class ChatScreen extends StatelessWidget {
+  const ChatScreen({super.key});
 
-  final String title;
-
-  @override
-  State<ChatScreen> createState() => _ChatScreenState();
-}
-
-class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: Text(FlutterI18n.translate(context, "menu_screen.chat_room")),
         ),
         body: Center(
           child: Column(

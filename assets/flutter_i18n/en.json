@@ -11,7 +11,6 @@
         "create_game": "Create a game",
         "join_game": "Join a game",
         "join_chat": "Join a chat room",
-        "chat_room": "Chat room",
         "change_language": "Change language"
     },
     "form": {
@@ -42,17 +41,17 @@
     },
     "auth": {
         "login": {
-            "title" : "Account authentification",
+            "title": "Account authentification",
             "username_label": "Username",
             "username_error": "Enter a username",
             "password_label": "Password",
             "password_error": "Enter a password",
             "button": "Sign in",
             "success": "Successful sign in!",
-            "failure" : "Error while signing in!"
+            "failure": "Error while signing in!"
         },
         "signup": {
-            "title" : "Account Creation",
+            "title": "Account Creation",
             "username_label": "Username",
             "username_error": "Please enter a username",
             "email_label": "Email",
@@ -64,7 +63,7 @@
             "password_confirm_error": "The passwords do not match",
             "button": "Register",
             "success": "Successful sign up!",
-            "failure" : "Error while signing up!"
+            "failure": "Error while signing up!"
         }
     },
     "setting": {
@@ -84,5 +83,8 @@
         "triple_letter": "TRIPLE\nLETTER",
         "double_word": "DOUBLE\nWORD",
         "triple_word": "TRIPLE\nWORD"
+    },
+    "chat": {
+        "screen_name": "Chat room"
     }
 }
