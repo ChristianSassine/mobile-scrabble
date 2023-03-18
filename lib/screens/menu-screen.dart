@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
@@ -21,103 +20,123 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final authService = GetIt.I.get<AuthService>();
   var loggedIn = false;
-  final _maintainers = [
-    "Christian Sassine",
-    "Raphael Tremblay",
-    "Laurent Nguyen",
-    "Yasser Kadimi",
-    "Esmé Généreux",
-    "Michael Russel"
-  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Image.asset(
-          "assets/images/scrabble_logo.png",
-          fit: BoxFit.contain,
-          height: 32, // Size that makes the image fit
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(CupertinoIcons.profile_circled)),
-            ),
-          )
-        ],
-      ),
-      bottomSheet: Container(
-        height: MediaQuery.of(context).size.height * 0.1,
-        color: Theme.of(context).backgroundColor,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: _maintainers
-              .map((e) => TextButton(onPressed: () {}, child: Text(e)))
-              .toList(),
-        ),
-      ),
-      drawer: const Drawer(
-        child: SafeArea(child: Placeholder()),
-      ),
-      body: Stack(children: [
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.1,
-          child: Container(
-            color: Colors.red,
-            child: IconButton(
-                onPressed: () => _scaffoldKey.currentState!.openDrawer(),
-                icon: Icon(CupertinoIcons.arrow_right)),
-          ),
-        ),
-        Center(
-          child: SingleChildScrollView(
-            child: Card(
-                child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 30.0, right: 30, bottom: 15, top: 15),
-                    child: Column(children: [
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset("assets/images/scrabble_logo.png", width: 500),
+              const SizedBox(height: 50),
+              Card(
+                  child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 30.0, right: 30, bottom: 15, top: 15),
+                      child: Column(children: [
+                        Text(
+                            loggedIn
+                                ? "${FlutterI18n.translate(context, "menu_screen.welcome")}"
+                                : FlutterI18n.translate(
+                                    context, "menu_screen.no_connection"),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green),
+                            onPressed: false
+                                ? null
+                                : () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => LoginScreen(
+                                                title: FlutterI18n.translate(
+                                                    context,
+                                                    "menu_screen.login_screen"))));
+                                  },
+                            child: Text(FlutterI18n.translate(
+                                context, "menu_screen.login"))),
+                        const SizedBox(height: 5),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red),
+                            onPressed: false ? null : () {},
+                            child: Text(FlutterI18n.translate(
+                                context, "menu_screen.disconnect"))),
+                        const SizedBox(height: 5),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue),
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignupScreen(
+                                        title: FlutterI18n.translate(context,
+                                            "menu_screen.sign_up_screen")))),
+                            child: Text(FlutterI18n.translate(
+                                context, "menu_screen.sign_up"))),
+                      ]))),
+              const SizedBox(height: 30),
+              SizedBox(
+                  width: 250,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
                       ElevatedButton(
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GameCreationScreen(
-                                      title: FlutterI18n.translate(context,
-                                          "menu_screen.create_game")))),
+                          onPressed: !loggedIn
+                              ? null
+                              : () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GameCreationScreen(
+                                          title: FlutterI18n.translate(context,
+                                              "menu_screen.create_game")))),
                           child: Text(FlutterI18n.translate(
                               context, "menu_screen.create_game"))),
                       ElevatedButton(
-                        onPressed: () => {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RoomSelectionScreen(
-                                    FlutterI18n.translate(
-                                        context, "menu_screen.join_game"))),
-                          )
-                        },
-                        child: Text(FlutterI18n.translate(
-                            context, "menu_screen.join_game")),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.05,
-                      ),
+                          onPressed: !loggedIn
+                              ? null
+                              : () => {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              RoomSelectionScreen(
+                                                  FlutterI18n.translate(context,
+                                                      "menu_screen.join_game"))),
+                                    )
+                                  },
+                          child: Text(FlutterI18n.translate(
+                              context, "menu_screen.join_game"))),
+
+                      // TO BE REMOVED
                       ElevatedButton(
-                        onPressed: () => {},
-                        child: Text("High Scores"), // TODO: translate
-                      ),
-                    ]))),
+                          onPressed: !loggedIn
+                              ? null
+                              : () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ChatScreen(
+                                            title: FlutterI18n.translate(
+                                                context,
+                                                "menu_screen.chat_room"))),
+                                  );
+                                },
+                          child: Text(FlutterI18n.translate(
+                              context, "menu_screen.join_chat")))
+                    ],
+                  )),
+            ],
           ),
         ),
-      ]),
+      ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.settings),
           onPressed: () {
