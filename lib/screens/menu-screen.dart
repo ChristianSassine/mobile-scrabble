@@ -7,6 +7,14 @@ import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/create-game-screen.dart';
 import 'package:mobile/screens/room-selection-screen.dart';
 
+enum DropDownOption {
+  UserSettings("userSettings"),
+  ThemeSettings("themeSettings");
+
+  const DropDownOption(this.value);
+
+  final String value;
+}
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key, required this.title});
@@ -30,8 +38,29 @@ class _MenuScreenState extends State<MenuScreen> {
     "Michael Russel"
   ];
 
+  _handleOption(DropDownOption option) {
+    switch(option) {
+      case DropDownOption.ThemeSettings:{
+        showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) =>
+                Settings(notifyParent: () => setState(() {})));
+      }
+      break;
+      case DropDownOption.UserSettings: {
+        // TODO: Add user settings
+      }
+      break;
+      default: {}
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery
+        .of(context)
+        .size;
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -44,17 +73,34 @@ class _MenuScreenState extends State<MenuScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(CupertinoIcons.profile_circled)),
-            ),
+            child: PopupMenuButton<DropDownOption>(
+              onSelected: (DropDownOption option){
+                _handleOption(option);
+              },
+                offset: const Offset(0, kTextTabBarHeight),
+                icon: const CircleAvatar(
+                    child: Icon(CupertinoIcons.profile_circled)
+                ),
+                itemBuilder: (BuildContext context) {
+                  return [
+                    const PopupMenuItem(
+                      value: DropDownOption.UserSettings,
+                        child: Center(child: Text("User settings"))
+                    ),
+                    const PopupMenuItem(
+                        value: DropDownOption.ThemeSettings,
+                        child: Center(child: Text("Theme settings"))
+                    ),
+                  ];
+                }),
           )
         ],
       ),
       bottomSheet: Container(
-        height: MediaQuery.of(context).size.height * 0.1,
-        color: Theme.of(context).backgroundColor,
+        height: size.height * 0.1,
+        color: Theme
+            .of(context)
+            .backgroundColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: _maintainers
@@ -67,14 +113,16 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
       body: Stack(children: [
         Positioned(
-          top: MediaQuery.of(context).size.height * 0.1,
+          top: size.height * 0.1,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topRight: Radius.circular(100),
                 bottomRight: Radius.circular(100),
               ),
-              color: Theme.of(context).backgroundColor,
+              color: Theme
+                  .of(context)
+                  .backgroundColor,
             ),
             child: IconButton(
                 onPressed: () => _scaffoldKey.currentState!.openDrawer(),
@@ -89,29 +137,34 @@ class _MenuScreenState extends State<MenuScreen> {
                         left: 30.0, right: 30, bottom: 15, top: 15),
                     child: Column(children: [
                       ElevatedButton(
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GameCreationScreen(
-                                      title: FlutterI18n.translate(context,
-                                          "menu_screen.create_game")))),
+                          onPressed: () =>
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          GameCreationScreen(
+                                              title: FlutterI18n.translate(
+                                                  context,
+                                                  "menu_screen.create_game")))),
                           child: Text(FlutterI18n.translate(
                               context, "menu_screen.create_game"))),
                       ElevatedButton(
-                        onPressed: () => {
+                        onPressed: () =>
+                        {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RoomSelectionScreen(
-                                    FlutterI18n.translate(
-                                        context, "menu_screen.join_game"))),
+                                builder: (context) =>
+                                    RoomSelectionScreen(
+                                        FlutterI18n.translate(
+                                            context, "menu_screen.join_game"))),
                           )
                         },
                         child: Text(FlutterI18n.translate(
                             context, "menu_screen.join_game")),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.05,
+                        height: size.height * 0.05,
                       ),
                       ElevatedButton(
                         onPressed: () => {},
@@ -121,14 +174,6 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
         ),
       ]),
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.settings),
-          onPressed: () {
-            showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) =>
-                    Settings(notifyParent: () => setState(() {})));
-          }),
     );
   }
 }
