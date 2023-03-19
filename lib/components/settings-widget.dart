@@ -21,18 +21,8 @@ class _SettingsState extends State<Settings> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: const [
             ThemesSettings(),
-            SizedBox(width: 30),
-            VerticalDivider(),
-            SizedBox(width: 30),
-            Text("${FlutterI18n.translate(context, "setting.language")}: "),
-            SizedBox(width: 5),
-            LanguageDropdown(notifyParent: () {
-              setState(() => {});
-              debugPrint(FlutterI18n.currentLocale(context)!.languageCode);
-              widget.notifyParent();
-            })
           ],
         ),
       ),
