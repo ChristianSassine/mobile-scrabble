@@ -51,8 +51,8 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
 
   void _createGame() {
     if (_formKey.currentState!.validate()) {
-      Room room = Room(_roomNameFieldController.text,
-          _selectedVisibility[0] ? RoomType.PUBLIC : RoomType.PRIVATE, []);
+      Room room = Room(_roomNameFieldController.text, [], "", 0,
+          _selectedVisibility[0] ? RoomType.PUBLIC : RoomType.PRIVATE);
       _roomService.createRoom(room);
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => WaitingRoomScreen()));

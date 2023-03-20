@@ -3,21 +3,29 @@ import 'dart:core';
 // TODO: To be adapted to the server room implementation.
 // TEMPORARY IMPLEMENTATION FOR UI
 class Room {
-  final String name;
-  final RoomType type;
-  List<String> playerList;
+  final String id;
+  final List<String> users;
+  final String dictionary;
+  final int timer;
+  final RoomType mode;
 
-  Room(this.name, this.type, this.playerList);
+  Room(this.id, this.users, this.dictionary, this.timer, this.mode);
 
   Room.fromJson(json)
-      : name = json['name'],
-        type = json['type'],
-        playerList = json['memberList'];
+      : id = json['id'],
+        users = json['users'],
+        dictionary = json['dictionary'],
+        timer = json['timer'],
+        mode = json['mode'];
 
   Map toJson() =>
-      {"name": name,
-        "type": type,
-        "memberList": playerList};
+      {
+        "id": id,
+        "users": users,
+        "dictionary": dictionary,
+        "timer" : timer,
+        "mode" : mode
+      };
 }
 
 enum RoomType {

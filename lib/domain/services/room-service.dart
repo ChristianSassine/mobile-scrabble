@@ -16,7 +16,7 @@ class RoomService {
 
   RoomService() {
     // FOR TESTING
-    roomList.add(Room("TEST ROOM", RoomType.PUBLIC, ["TEST PLAYER"]));
+    roomList.add(Room("TEST ROOM", ["TEST PLAYER"], "", 0, RoomType.PUBLIC));
     initSocketListeners();
   }
 
@@ -26,11 +26,15 @@ class RoomService {
 
   void initSocketListeners() {
     // TODO SERVER IMPLEMENTATION
-    _socket.on(RoomSocketEvents.UpdateRoomJoinable.event, (data) {print(data);});
+    _socket.on(RoomSocketEvents.UpdateRoomJoinable.event, (data) {
+      _updateRoomList(data);
+    });
   }
 
-  void updateRoomList() {
+  void _updateRoomList(List<Room> newRooms) {
     // TODO SERVER IMPLEMENTATION
+    roomList = newRooms;
+    notifyNewRoomList.add(newRooms);
   }
 
   void joinRoom(Room room){
@@ -45,7 +49,7 @@ class RoomService {
   }
 
   void createRoom(Room room) {
-    room.playerList.add(_authService.username!);
+    room.users.add(_authService.username!);
     selectedRoom = room;
   }
 

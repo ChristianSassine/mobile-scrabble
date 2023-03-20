@@ -56,7 +56,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
   Widget _buildRoomCard(Room room) {
     return Card(
       child: ListTile(
-        title: Text(room.name),
+        title: Text(room.id),
         trailing: IconButton(
             icon: const Icon(Icons.login),
             color: Colors.green,

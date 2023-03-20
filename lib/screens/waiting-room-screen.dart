@@ -55,7 +55,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       appBar: AppBar(title: Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(currentRoom.name, style: const TextStyle(fontSize: 50)),
+          Text(currentRoom.id, style: const TextStyle(fontSize: 50)),
           const SizedBox(height: 100),
           Text(FlutterI18n.translate(context, "waiting_room.players"),
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
@@ -72,7 +72,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
                 child: ListView(
                   controller: _scrollController,
                   children: [
-                    for (String playerName in currentRoom.playerList)
+                    for (String playerName in currentRoom.users)
                       _buildRoomMemberCard(playerName)
                   ],
                 ),
