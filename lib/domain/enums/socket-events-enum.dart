@@ -7,7 +7,9 @@ enum RoomSocketEvents {
   LeaveHomeRoom('leaveHomeRoom'),
   userLeftHomeRoom('userLeftHomeRoom'),
   UserConnected('userConnected'),
-  usernameTaken('usernameTaken');
+  usernameTaken('usernameTaken'),
+  RoomLobby('roomLobby'),
+  UpdateRoomJoinable('updateListOfRooms');
 
   const RoomSocketEvents(this.event);
 

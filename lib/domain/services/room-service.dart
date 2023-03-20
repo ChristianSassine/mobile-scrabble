@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -6,8 +7,8 @@ import 'package:socket_io_client/socket_io_client.dart';
 import '../models/room-model.dart';
 
 class RoomService {
-  // Socket _socket = GetIt.I.get<Socket>();
-  AuthService _authService = GetIt.I.get<AuthService>();
+  final Socket _socket = GetIt.I.get<Socket>();
+  final AuthService _authService = GetIt.I.get<AuthService>();
   List<Room> roomList = [];
   Room? selectedRoom;
   Subject<List<Room>> notifyNewRoomList = PublishSubject();
@@ -16,12 +17,16 @@ class RoomService {
   RoomService() {
     // FOR TESTING
     roomList.add(Room("TEST ROOM", RoomType.PUBLIC, ["TEST PLAYER"]));
-
     initSocketListeners();
+  }
+
+  void connectToRooms() {
+    _socket.emit(RoomSocketEvents.RoomLobby.event);
   }
 
   void initSocketListeners() {
     // TODO SERVER IMPLEMENTATION
+    _socket.on(RoomSocketEvents.UpdateRoomJoinable.event, (data) {print(data);});
   }
 
   void updateRoomList() {

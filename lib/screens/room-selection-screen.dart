@@ -19,7 +19,25 @@ class _RoomListState extends State<RoomSelectionScreen> {
   final _roomService = GetIt.I.get<RoomService>();
   List<Room> roomList = [];
   final ScrollController _scrollController = ScrollController();
-  StreamSubscription? sub;
+  late final StreamSubscription sub;
+
+  @override
+  initState(){
+    super.initState();
+    sub = _roomService.notifyNewRoomList.stream.listen((newRoomList) {
+      setState(() {
+        roomList = newRoomList;
+      });
+    });
+
+    _roomService.connectToRooms();
+  }
+
+  @override
+  dispose(){
+    sub.cancel();
+    super.dispose();
+  }
 
   _RoomListState() {
     roomList = _roomService.roomList;
@@ -49,11 +67,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    sub ??= _roomService.notifyNewRoomList.stream.listen((newRoomList) {
-      setState(() {
-        roomList = newRoomList;
-      });
-    });
+
 
     return Scaffold(
       appBar: AppBar(title: Text(FlutterI18n.translate(context,
