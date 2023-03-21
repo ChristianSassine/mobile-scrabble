@@ -6,7 +6,7 @@ import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AuthService {
-  String? username;
+  String? username = "John"; // TODO : remove after testing (Set by default for testing purposes)
   final httpService = GetIt.I.get<HttpHandlerService>();
   Cookie cookie = Cookie("", "");
 

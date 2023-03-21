@@ -3,11 +3,11 @@ import 'dart:core';
 // TODO: To be adapted to the server room implementation.
 // TEMPORARY IMPLEMENTATION FOR UI
 class Room {
-  final String id;
-  final List<String> users;
-  final String dictionary;
-  final int timer;
-  final RoomType mode;
+  String id;
+  List<String> users;
+  String dictionary;
+  int timer;
+  RoomType mode;
 
   Room(this.id, this.users, this.dictionary, this.timer, this.mode);
 

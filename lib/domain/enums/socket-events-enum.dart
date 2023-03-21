@@ -1,4 +1,4 @@
-enum RoomSocketEvents {
+enum SocketEvents {
   JoinHomeRoom('joinHomeRoom'),
   UserJoinedRoom('userJoinedRoom'),
   RoomIsFull('roomIsFull'),
@@ -9,9 +9,12 @@ enum RoomSocketEvents {
   UserConnected('userConnected'),
   usernameTaken('usernameTaken'),
   RoomLobby('roomLobby'),
-  UpdateRoomJoinable('updateListOfRooms');
+  UpdateRoomJoinable('updateListOfRooms'),
+  PlayerJoinGameAvailable('roomJoin'),
+  JoinValidGame('joinValid')
+  ;
 
-  const RoomSocketEvents(this.event);
+  const SocketEvents(this.event);
 
   final String event;
 }

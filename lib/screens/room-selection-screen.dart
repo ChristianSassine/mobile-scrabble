@@ -45,7 +45,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
   }
 
   void _joinRoom(Room room) {
-    _roomService.joinRoom(room);
+    _roomService.requestJoinRoom(room);
     Navigator.push(
       context,
       MaterialPageRoute(

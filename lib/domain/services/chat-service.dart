@@ -28,19 +28,19 @@ class ChatService {
     // When left service is undefined (user is not connected to a username) the client crashes because data is null
     // socket.on(
     //     RoomSocketEvents.userLeftHomeRoom.event, (data) => {_userLeft(data)});
-    socket.on(RoomSocketEvents.UserJoinedRoom.event, (data) => {});
+    socket.on(SocketEvents.UserJoinedRoom.event, (data) => {});
 
-    socket.on(RoomSocketEvents.BroadCastMessageHome.event,
+    socket.on(SocketEvents.BroadCastMessageHome.event,
         (data) => {_receivedMessage(ChatMessage.fromJson(data))});
     socket.on(
-        RoomSocketEvents.UserJoinedRoom.event, (data) => {_userJoined(data)});
+        SocketEvents.UserJoinedRoom.event, (data) => {_userJoined(data)});
   }
 
   void submitMessage(String msg) {
     ChatMessage newMessage = ChatMessage(authService.username!,
         MessageType.CLIENT.value, msg, DateFormat.Hms().format(DateTime.now()));
     chatBox.addMessage(newMessage);
-    socket.emit(RoomSocketEvents.SendHomeMessage.event, newMessage);
+    socket.emit(SocketEvents.SendHomeMessage.event, newMessage);
   }
 
   // void requestFetchMessages() {
