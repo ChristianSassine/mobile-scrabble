@@ -16,7 +16,7 @@ class RoomService {
 
   RoomService() {
     // FOR TESTING
-    roomList.add(Room("TEST ROOM", RoomType.PUBLIC, [Player("TEST PLAYER")]));
+    roomList.add(Room("TEST ROOM", RoomType.PUBLIC, [Player("TEST PLAYER"),Player("TEST PLAYER2"),Player("TEST PLAYER3"),Player("TEST PLAYER4"),]));
 
     initSocketListeners();
   }
