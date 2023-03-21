@@ -25,8 +25,7 @@ class AuthService {
     if (response.statusCode == HttpStatus.ok){
       // JWT token
       String? rawCookie = response.headers['set-cookie'];
-      var _cookie = Cookie.fromSetCookieValue(rawCookie!);
-      print(_cookie.value);
+      _cookie = Cookie.fromSetCookieValue(rawCookie!);
 
       _socket.io.options['extraHeaders'] = {'cookie': _cookie};
       _socket..disconnect()..connect();
@@ -41,12 +40,7 @@ class AuthService {
         .signUpRequest({"username": username, "email":email, "password": password});
 
     if (response.statusCode == HttpStatus.ok){
-      // JWT token
-      // String? rawCookie = response.headers['set-cookie'];
-      // var parsedCookie = Cookie.fromSetCookieValue(rawCookie!);
-      // print(parsedCookie.value);
-
-      notifyLogin.add(true);
+      await connectUser(username, password);
       return;
     }
     notifyError.add("Failed Login");

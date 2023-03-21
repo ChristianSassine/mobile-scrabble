@@ -7,6 +7,7 @@
         "login_screen": "Page de connection",
         "disconnect": "Se déconnecter",
         "sign_up": "Créer un compte",
+        "sign_up_screen": "Page de création de compte",
         "create_game": "Créer une partie",
         "join_game": "Rejoindre une partie",
         "join_chat": "Rejoindre une salle de clavardage",
@@ -48,7 +49,8 @@
             "password_error": "Entez votre mot de passe",
             "button": "S'identifier",
             "success": "Succès d'identification!",
-            "failure" : "Erreur lors de l'identification!"
+            "failure" : "Erreur lors de l'identification!",
+            "button_sign_up" : "Créer un nouveau compte"
         },
         "signup": {
             "title" : "Création de compte",
