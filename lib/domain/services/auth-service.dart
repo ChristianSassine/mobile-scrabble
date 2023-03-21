@@ -3,10 +3,15 @@ import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 class AuthService {
   String? username;
-  final httpService = GetIt.I.get<HttpHandlerService>();
+  Cookie? _cookie;
+
+  // Services
+  final _httpService = GetIt.I.get<HttpHandlerService>();
+  final _socket = GetIt.I.get<Socket>();
 
   // I don't like doing a lot of subjects but it works for now
   Subject<bool> notifyLogin = PublishSubject();
@@ -14,15 +19,17 @@ class AuthService {
   Subject<String> notifyError = PublishSubject();
 
   Future<void> connectUser(String username, String password) async {
-    var response = await httpService
+    var response = await _httpService
         .signInRequest({"username": username, "password": password});
 
     if (response.statusCode == HttpStatus.ok){
       // JWT token
       String? rawCookie = response.headers['set-cookie'];
-      var parsedCookie = Cookie.fromSetCookieValue(rawCookie!);
-      print(parsedCookie.value);
+      var _cookie = Cookie.fromSetCookieValue(rawCookie!);
+      print(_cookie.value);
 
+      _socket.io.options['extraHeaders'] = {'cookie': _cookie};
+      _socket..disconnect()..connect();
       notifyLogin.add(true);
       return;
     }
@@ -30,7 +37,7 @@ class AuthService {
   }
 
   Future<void> createUser(String username, String email, String password) async {
-    var response = await httpService
+    var response = await _httpService
         .signUpRequest({"username": username, "email":email, "password": password});
 
     if (response.statusCode == HttpStatus.ok){
