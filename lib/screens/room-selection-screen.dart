@@ -27,6 +27,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
     sub = _roomService.notifyNewRoomList.stream.listen((newRoomList) {
       setState(() {
         roomList = newRoomList;
+        debugPrint("roomsUpdated");
       });
     });
 

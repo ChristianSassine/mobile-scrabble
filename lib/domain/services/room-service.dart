@@ -24,10 +24,14 @@ class RoomService {
     _socket.emit(RoomSocketEvents.RoomLobby.event);
   }
 
+  T? cast<T>(x) => x is T ? x : null;
+
   void initSocketListeners() {
     // TODO SERVER IMPLEMENTATION
     _socket.on(RoomSocketEvents.UpdateRoomJoinable.event, (data) {
-      _updateRoomList(data);
+      final newRooms =
+          (data as List<dynamic>).map((e) => Room.fromJson(e)).toList();
+      _updateRoomList(newRooms);
     });
   }
 
@@ -37,7 +41,7 @@ class RoomService {
     notifyNewRoomList.add(newRooms);
   }
 
-  void joinRoom(Room room){
+  void joinRoom(Room room) {
     selectedRoom = room;
 
     //TODO SERVER IMPLEMENTATION
@@ -52,5 +56,4 @@ class RoomService {
     room.users.add(_authService.username!);
     selectedRoom = room;
   }
-
 }

@@ -13,10 +13,10 @@ class Room {
 
   Room.fromJson(json)
       : id = json['id'],
-        users = json['users'],
+        users = (json['users'] as List<dynamic>).map((e) => e as String).toList() as List<String>,
         dictionary = json['dictionary'],
         timer = json['timer'],
-        mode = json['mode'];
+        mode = RoomType.toEnum(json['mode']);
 
   Map toJson() =>
       {
@@ -33,6 +33,12 @@ enum RoomType {
   PRIVATE("private");
 
   const RoomType(this.value);
+
+  static RoomType toEnum(String value){
+    RoomType? room = RoomType.values.asMap()[value];
+    if (room == null) return RoomType.PUBLIC;
+    return room;
+  }
 
   final String value;
 }
