@@ -4,9 +4,7 @@ import 'package:mobile/screens/menu-screen.dart';
 
 
 class EndGameScreen extends StatefulWidget {
-  const EndGameScreen({super.key, required this.title});
-
-  final String title;
+  const EndGameScreen({super.key});
 
   @override
   State<EndGameScreen> createState() => _EndGameScreenState();

@@ -22,7 +22,7 @@ class _GameScreenState extends State<GameScreen> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                const EndGameScreen(title: "Fin de la partie")));
+                const EndGameScreen()));
   }
 
   @override
