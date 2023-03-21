@@ -68,8 +68,9 @@ class _SignUpFormState extends State<SignUpForm> {
           FlutterI18n.translate(context, "auth.signup.success")));
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) =>
-                  const MenuScreen(title: "Page de connection")),
+              builder: (context) => MenuScreen(
+                  title: FlutterI18n.translate(
+                      context, "menu_screen.screen_name"))),
           (route) => false);
     });
 
@@ -207,7 +208,8 @@ class _SignUpFormState extends State<SignUpForm> {
                         }
                       }
                     : null,
-                child: Text(FlutterI18n.translate(context, "auth.signup.button")),
+                child:
+                    Text(FlutterI18n.translate(context, "auth.signup.button")),
               ),
             ),
           ],

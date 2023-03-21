@@ -6,12 +6,12 @@
         "login": "Login",
         "login_screen": "Connection screen",
         "disconnect": "Disconnect",
+        "sign_up_screen": "Account Creation screen",
         "sign_up": "Sign up",
-        "sign_up_screen": "Sign up screen",
         "create_game": "Create a game",
         "join_game": "Join a game",
         "join_chat": "Join a chat room",
-        "chat_room": "Chat room",
+        "score": "Leaderboard",
         "change_language": "Change language",
         "settings": {
             "user": "User settings",
@@ -90,5 +90,8 @@
         "triple_letter": "TRIPLE\nLETTER",
         "double_word": "DOUBLE\nWORD",
         "triple_word": "TRIPLE\nWORD"
+    },
+    "chat": {
+        "screen_name": "Chat room"
     }
 }

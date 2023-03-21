@@ -22,13 +22,15 @@ class AuthService {
     var response = await _httpService
         .signInRequest({"username": username, "password": password});
 
-    if (response.statusCode == HttpStatus.ok){
+    if (response.statusCode == HttpStatus.ok) {
       // JWT token
       String? rawCookie = response.headers['set-cookie'];
       _cookie = Cookie.fromSetCookieValue(rawCookie!);
 
       _socket.io.options['extraHeaders'] = {'cookie': _cookie};
-      _socket..disconnect()..connect();
+      _socket
+        ..disconnect()
+        ..connect();
       this.username = username;
       notifyLogin.add(true);
       return;
@@ -36,18 +38,19 @@ class AuthService {
     notifyError.add("Failed Login");
   }
 
-  Future<void> createUser(String username, String email, String password) async {
-    var response = await _httpService
-        .signUpRequest({"username": username, "email":email, "password": password});
+  Future<void> createUser(
+      String username, String email, String password) async {
+    var response = await _httpService.signUpRequest(
+        {"username": username, "email": email, "password": password});
 
-    if (response.statusCode == HttpStatus.ok){
+    if (response.statusCode == HttpStatus.ok) {
       await connectUser(username, password);
       return;
     }
     notifyError.add("Failed Login");
   }
 
-  void diconnect(){
+  void diconnect() {
     username = null;
     _cookie = null;
     _socket.disconnect();

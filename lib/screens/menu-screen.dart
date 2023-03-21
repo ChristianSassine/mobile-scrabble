@@ -92,13 +92,19 @@ class _MenuScreenState extends State<MenuScreen> {
                   return [
                     PopupMenuItem(
                         value: DropDownOption.UserSettings,
-                        child: Center(child: Text(FlutterI18n.translate(context, "menu_screen.settings.user")))),
+                        child: Center(
+                            child: Text(FlutterI18n.translate(
+                                context, "menu_screen.settings.user")))),
                     PopupMenuItem(
                         value: DropDownOption.ThemeSettings,
-                        child: Center(child: Text(FlutterI18n.translate(context, "menu_screen.settings.theme")))),
+                        child: Center(
+                            child: Text(FlutterI18n.translate(
+                                context, "menu_screen.settings.theme")))),
                     PopupMenuItem(
                         value: DropDownOption.Disconnect,
-                        child: Center(child: Text(FlutterI18n.translate(context, "menu_screen.settings.disconnect")))),
+                        child: Center(
+                            child: Text(FlutterI18n.translate(
+                                context, "menu_screen.settings.disconnect")))),
                   ];
                 }),
           )
@@ -148,9 +154,8 @@ class _MenuScreenState extends State<MenuScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RoomSelectionScreen(
-                                    FlutterI18n.translate(
-                                        context, "menu_screen.join_game"))),
+                              builder: (context) => RoomSelectionScreen(),
+                            ),
                           )
                         },
                         child: Text(FlutterI18n.translate(
@@ -161,7 +166,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () => {},
-                        child: Text("High Scores"), // TODO: translate
+                        child: Text(FlutterI18n.translate(context, "menu_screen.score")),
                       ),
                     ]))),
           ),

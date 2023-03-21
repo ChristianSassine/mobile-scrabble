@@ -8,12 +8,8 @@ import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/screens/waiting-room-screen.dart';
 
 class RoomSelectionScreen extends StatefulWidget {
-  final String title;
 
-  const RoomSelectionScreen(
-    this.title, {
-    Key? key,
-  }) : super(key: key);
+  const RoomSelectionScreen({Key? key,}) : super(key: key);
 
   @override
   State<RoomSelectionScreen> createState() => _RoomListState();
@@ -35,7 +31,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              WaitingRoomScreen(FlutterI18n.translate(context, "waiting_room.screen_name"))),
+              const WaitingRoomScreen()),
     );
   }
 
@@ -60,7 +56,8 @@ class _RoomListState extends State<RoomSelectionScreen> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(title: Text(FlutterI18n.translate(context,
+          "menu_screen.join_game"))),
       body: Center(
         child: SizedBox(
           width: 500,
