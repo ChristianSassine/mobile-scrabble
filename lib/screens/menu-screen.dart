@@ -6,11 +6,13 @@ import 'package:mobile/components/language-dropdown-widget.dart';
 import 'package:mobile/components/settings-widget.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/create-game-screen.dart';
+import 'package:mobile/screens/login-screen.dart';
 import 'package:mobile/screens/room-selection-screen.dart';
 
 enum DropDownOption {
   UserSettings("userSettings"),
-  ThemeSettings("themeSettings");
+  ThemeSettings("themeSettings"),
+  Disconnect("diconnect");
 
   const DropDownOption(this.value);
 
@@ -28,9 +30,9 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final authService = GetIt.I.get<AuthService>();
   var loggedIn = false;
 
+  final _authService = GetIt.I.get<AuthService>();
 
   _handleOption(DropDownOption option) {
     switch (option) {
@@ -45,6 +47,17 @@ class _MenuScreenState extends State<MenuScreen> {
       case DropDownOption.UserSettings:
         {
           // TODO: Add user settings
+        }
+        break;
+      case DropDownOption.Disconnect:
+        _authService.diconnect();
+        {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (context) => LoginScreen(
+                      title: FlutterI18n.translate(
+                          context, "menu_screen.login_screen"))),
+              (route) => false);
         }
         break;
       default:
@@ -77,18 +90,24 @@ class _MenuScreenState extends State<MenuScreen> {
                     child: Icon(CupertinoIcons.profile_circled)),
                 itemBuilder: (BuildContext context) {
                   return [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                         value: DropDownOption.UserSettings,
-                        child: Center(child: Text("User settings"))),
-                    const PopupMenuItem(
+                        child: Center(child: Text(FlutterI18n.translate(context, "menu_screen.settings.user")))),
+                    PopupMenuItem(
                         value: DropDownOption.ThemeSettings,
-                        child: Center(child: Text("Theme settings"))),
+                        child: Center(child: Text(FlutterI18n.translate(context, "menu_screen.settings.theme")))),
+                    PopupMenuItem(
+                        value: DropDownOption.Disconnect,
+                        child: Center(child: Text(FlutterI18n.translate(context, "menu_screen.settings.disconnect")))),
                   ];
                 }),
           )
         ],
       ),
-      bottomSheet: Footer(size: size, notifyParent: ()=> setState((){}),),
+      bottomSheet: Footer(
+        size: size,
+        notifyParent: () => setState(() {}),
+      ),
       drawer: const Drawer(
         child: SafeArea(child: Placeholder()),
       ),
@@ -153,11 +172,8 @@ class _MenuScreenState extends State<MenuScreen> {
 }
 
 class Footer extends StatefulWidget {
-  const Footer({
-    Key? key,
-    required this.size,
-    required this.notifyParent
-  }) : super(key: key);
+  const Footer({Key? key, required this.size, required this.notifyParent})
+      : super(key: key);
 
   final Size size;
   final Function() notifyParent;
@@ -192,7 +208,8 @@ class _FooterState extends State<Footer> {
                   LanguageDropdown(notifyParent: () {
                     setState(() => {});
                     widget.notifyParent();
-                    debugPrint(FlutterI18n.currentLocale(context)!.languageCode);
+                    debugPrint(
+                        FlutterI18n.currentLocale(context)!.languageCode);
                   }),
                 ],
               )),

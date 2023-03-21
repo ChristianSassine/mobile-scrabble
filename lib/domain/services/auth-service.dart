@@ -29,6 +29,7 @@ class AuthService {
 
       _socket.io.options['extraHeaders'] = {'cookie': _cookie};
       _socket..disconnect()..connect();
+      this.username = username;
       notifyLogin.add(true);
       return;
     }
@@ -44,5 +45,11 @@ class AuthService {
       return;
     }
     notifyError.add("Failed Login");
+  }
+
+  void diconnect(){
+    username = null;
+    _cookie = null;
+    _socket.disconnect();
   }
 }
