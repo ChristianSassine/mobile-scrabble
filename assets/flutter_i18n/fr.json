@@ -6,12 +6,12 @@
         "login": "Se connecter",
         "login_screen": "Page de connection",
         "disconnect": "Se déconnecter",
+        "sign_up_screen": "Page de création de compte",
         "sign_up": "Créer un compte",
         "sign_up_screen": "Création de compte",
         "create_game": "Créer une partie",
         "join_game": "Rejoindre une partie",
         "join_chat": "Rejoindre une salle de clavardage",
-        "chat_room": "Salle de clavardage",
         "change_language": "Changer la langue"
     },
     "form": {
@@ -84,5 +84,8 @@
         "triple_letter": "TRIPLE\nLETTRE",
         "double_word": "DOUBLE\nMOT",
         "triple_word": "TRIPLE\nMOT"
+    },
+    "chat": {
+        "screen_name": "Salle de clavardage"
     }
 }

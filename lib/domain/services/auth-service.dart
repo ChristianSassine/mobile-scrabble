@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:rxdart/rxdart.dart';
@@ -7,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 class AuthService {
   String? username;
   final httpService = GetIt.I.get<HttpHandlerService>();
+  Cookie cookie = Cookie("", "");
 
   // I don't like doing a lot of subjects but it works for now
   Subject<bool> notifyLogin = PublishSubject();
@@ -20,8 +22,8 @@ class AuthService {
     if (response.statusCode == HttpStatus.ok){
       // JWT token
       String? rawCookie = response.headers['set-cookie'];
-      var parsedCookie = Cookie.fromSetCookieValue(rawCookie!);
-      print(parsedCookie.value);
+      cookie = Cookie.fromSetCookieValue(rawCookie!);
+      debugPrint("Connected with cookie : $cookie");
 
       notifyLogin.add(true);
       return;
@@ -34,12 +36,7 @@ class AuthService {
         .signUpRequest({"username": username, "email":email, "password": password});
 
     if (response.statusCode == HttpStatus.ok){
-      // JWT token
-      // String? rawCookie = response.headers['set-cookie'];
-      // var parsedCookie = Cookie.fromSetCookieValue(rawCookie!);
-      // print(parsedCookie.value);
-
-      notifyLogin.add(true);
+      await connectUser(username, password);
       return;
     }
     notifyError.add("Failed Login");
