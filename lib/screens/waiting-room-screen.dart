@@ -24,7 +24,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   StreamSubscription? sub;
 
   _WaitingRoomState() {
-    currentRoom = _roomService.selectedRoom!;
+    currentRoom = _roomService.currentRoom!;
   }
 
   _startGame() {

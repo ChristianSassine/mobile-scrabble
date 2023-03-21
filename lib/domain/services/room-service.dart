@@ -10,13 +10,13 @@ class RoomService {
   // Socket _socket = GetIt.I.get<Socket>();
   AuthService _authService = GetIt.I.get<AuthService>();
   List<Room> roomList = [];
-  Room? selectedRoom;
+  Room? currentRoom;
   Subject<List<Room>> notifyNewRoomList = PublishSubject();
   Subject<Room> notifyRoomMemberList = PublishSubject();
 
   RoomService() {
     // FOR TESTING
-    roomList.add(Room("TEST ROOM", RoomType.PUBLIC, [Player("TEST PLAYER"),Player("TEST PLAYER2"),Player("TEST PLAYER3"),Player("TEST PLAYER4"),]));
+    roomList.add(Room("TEST ROOM", RoomType.PUBLIC, [Player(_authService.username),Player("TEST PLAYER2"),Player("TEST PLAYER3"),Player("TEST PLAYER4"),]));
 
     initSocketListeners();
   }
@@ -30,7 +30,7 @@ class RoomService {
   }
 
   void joinRoom(Room room){
-    selectedRoom = room;
+    currentRoom = room;
 
     //TODO SERVER IMPLEMENTATION
   }
@@ -42,7 +42,7 @@ class RoomService {
 
   void createRoom(Room room) {
     room.playerList.add(Player(_authService.username!));
-    selectedRoom = room;
+    currentRoom = room;
   }
 
 }
