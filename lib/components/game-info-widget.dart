@@ -28,7 +28,7 @@ class GameInfoBar extends StatelessWidget {
                     padding: EdgeInsets.all(20.0),
                     child: Text("Placer"),
                   )),
-              SizedBox(width: 50),
+              const SizedBox(width: 50),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
                   onPressed: () => {},

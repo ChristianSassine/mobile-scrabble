@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/components/board-widget.dart';
 import 'package:mobile/components/easel-widget.dart';
 import 'package:mobile/components/game-info-widget.dart';
-import 'package:mobile/domain/models/chat-models.dart';
+import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:mobile/screens/end-game-screen.dart';
 
 import '../components/chatbox-widget.dart';
@@ -55,7 +55,14 @@ class _GameScreenState extends State<GameScreen> {
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.red,
           child: const Icon(Icons.flag),
-          onPressed: () => _abandonGame()),
+          onPressed: () async {
+            if (await confirm(context,
+                textOK: Text("Oui"),
+                textCancel: Text("Non"),
+                content: Text("Êtes vous sûr de vouloir abandonner?"))) {
+              _abandonGame();
+            }
+          }),
     );
   }
 }
