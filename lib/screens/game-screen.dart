@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/components/board-widget.dart';
 import 'package:mobile/components/easel-widget.dart';
+import 'package:mobile/components/game-info-widget.dart';
+import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/screens/end-game-screen.dart';
+
+import '../components/chatbox-widget.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key, required this.title});
@@ -18,20 +22,18 @@ class _GameScreenState extends State<GameScreen> {
   _abandonGame() {
     // TODO: Prompt user confirmation
 
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const EndGameScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const EndGameScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.green[100],
       body: Center(
-          child: Column(
+          child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          GameInfoWidget(),
           Expanded(
             child: InteractiveViewer(
               panEnabled: false,
@@ -51,8 +53,9 @@ class _GameScreenState extends State<GameScreen> {
       ))),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
-          child: const Icon(Icons.flag), onPressed: () => _abandonGame()),
+          backgroundColor: Colors.red,
+          child: const Icon(Icons.flag),
+          onPressed: () => _abandonGame()),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/models/player-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
 
@@ -72,8 +73,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
                 child: ListView(
                   controller: _scrollController,
                   children: [
-                    for (String playerName in currentRoom.playerList)
-                      _buildRoomMemberCard(playerName)
+                    for (Player player in currentRoom.playerList)
+                      _buildRoomMemberCard(player.name)
                   ],
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
+import 'package:mobile/domain/models/player-models.dart';
 
 import '../enums/letter-enum.dart';
 
@@ -14,8 +15,13 @@ class LetterPlacement {
 class GameService {
   final Board gameboard = Board(15);
   final Easel easel = Easel(7);
-
   Letter? draggedLetter;
+
+  Player? activePlayer;
+
+  static const turnLength = 60;
+  int turnTimer = 0;
+
 
   final List<LetterPlacement> _pendingLetters = [];
 

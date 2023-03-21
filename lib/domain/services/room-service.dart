@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/models/player-models.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -15,7 +16,7 @@ class RoomService {
 
   RoomService() {
     // FOR TESTING
-    roomList.add(Room("TEST ROOM", RoomType.PUBLIC, ["TEST PLAYER"]));
+    roomList.add(Room("TEST ROOM", RoomType.PUBLIC, [Player("TEST PLAYER")]));
 
     initSocketListeners();
   }
@@ -40,7 +41,7 @@ class RoomService {
   }
 
   void createRoom(Room room) {
-    room.playerList.add(_authService.username!);
+    room.playerList.add(Player(_authService.username!));
     selectedRoom = room;
   }
 

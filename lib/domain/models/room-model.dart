@@ -1,11 +1,13 @@
 import 'dart:core';
 
+import 'package:mobile/domain/models/player-models.dart';
+
 // TODO: To be adapted to the server room implementation.
 // TEMPORARY IMPLEMENTATION FOR UI
 class Room {
   final String name;
   final RoomType type;
-  List<String> playerList;
+  List<Player> playerList;
 
   Room(this.name, this.type, this.playerList);
 

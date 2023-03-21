@@ -29,10 +29,7 @@ class _BoardState extends State<BoardWidget> {
     });
 
     int boardSize = _gameService.gameboard.size;
-    return Card(
-      color: Colors.green[900],
-      shape: Border.all(width: 0),
-      child: Column(
+    return Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
@@ -64,8 +61,7 @@ class _BoardState extends State<BoardWidget> {
                                     : const SizedBox.shrink()
                               ])).toList(),
                     ),
-                  )).toList()),
-    );
+                  )).toList());
   }
 }
 
