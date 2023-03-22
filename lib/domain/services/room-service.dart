@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
+import 'package:mobile/domain/models/iuser-model.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -22,7 +23,7 @@ class RoomService {
 
   RoomService() {
     // FOR TESTING
-    roomList.add(Room("TEST ROOM", ["TEST PLAYER"], "", 0, RoomType.PUBLIC));
+    roomList.add(Room("TEST ROOM", [], "", 0, RoomType.PUBLIC));
     initSocketListeners();
   }
 
@@ -31,7 +32,6 @@ class RoomService {
   }
 
   void initSocketListeners() {
-    // TODO SERVER IMPLEMENTATION
     _socket.on(SocketEvents.UpdateRoomJoinable.event, (data) {
       final newRooms =
           (data as List<dynamic>).map((e) => Room.fromJson(e)).toList();
@@ -45,7 +45,7 @@ class RoomService {
       // final players =
       // (data as List<dynamic>).map((e) => e as String).toList();
       debugPrint("Join Room request accepted");
-      _joinRoom(players);
+      // _joinRoom(players);
     });
   }
 
@@ -63,9 +63,9 @@ class RoomService {
     }); // TODO : Might need to create a model for this later maybe?
   }
 
-  void _joinRoom(List<String> players) {
+  void _joinRoom(List<IUser> players) {
     print(players);
-    selectedRoom!.users = [_authService.username!, ...players];
+    selectedRoom!.users = [IUser(_authService.username!), ...players];
     print("Room Joined");
   }
 
@@ -75,7 +75,7 @@ class RoomService {
   }
 
   void createRoom(Room room) {
-    room.users.add(_authService.username!);
+    // room.users.add(IUser("email", _authService.username!));
     selectedRoom = room;
   }
 }

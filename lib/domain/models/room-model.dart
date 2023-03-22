@@ -1,10 +1,12 @@
 import 'dart:core';
 
+import 'package:mobile/domain/models/iuser-model.dart';
+
 // TODO: To be adapted to the server room implementation.
 // TEMPORARY IMPLEMENTATION FOR UI
 class Room {
   String id;
-  List<String> users;
+  List<IUser> users;
   String dictionary;
   int timer;
   RoomType mode;
@@ -13,18 +15,19 @@ class Room {
 
   Room.fromJson(json)
       : id = json['id'],
-        users = (json['users'] as List<dynamic>).map((e) => e as String).toList() as List<String>,
+        users = (json['users'] as List<dynamic>)
+            .map((e) => IUser.fromJson(e))
+            .toList(),
         dictionary = json['dictionary'],
         timer = json['timer'],
         mode = RoomType.toEnum(json['mode']);
 
-  Map toJson() =>
-      {
+  Map toJson() => {
         "id": id,
         "users": users,
         "dictionary": dictionary,
-        "timer" : timer,
-        "mode" : mode
+        "timer": timer,
+        "mode": mode
       };
 }
 
@@ -34,7 +37,7 @@ enum RoomType {
 
   const RoomType(this.value);
 
-  static RoomType toEnum(String value){
+  static RoomType toEnum(String value) {
     RoomType? room = RoomType.values.asMap()[value];
     if (room == null) return RoomType.PUBLIC;
     return room;

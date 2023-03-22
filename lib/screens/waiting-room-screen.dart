@@ -72,7 +72,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
                 child: ListView(
                   controller: _scrollController,
                   children: [
-                    for (String playerName in currentRoom.users)
+                    for (String playerName in currentRoom.users.map((e) => e.username))
                       _buildRoomMemberCard(playerName)
                   ],
                 ),
