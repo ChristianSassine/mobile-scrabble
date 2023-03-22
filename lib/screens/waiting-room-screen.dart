@@ -18,9 +18,21 @@ class WaitingRoomScreen extends StatefulWidget {
 
 class _WaitingRoomState extends State<WaitingRoomScreen> {
   final _roomService = GetIt.I.get<RoomService>();
+  late final StreamSubscription sub;
+
   late Room currentRoom;
   final ScrollController _scrollController = ScrollController();
-  StreamSubscription? sub;
+
+  @override
+  initState(){
+    super.initState();
+
+    sub = _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
+      setState(() {
+        currentRoom = newRoomState;
+      });
+    });
+  }
 
   _WaitingRoomState() {
     currentRoom = _roomService.selectedRoom!;
@@ -42,49 +54,52 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       ),
     );
   }
+  Future<bool> _onWillPop() {
+    _roomService.exitWaitingRoom();
+    return Future(() => true);
+  }
 
   @override
   Widget build(BuildContext context) {
-    sub ??= _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
-      setState(() {
-        currentRoom = newRoomState;
-      });
-    });
 
-    return Scaffold(
-      appBar: AppBar(title: Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
-      body: Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(currentRoom.id, style: const TextStyle(fontSize: 50)),
-          const SizedBox(height: 100),
-          Text(FlutterI18n.translate(context, "waiting_room.players"),
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          SizedBox(
-            width: 500,
-            height: 300,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(color: Colors.white70, width: 1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Scrollbar(
-                child: ListView(
-                  controller: _scrollController,
-                  children: [
-                    for (String playerName in currentRoom.users.map((e) => e.username))
-                      _buildRoomMemberCard(playerName)
-                  ],
+
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(title: Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
+        body: Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(currentRoom.id, style: const TextStyle(fontSize: 50)),
+            const SizedBox(height: 100),
+            Text(FlutterI18n.translate(context, "waiting_room.players"),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+            SizedBox(
+              width: 500,
+              height: 300,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(color: Colors.white70, width: 1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Scrollbar(
+                  child: ListView(
+                    controller: _scrollController,
+                    children: [
+                      for (String playerName in currentRoom.users.map((e) => e.username))
+                        _buildRoomMemberCard(playerName)
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ]),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _startGame,
-        tooltip: FlutterI18n.translate(context, "waiting_room.start_game"),
-        child: const Icon(Icons.play_arrow),
+          ]),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _startGame,
+          tooltip: FlutterI18n.translate(context, "waiting_room.start_game"),
+          child: const Icon(Icons.play_arrow),
+        ),
       ),
     );
   }

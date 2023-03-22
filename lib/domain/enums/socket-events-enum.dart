@@ -11,7 +11,8 @@ enum SocketEvents {
   RoomLobby('roomLobby'),
   UpdateRoomJoinable('updateListOfRooms'),
   PlayerJoinGameAvailable('roomJoin'),
-  JoinValidGame('joinValid')
+  JoinValidGame('joinValid'),
+  ExitWaitingRoom('exitWaitingRoom')
   ;
 
   const SocketEvents(this.event);
