@@ -18,7 +18,8 @@ class WaitingRoomScreen extends StatefulWidget {
 
 class _WaitingRoomState extends State<WaitingRoomScreen> {
   final _roomService = GetIt.I.get<RoomService>();
-  late final StreamSubscription sub;
+  late final StreamSubscription newMemberSub;
+  // late final StreamSubscription kickedOutSub;
 
   late Room currentRoom;
   final ScrollController _scrollController = ScrollController();
@@ -27,7 +28,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   initState(){
     super.initState();
 
-    sub = _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
+    newMemberSub = _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
       setState(() {
         currentRoom = newRoomState;
       });

@@ -22,6 +22,8 @@ class RoomService {
   Subject<List<Room>> notifyNewRoomList = PublishSubject();
   Subject<Room> notifyRoomMemberList = PublishSubject();
   Subject<Room> notifyRoomJoin = PublishSubject();
+  // TODO : Add kicked out when it's finished [SERVER]
+  // Subject<bool> notifyKickedOut = PublishSubject();
 
   // TODO: Replace with real image info (Avatar still has to be implemented)
   final userImage = UserImageInfo(
@@ -79,7 +81,8 @@ class RoomService {
   }
 
   void _joinRoom(List<IUser> players) {
-    selectedRoom!.users = [IUser(_authService.username!), ...players];
+    selectedRoom!.users = [...players];
+    notifyRoomJoin.add(selectedRoom!);
     debugPrint("Room Joined");
   }
 
