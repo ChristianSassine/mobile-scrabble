@@ -21,8 +21,8 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
   // Those labels don't need to be translated (We want the language name in the language itself)
   List<DropdownMenuItem<String>> availableLanguages =
       <DropdownMenuItem<String>>[
-    const DropdownMenuItem<String>(value: "fr", child: Text("Français")),
-    const DropdownMenuItem<String>(value: "en", child: Text("English")),
+    const DropdownMenuItem<String>(value: "fr", child: Text("FR")),
+    const DropdownMenuItem<String>(value: "en", child: Text("EN")),
   ];
 
   void _changeLanguage(Locale locale) {
