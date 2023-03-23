@@ -7,7 +7,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 class RecaptchaV2 extends StatefulWidget {
-  final String apiKey;
+  final String? apiKey;
   final String? apiSecret;
   final String pluginURL;
   final RecaptchaV2Controller controller;
@@ -20,9 +20,9 @@ class RecaptchaV2 extends StatefulWidget {
   final ValueChanged<String>? onManualVerification;
 
   RecaptchaV2({
-    required this.apiKey,
+    this.apiKey,
     this.apiSecret,
-    this.pluginURL = "https://recaptcha-flutter-plugin.firebaseapp.com/",
+    required this.pluginURL,
     this.visibleCancelBottom = false,
     this.textCancelButtom = "CANCEL CAPTCHA",
     RecaptchaV2Controller? controller,
@@ -30,8 +30,7 @@ class RecaptchaV2 extends StatefulWidget {
     this.onVerifiedError,
     this.onManualVerification,
     this.autoVerify = true,
-  })  : controller = controller ?? RecaptchaV2Controller(),
-        assert(apiKey != null, "Google ReCaptcha API KEY is missing.");
+  })  : controller = controller ?? RecaptchaV2Controller();
 
   @override
   State<StatefulWidget> createState() => _RecaptchaV2State();
@@ -83,11 +82,20 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
 
     webController
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.white)
+      ..setBackgroundColor(Colors.transparent)
+      ..setNavigationDelegate(NavigationDelegate(
+        onNavigationRequest: (NavigationRequest request) {
+          if (request.url != widget.pluginURL) {
+            return NavigationDecision.prevent;
+          }
+          return NavigationDecision.navigate;
+        },
+      ),)
       ..addJavaScriptChannel(
-        'RecaptchaFlutterChannel',
+        'Captcha',
         onMessageReceived: (JavaScriptMessage receiver) {
           String _token = receiver.message;
+          debugPrint(_token);
           if (_token.contains("verify")) {
             _token = _token.substring(7);
           }
@@ -95,7 +103,7 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
           widget.onManualVerification!(_token);
         },
       )
-      ..loadRequest(Uri.parse("${widget.pluginURL}?api_key=${widget.apiKey}"));
+      ..loadRequest(Uri.parse("${widget.pluginURL}"));
 
     _controller = webController;
 
