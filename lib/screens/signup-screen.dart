@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/recaptcha-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
@@ -17,25 +18,56 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  RecaptchaV2Controller recaptchaV2Controller = RecaptchaV2Controller();
+  bool _isVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => recaptchaV2Controller.show());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: const Scaffold(
-          body: Center(
-            child: SizedBox(
-              width: 500,
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: SignUpForm(),
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Stack(children: [
+        Center(
+          child: SizedBox(
+            width: 500,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Visibility(
+                  visible: _isVisible,
+                  child: const SignUpForm(),
                 ),
               ),
             ),
           ),
-        ));
+        ),
+        RecaptchaV2(
+          apiKey: "6LdDAfQkAAAAAOAR8Or0EiqjmF4RCYdSS48A8iwv",
+          controller: recaptchaV2Controller,
+          onManualVerification: (token) {
+            if (token != Null) {
+              setState(() {
+                recaptchaV2Controller.hide();
+                _isVisible = true;
+              });
+              return;
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBarFactory.redSnack("Error in verification"));
+            Navigator.of(context).pop();
+          },
+          autoVerify: false,
+        ),
+      ]),
+    );
   }
 }
 
