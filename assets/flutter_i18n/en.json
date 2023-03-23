@@ -71,6 +71,9 @@
             "button": "Register",
             "success": "Successful sign up!",
             "failure": "Error while signing up!"
+        },
+        "recaptcha": {
+            "error": "Error in captcha verification"
         }
     },
     "setting": {

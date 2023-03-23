@@ -64,7 +64,7 @@ class _SignupScreenState extends State<SignupScreen> {
               return;
             }
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBarFactory.redSnack("Error in verification"));
+                SnackBarFactory.redSnack(FlutterI18n.translate(context, "auth.recaptcha.error")));
             Navigator.of(context).pop();
           },
           autoVerify: false,

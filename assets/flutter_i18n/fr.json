@@ -71,6 +71,9 @@
             "button": "Créer",
             "success": "Succès de création de compte!",
             "failure": "Erreur dans la création du compte!"
+        },
+        "recaptcha": {
+            "error": "Erreur dans la verification du recaptcha"
         }
     },
     "setting": {
