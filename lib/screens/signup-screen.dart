@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/components/recaptcha-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -20,6 +21,8 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   RecaptchaV2Controller recaptchaV2Controller = RecaptchaV2Controller();
   bool _isVisible = false;
+
+  final _httpService = GetIt.I.get<HttpHandlerService>();
 
   @override
   void initState() {
@@ -38,19 +41,19 @@ class _SignupScreenState extends State<SignupScreen> {
         Center(
           child: SizedBox(
             width: 500,
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Visibility(
-                  visible: _isVisible,
-                  child: const SignUpForm(),
+            child: Visibility(
+              visible: _isVisible,
+              child: const Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: SignUpForm(),
                 ),
               ),
             ),
           ),
         ),
         RecaptchaV2(
-          apiKey: "6LdDAfQkAAAAAOAR8Or0EiqjmF4RCYdSS48A8iwv",
+          pluginURL: "${_httpService.baseUrl}/auth/captcha",
           controller: recaptchaV2Controller,
           onManualVerification: (token) {
             if (token != Null) {
@@ -87,7 +90,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final _confirmPasswordController = TextEditingController();
   final _emailController = TextEditingController();
 
-  final authService = GetIt.I.get<AuthService>();
+  final _authService = GetIt.I.get<AuthService>();
   late final StreamSubscription loginSub;
   late final StreamSubscription errorSub;
 
@@ -95,7 +98,7 @@ class _SignUpFormState extends State<SignUpForm> {
   void initState() {
     super.initState();
 
-    loginSub = authService.notifyLogin.stream.listen((event) {
+    loginSub = _authService.notifyLogin.stream.listen((event) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(
           FlutterI18n.translate(context, "auth.signup.success")));
       Navigator.of(context).pushAndRemoveUntil(
@@ -106,7 +109,7 @@ class _SignUpFormState extends State<SignUpForm> {
           (route) => false);
     });
 
-    errorSub = authService.notifyError.stream.listen((event) {
+    errorSub = _authService.notifyError.stream.listen((event) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
           FlutterI18n.translate(context, "auth.signup.failure")));
     });
@@ -120,7 +123,7 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   void _registerAccount() {
-    authService.createUser(_usernameController.text, _emailController.text,
+    _authService.createUser(_usernameController.text, _emailController.text,
         _passwordController.text);
   }
 
