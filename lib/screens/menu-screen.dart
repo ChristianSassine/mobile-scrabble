@@ -4,6 +4,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/language-dropdown-widget.dart';
 import 'package:mobile/components/settings-widget.dart';
+import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/create-game-screen.dart';
 import 'package:mobile/screens/login-screen.dart';
@@ -68,6 +69,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -126,7 +128,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 topRight: Radius.circular(100),
                 bottomRight: Radius.circular(100),
               ),
-              color: Theme.of(context).backgroundColor,
+              color: theme.backgroundColor,
             ),
             child: IconButton(
                 onPressed: () => _scaffoldKey.currentState!.openDrawer(),
@@ -165,8 +167,97 @@ class _MenuScreenState extends State<MenuScreen> {
                         height: size.height * 0.05,
                       ),
                       ElevatedButton(
-                        onPressed: () => {},
-                        child: Text(FlutterI18n.translate(context, "menu_screen.score")),
+                        onPressed: () => {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => Dialog(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: FutureBuilder(
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.done) {
+                                            if (snapshot.hasError) {
+                                              Navigator.of(context).pop();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                      SnackBarFactory.redSnack(
+                                                          "Error while fetching the high scores")); // TODO: Translate
+                                              return SizedBox();
+                                            }
+                                            return IntrinsicHeight(
+                                              child: IntrinsicWidth(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      "High Scores",
+                                                      style: theme.textTheme
+                                                          .displayMedium,
+                                                    ),
+                                                    DataTable(
+                                                        columnSpacing:
+                                                            size.width * 0.2,
+                                                        columns: [
+                                                          DataColumn(
+                                                              label: Text(
+                                                            "Scores",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          )),
+                                                          DataColumn(
+                                                              label: Text(
+                                                            "Players",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          )),
+                                                        ],
+                                                        rows: [
+                                                          DataRow(cells: [
+                                                            DataCell(Text(
+                                                              "0",
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            )),
+                                                            DataCell(Text(
+                                                                "placeHolder"))
+                                                          ]),
+                                                          DataRow(cells: [
+                                                            DataCell(Text("0")),
+                                                            DataCell(Text(
+                                                                "placeHolder"))
+                                                          ]),
+                                                          DataRow(cells: [
+                                                            DataCell(Text("0")),
+                                                            DataCell(Text(
+                                                                "placeHolder"))
+                                                          ]),
+                                                          DataRow(cells: [
+                                                            DataCell(Text("0")),
+                                                            DataCell(Text(
+                                                                "placeHolder"))
+                                                          ]),
+                                                          DataRow(cells: [
+                                                            DataCell(Text("0")),
+                                                            DataCell(Text(
+                                                                "placeHolder"))
+                                                          ]),
+                                                        ])
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          return CircularProgressIndicator();
+                                        },
+                                      ),
+                                    ),
+                                  ))
+                        },
+                        child: Text(FlutterI18n.translate(
+                            context, "menu_screen.score")),
                       ),
                     ]))),
           ),
@@ -199,9 +290,11 @@ class _FooterState extends State<Footer> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       height: widget.size.height * 0.1,
-      color: Theme.of(context).backgroundColor,
+      color: theme.backgroundColor,
       child: Stack(
         fit: StackFit.expand,
         children: [
