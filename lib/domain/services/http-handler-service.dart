@@ -23,7 +23,8 @@ class HttpHandlerService {
     return client.get(
       Uri.parse("${baseUrl}/image/default-pictures"),
     );
-  
+  }
+
   Future<http.Response> fetchHighScoresRequest() {
     return client.get(Uri.parse("${baseUrl}/highScore/classique"));
   }
