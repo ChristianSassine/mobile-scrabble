@@ -17,6 +17,12 @@
             "user": "Paramètres utilisateur",
             "theme": "Paramètres de thème",
             "disconnect": "Déconnexion"
+        },
+        "high_scores": {
+            "error" : "Erreur lors de la récupération des meilleurs scores",
+            "title": "Meilleurs Scores",
+            "label_score": "Scores",
+            "label_player": "Joueurs"
         }
     },
     "form": {
