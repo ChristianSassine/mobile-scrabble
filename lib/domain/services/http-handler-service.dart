@@ -17,4 +17,8 @@ class HttpHandlerService {
   Future<http.Response> signUpRequest(Object body) {
     return client.post(Uri.parse("${baseUrl}/auth/signUp"), body: body);
   }
+
+  Future<http.Response> fetchHighScoresRequest() {
+    return client.get(Uri.parse("${baseUrl}/highScore/classique"));
+  }
 }
