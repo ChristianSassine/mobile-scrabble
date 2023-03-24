@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/high-scores-widget.dart';
 import 'package:mobile/components/language-dropdown-widget.dart';
 import 'package:mobile/components/settings-widget.dart';
-import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/high-scores-service.dart';
 import 'package:mobile/screens/create-game-screen.dart';
 import 'package:mobile/screens/login-screen.dart';
 import 'package:mobile/screens/room-selection-screen.dart';
@@ -171,89 +174,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) => Dialog(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: FutureBuilder(
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                            if (snapshot.hasError) {
-                                              Navigator.of(context).pop();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                      SnackBarFactory.redSnack(
-                                                          "Error while fetching the high scores")); // TODO: Translate
-                                              return SizedBox();
-                                            }
-                                            return IntrinsicHeight(
-                                              child: IntrinsicWidth(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      "High Scores",
-                                                      style: theme.textTheme
-                                                          .displayMedium,
-                                                    ),
-                                                    DataTable(
-                                                        columnSpacing:
-                                                            size.width * 0.2,
-                                                        columns: [
-                                                          DataColumn(
-                                                              label: Text(
-                                                            "Scores",
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          )),
-                                                          DataColumn(
-                                                              label: Text(
-                                                            "Players",
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          )),
-                                                        ],
-                                                        rows: [
-                                                          DataRow(cells: [
-                                                            DataCell(Text(
-                                                              "0",
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                            )),
-                                                            DataCell(Text(
-                                                                "placeHolder"))
-                                                          ]),
-                                                          DataRow(cells: [
-                                                            DataCell(Text("0")),
-                                                            DataCell(Text(
-                                                                "placeHolder"))
-                                                          ]),
-                                                          DataRow(cells: [
-                                                            DataCell(Text("0")),
-                                                            DataCell(Text(
-                                                                "placeHolder"))
-                                                          ]),
-                                                          DataRow(cells: [
-                                                            DataCell(Text("0")),
-                                                            DataCell(Text(
-                                                                "placeHolder"))
-                                                          ]),
-                                                          DataRow(cells: [
-                                                            DataCell(Text("0")),
-                                                            DataCell(Text(
-                                                                "placeHolder"))
-                                                          ]),
-                                                        ])
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                          return CircularProgressIndicator();
-                                        },
-                                      ),
-                                    ),
+                                    child: HighScores(),
                                   ))
                         },
                         child: Text(FlutterI18n.translate(
