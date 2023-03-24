@@ -6,12 +6,24 @@
         "login": "Se connecter",
         "login_screen": "Page de connection",
         "disconnect": "Se déconnecter",
+        "sign_up_screen": "Page de création de compte",
         "sign_up": "Créer un compte",
         "create_game": "Créer une partie",
         "join_game": "Rejoindre une partie",
         "join_chat": "Rejoindre une salle de clavardage",
-        "chat_room": "Salle de clavardage",
-        "change_language": "Changer la langue"
+        "score": "Meilleurs scores",
+        "change_language": "Changer la langue",
+        "settings": {
+            "user": "Paramètres utilisateur",
+            "theme": "Paramètres de thème",
+            "disconnect": "Déconnexion"
+        },
+        "high_scores": {
+            "error" : "Erreur lors de la récupération des meilleurs scores",
+            "title": "Meilleurs Scores",
+            "label_score": "Scores",
+            "label_player": "Joueurs"
+        }
     },
     "form": {
         "username_field": "Ecrivez votre nom d'utilisateur ici",
@@ -25,7 +37,7 @@
         "missing_room_name": "Entrez un nom de salle avant de soumettre",
         "game_visibility": "Visibilité de la partie",
         "private": "Privée",
-        "public":  "Public",
+        "public": "Public",
         "create_game": "Créer une partie"
     },
     "waiting_room": {
@@ -41,17 +53,18 @@
     },
     "auth": {
         "login": {
-            "title" : "Authentification de compte",
+            "title": "Authentification de compte",
             "username_label": "Nom d'utilisateur",
             "username_error": "Entrez votre nom d'utilisateur",
             "password_label": "Mot de passe",
             "password_error": "Entez votre mot de passe",
             "button": "S'identifier",
             "success": "Succès d'identification!",
-            "failure" : "Erreur lors de l'identification!"
+            "failure": "Erreur lors de l'identification!",
+            "button_sign_up": "Créer un nouveau compte"
         },
         "signup": {
-            "title" : "Création de compte",
+            "title": "Création de compte",
             "username_label": "Nom d'utilisateur",
             "username_error": "Entrez un nom d'utilisateur",
             "email_label": "Courriel",
@@ -63,7 +76,10 @@
             "password_confirm_error": "Les mots de passes sont différents",
             "button": "Créer",
             "success": "Succès de création de compte!",
-            "failure" : "Erreur dans la création du compte!"
+            "failure": "Erreur dans la création du compte!"
+        },
+        "recaptcha": {
+            "error": "Erreur dans la verification du recaptcha"
         }
     },
     "setting": {
@@ -83,5 +99,8 @@
         "triple_letter": "TRIPLE\nLETTRE",
         "double_word": "DOUBLE\nMOT",
         "triple_word": "TRIPLE\nMOT"
+    },
+    "chat": {
+        "screen_name": "Salle de clavardage"
     }
 }

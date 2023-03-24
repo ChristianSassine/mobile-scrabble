@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/recaptcha-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -17,17 +19,31 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  RecaptchaV2Controller recaptchaV2Controller = RecaptchaV2Controller();
+  bool _isVisible = false;
+
+  final _httpService = GetIt.I.get<HttpHandlerService>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => recaptchaV2Controller.show());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: const Scaffold(
-          body: Center(
-            child: SizedBox(
-              width: 500,
-              child: Card(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Stack(children: [
+        Center(
+          child: SizedBox(
+            width: 500,
+            child: Visibility(
+              visible: _isVisible,
+              child: const Card(
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: SignUpForm(),
@@ -35,7 +51,26 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             ),
           ),
-        ));
+        ),
+        RecaptchaV2(
+          pluginURL: "${_httpService.baseUrl}/auth/captcha",
+          controller: recaptchaV2Controller,
+          onManualVerification: (token) {
+            if (token != Null) {
+              setState(() {
+                recaptchaV2Controller.hide();
+                _isVisible = true;
+              });
+              return;
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBarFactory.redSnack(FlutterI18n.translate(context, "auth.recaptcha.error")));
+            Navigator.of(context).pop();
+          },
+          autoVerify: false,
+        ),
+      ]),
+    );
   }
 }
 
@@ -55,7 +90,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final _confirmPasswordController = TextEditingController();
   final _emailController = TextEditingController();
 
-  final authService = GetIt.I.get<AuthService>();
+  final _authService = GetIt.I.get<AuthService>();
   late final StreamSubscription loginSub;
   late final StreamSubscription errorSub;
 
@@ -63,17 +98,18 @@ class _SignUpFormState extends State<SignUpForm> {
   void initState() {
     super.initState();
 
-    loginSub = authService.notifyLogin.stream.listen((event) {
+    loginSub = _authService.notifyLogin.stream.listen((event) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(
           FlutterI18n.translate(context, "auth.signup.success")));
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) =>
-                  const MenuScreen(title: "Page de connection")),
+              builder: (context) => MenuScreen(
+                  title: FlutterI18n.translate(
+                      context, "menu_screen.screen_name"))),
           (route) => false);
     });
 
-    errorSub = authService.notifyError.stream.listen((event) {
+    errorSub = _authService.notifyError.stream.listen((event) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
           FlutterI18n.translate(context, "auth.signup.failure")));
     });
@@ -87,7 +123,7 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   void _registerAccount() {
-    authService.createUser(_usernameController.text, _emailController.text,
+    _authService.createUser(_usernameController.text, _emailController.text,
         _passwordController.text);
   }
 
@@ -207,7 +243,8 @@ class _SignUpFormState extends State<SignUpForm> {
                         }
                       }
                     : null,
-                child: Text(FlutterI18n.translate(context, "auth.signup.button")),
+                child:
+                    Text(FlutterI18n.translate(context, "auth.signup.button")),
               ),
             ),
           ],

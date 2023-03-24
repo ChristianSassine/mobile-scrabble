@@ -84,31 +84,39 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                 FutureBuilder<dynamic>(
                   future: _images,
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      List<Widget> widgets = [];
-                      for (int i = 0; i < snapshot.data.length; i++) {
-                        widgets.add(Expanded(
-                            child: GestureDetector(
-                          onTap: () => selectAvatar(
-                              i,
-                              snapshot.data![snapshot.data.keys.elementAt(i)]
-                                  [0]),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 3,
-                                      color: _selectedImageIndex == i
-                                          ? Colors.green
-                                          : Colors.transparent)),
-                              child: Image.network(
-                                snapshot.data![snapshot.data.keys.elementAt(i)]
-                                    [0],
-                                width: 50,
-                                height: 50,
-                              )),
-                        )));
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasError) {
+                        return Placeholder();
                       }
-                      return Row(children: widgets);
+                      if (snapshot.hasData) {
+                        List<Widget> widgets = [];
+                        for (int i = 0; i < snapshot.data.length; i++) {
+                          widgets.add(Expanded(
+                              child: GestureDetector(
+                                onTap: () =>
+                                    selectAvatar(
+                                        i,
+                                        snapshot.data![snapshot.data.keys
+                                            .elementAt(i)]
+                                        [0]),
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            width: 3,
+                                            color: _selectedImageIndex == i
+                                                ? Colors.green
+                                                : Colors.transparent)),
+                                    child: Image.network(
+                                      snapshot.data![snapshot.data.keys
+                                          .elementAt(i)]
+                                      [0],
+                                      width: 50,
+                                      height: 50,
+                                    )),
+                              )));
+                        }
+                        return Row(children: widgets);
+                      }
                     }
                     return const CircularProgressIndicator();
                   },

@@ -22,6 +22,7 @@ dependencies:
     http: ^0.13.5
     flutter_i18n: ^0.32.1
     image_picker: ^0.8.7
+    webview_flutter: ^4.0.7
 
 dev_dependencies:
     flutter_test:
