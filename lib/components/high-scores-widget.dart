@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/high-score-model.dart';
@@ -27,7 +28,7 @@ class HighScores extends StatelessWidget {
             if (snapshot.hasError) {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
-                  "Error while fetching the high scores")); // TODO: Translate
+                  FlutterI18n.translate(context, "menu_screen.high_scores.error"))); // TODO: Translate
               return SizedBox();
             }
             return IntrinsicHeight(

@@ -17,6 +17,9 @@
             "user": "User settings",
             "theme": "Themes settings",
             "disconnect": "Log out"
+        },
+        "high_scores": {
+            "error" : "Error while fetching the high scores"
         }
     },
     "form": {
