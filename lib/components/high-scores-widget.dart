@@ -37,20 +37,20 @@ class HighScores extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "High Scores",
+                      FlutterI18n.translate(context, "menu_screen.high_scores.title"),
                       style: theme.textTheme.displayMedium,
                     ),
                     DataTable(
                         columnSpacing: size.width * 0.2,
-                        columns: const [
+                        columns: [
                           DataColumn(
                               label: Text(
-                            "Scores",
+                            FlutterI18n.translate(context, "menu_screen.high_scores.label_score"),
                             textAlign: TextAlign.center,
                           )),
                           DataColumn(
                               label: Text(
-                            "Players",
+                                FlutterI18n.translate(context, "menu_screen.high_scores.label_player"),
                             textAlign: TextAlign.center,
                           )),
                         ],

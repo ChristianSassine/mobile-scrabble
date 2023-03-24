@@ -19,7 +19,10 @@
             "disconnect": "Log out"
         },
         "high_scores": {
-            "error" : "Error while fetching the high scores"
+            "error" : "Error while fetching the high scores",
+            "title": "High Scores",
+            "label_score": "Scores",
+            "label_player": "Players"
         }
     },
     "form": {

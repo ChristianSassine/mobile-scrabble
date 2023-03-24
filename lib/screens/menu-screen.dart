@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -8,7 +6,6 @@ import 'package:mobile/components/high-scores-widget.dart';
 import 'package:mobile/components/language-dropdown-widget.dart';
 import 'package:mobile/components/settings-widget.dart';
 import 'package:mobile/domain/services/auth-service.dart';
-import 'package:mobile/domain/services/high-scores-service.dart';
 import 'package:mobile/screens/create-game-screen.dart';
 import 'package:mobile/screens/login-screen.dart';
 import 'package:mobile/screens/room-selection-screen.dart';
