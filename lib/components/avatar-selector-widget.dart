@@ -28,11 +28,6 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
   late Future<dynamic> _images;
 
   int? _selectedImageIndex;
-  final List<String> _defaultImages = [
-    'assets/images/test.png',
-    'assets/images/test.png',
-    'assets/images/scrabble_logo.png',
-  ];
 
   late final Function(File, int) _selectAvatarFromList;
   late final Function() _selectAvatarFromCamera;
@@ -68,9 +63,6 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
             },
             child: const Text(
               'Choisir',
-              // style: TextStyle(
-              //   color: Colors.black,
-              // ),
             ),
           ),
         ],
@@ -141,7 +133,8 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
 }
 
 class AvatarSelector extends StatefulWidget {
-  const AvatarSelector({Key? key}) : super(key: key);
+  const AvatarSelector({Key? key, required this.onImageChange}) : super(key: key);
+  final ValueChanged<File?> onImageChange;
 
   @override
   _AvatarSelectorState createState() => _AvatarSelectorState();
@@ -187,6 +180,7 @@ class _AvatarSelectorState extends State<AvatarSelector> {
   }
 
   setAvatar() {
+    widget.onImageChange(_selectedImageFile);
     if (_selectedImageFile == null) {
       return null;
     } else if (_selectedImageFile != null &&
@@ -204,7 +198,6 @@ class _AvatarSelectorState extends State<AvatarSelector> {
       mouseCursor: SystemMouseCursors.click,
       child: CircleAvatar(
           radius: 32.0,
-          backgroundColor: Colors.black,
           child: CircleAvatar(
             radius: 30.0,
             backgroundImage: setAvatar(),
