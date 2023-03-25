@@ -99,9 +99,11 @@ class _MenuScreenState extends State<MenuScreen> {
                           child: Text(FlutterI18n.translate(
                               context, "menu_screen.create_game"))),
                       ElevatedButton(
-                          onPressed: !loggedIn
-                              ? null
-                              : () => {
+                          onPressed:
+                          // !loggedIn
+                          //     ? null
+                          //     :
+                              () => {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

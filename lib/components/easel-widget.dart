@@ -158,7 +158,7 @@ class EaselLetter extends StatelessWidget {
       child: LetterWidget(
         character: value.character,
         points: value.points,
-        widgetSize: 75,
+        widgetSize: MediaQuery.of(context).size.height * 0.1,
         opacity: value != Letter.EMPTY ? 1 : 0.75,
       ),
       onDragStarted: () => _gameService.dragLetterFromEasel(index),

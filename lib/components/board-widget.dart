@@ -33,7 +33,9 @@ class _BoardState extends State<BoardWidget> {
 
   @override
   Widget build(BuildContext context) {
+    double slotSize = MediaQuery.of(context).size.height * 0.055;
     int boardSize = _gameService.gameboard.size;
+
     return Card(
       color: Colors.green[900],
       shape: Border.all(width: 0),
@@ -56,25 +58,16 @@ class _BoardState extends State<BoardWidget> {
                                     x: vIndex,
                                     y: hIndex),
                                 !_gameService.gameboard.isSlotEmpty(vIndex, hIndex)
-<<<<<<< Updated upstream
                                     ? _gameService.isPendingLetter(vIndex, hIndex)
                                         ? PendingBoardLetter(
                                             value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
                                             dragKey: widget.dragKey,
-                                            widgetSize: 35,
+                                            widgetSize: slotSize,
                                             x: vIndex,
                                             y: hIndex)
                                         : BoardLetter(
                                             value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
-                                            widgetSize: 35)
-=======
-                                    ? BoardLetter(
-                                        value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
-                                        dragKey: widget.dragKey,
-                                        widgetSize: 35,
-                                        x: vIndex,
-                                        y: hIndex)
->>>>>>> Stashed changes
+                                            widgetSize: slotSize)
                                     : const SizedBox.shrink()
                               ])).toList(),
                     ),
@@ -131,9 +124,11 @@ class SlotWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var SlotSize = MediaQuery.of(context).size.height * 0.055;
+
     return SizedBox(
-      height: 35,
-      width: 35,
+      height: SlotSize,
+      width: SlotSize,
       child: DragTarget<Letter>(
         builder: (context, letters, rejectedItems) {
           if (letters.isEmpty) {
@@ -141,7 +136,7 @@ class SlotWidget extends StatelessWidget {
           } else {
             return Stack(children: [
               getCardFromModifier(context, value),
-              GhostLetter(value: letters[0]!, widgetSize: 35)
+              GhostLetter(value: letters[0]!, widgetSize: SlotSize)
             ]);
           }
         },
@@ -181,11 +176,10 @@ class PendingBoardLetter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< Updated upstream
     return _gameService.isPlacedLetterRemovalValid(x, y)
         ? LongPressDraggable(
             data: value,
-            delay: const Duration(milliseconds: 50),
+            delay: const Duration(milliseconds: 0),
             feedback: DraggedLetter(value: value, dragKey: dragKey),
             child: LetterWidget(
               character: value.character,
@@ -202,15 +196,5 @@ class PendingBoardLetter extends StatelessWidget {
             widgetSize: widgetSize,
             highlighted: true,
           );
-=======
-    return LongPressDraggable(
-      data: value,
-      delay: const Duration(milliseconds: 100),
-      feedback: DraggedLetter(value: value, dragKey: dragKey),
-      child: LetterWidget(character: value.character, points: value.points, widgetSize: widgetSize),
-      onDragStarted: () => _gameService.removeLetterFromBoard(x, y),
-      onDraggableCanceled: (_v, _o) => _gameService.placeLetterOnBoard(x, y, value),
-    );
->>>>>>> Stashed changes
   }
 }
