@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile/domain/enums/image-type-enum.dart';
+import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 
 const AVATAR_FROM_CAMERA = -1;
 
 class AvatarSelectorDialog extends StatefulWidget {
-  final Function(File, int) selectAvatarFromList;
+  final Function(File, String, int) selectAvatarFromList;
   final Function() selectAvatarFromCamera;
   int? selectedImageIndex;
 
@@ -29,7 +31,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
 
   int? _selectedImageIndex;
 
-  late final Function(File, int) _selectAvatarFromList;
+  late final Function(File, String, int) _selectAvatarFromList;
   late final Function() _selectAvatarFromCamera;
 
   @override
@@ -41,9 +43,9 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
     _images = _avatarService.getDefaultAvatars();
   }
 
-  void selectAvatar(int index, [String? imageURL]) {
+  void selectAvatar(int index, [String? imageURL, String? name]) {
     if (index >= 0 && imageURL!.isNotEmpty) {
-      _selectAvatarFromList(File(imageURL), index);
+      _selectAvatarFromList(File(imageURL), name!, index);
     } else {
       _selectAvatarFromCamera();
       Navigator.pop(context, 'Choisir');
@@ -78,7 +80,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       if (snapshot.hasError) {
-                        return Placeholder();
+                        return Placeholder(); // TODO: Handle error
                       }
                       if (snapshot.hasData) {
                         List<Widget> widgets = [];
@@ -90,7 +92,8 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                                         i,
                                         snapshot.data![snapshot.data.keys
                                             .elementAt(i)]
-                                        [0]),
+                                        [0], snapshot.data.keys
+                                        .elementAt(i)),
                                 child: Container(
                                     decoration: BoxDecoration(
                                         border: Border.all(
@@ -134,7 +137,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
 
 class AvatarSelector extends StatefulWidget {
   const AvatarSelector({Key? key, required this.onImageChange}) : super(key: key);
-  final ValueChanged<File?> onImageChange;
+  final ValueChanged<AvatarData?> onImageChange;
 
   @override
   _AvatarSelectorState createState() => _AvatarSelectorState();
@@ -157,16 +160,19 @@ class _AvatarSelectorState extends State<AvatarSelector> {
         _selectedImageFile = File(image.path);
         _selectedImageIndex = AVATAR_FROM_CAMERA;
       });
+      widget.onImageChange(AvatarData(ImageType.DataImage, file: _selectedImageFile));
     } catch (e) {
       print(e);
     }
   }
 
-  void selectAvatarFromList(File selectedAvatar, int index) {
+  void selectAvatarFromList(File selectedAvatar, String filename, int index) {
     setState(() {
       _selectedImageFile = selectedAvatar;
       _selectedImageIndex = index;
     });
+    print("IN SELECT : ${filename}");
+    widget.onImageChange(AvatarData(ImageType.UrlImage, name: filename, file: _selectedImageFile));
   }
 
   Future openAvatarSelector() async {
@@ -180,7 +186,6 @@ class _AvatarSelectorState extends State<AvatarSelector> {
   }
 
   setAvatar() {
-    widget.onImageChange(_selectedImageFile);
     if (_selectedImageFile == null) {
       return null;
     } else if (_selectedImageFile != null &&
