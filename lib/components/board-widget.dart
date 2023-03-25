@@ -23,11 +23,16 @@ class _BoardState extends State<BoardWidget> {
   StreamSubscription? boardUpdate;
 
   @override
-  Widget build(BuildContext context) {
-    boardUpdate ??= _gameService.gameboard.notifyBoardChanged.stream.listen((event) {
+  initState() {
+    super.initState();
+
+    boardUpdate = _gameService.gameboard.notifyBoardChanged.stream.listen((event) {
       setState(() {});
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     int boardSize = _gameService.gameboard.size;
     return Card(
       color: Colors.green[900],
@@ -51,6 +56,7 @@ class _BoardState extends State<BoardWidget> {
                                     x: vIndex,
                                     y: hIndex),
                                 !_gameService.gameboard.isSlotEmpty(vIndex, hIndex)
+<<<<<<< Updated upstream
                                     ? _gameService.isPendingLetter(vIndex, hIndex)
                                         ? PendingBoardLetter(
                                             value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
@@ -61,6 +67,14 @@ class _BoardState extends State<BoardWidget> {
                                         : BoardLetter(
                                             value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
                                             widgetSize: 35)
+=======
+                                    ? BoardLetter(
+                                        value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
+                                        dragKey: widget.dragKey,
+                                        widgetSize: 35,
+                                        x: vIndex,
+                                        y: hIndex)
+>>>>>>> Stashed changes
                                     : const SizedBox.shrink()
                               ])).toList(),
                     ),
@@ -167,6 +181,7 @@ class PendingBoardLetter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     return _gameService.isPlacedLetterRemovalValid(x, y)
         ? LongPressDraggable(
             data: value,
@@ -187,5 +202,15 @@ class PendingBoardLetter extends StatelessWidget {
             widgetSize: widgetSize,
             highlighted: true,
           );
+=======
+    return LongPressDraggable(
+      data: value,
+      delay: const Duration(milliseconds: 100),
+      feedback: DraggedLetter(value: value, dragKey: dragKey),
+      child: LetterWidget(character: value.character, points: value.points, widgetSize: widgetSize),
+      onDragStarted: () => _gameService.removeLetterFromBoard(x, y),
+      onDraggableCanceled: (_v, _o) => _gameService.placeLetterOnBoard(x, y, value),
+    );
+>>>>>>> Stashed changes
   }
 }

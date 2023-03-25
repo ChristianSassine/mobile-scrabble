@@ -46,9 +46,7 @@ class _EaselState extends State<EaselWidget> {
 
   void _moveGhostLetterFromDragOffset(Offset offset) {
     _moveGhostLetterAt(
-        offset.dx < MediaQuery.of(context).size.width / 2
-            ? 0
-            : _visualLetters.length - 1);
+        offset.dx < MediaQuery.of(context).size.width / 2 ? 0 : _visualLetters.length - 1);
   }
 
   void _onEaselDrop(letter) {
@@ -69,9 +67,10 @@ class _EaselState extends State<EaselWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    easelUpdate ??=
-        _gameService.easel.notifyEaselChanged.stream.listen((letterIndex) {
+  void initState() {
+    super.initState();
+
+    easelUpdate = _gameService.easel.notifyEaselChanged.stream.listen((letterIndex) {
       setState(() {
         List<Letter> actualEasel = _gameService.easel.getLetterList();
 
@@ -79,14 +78,24 @@ class _EaselState extends State<EaselWidget> {
       });
     });
 
-    boardUpdate ??=
-        _gameService.gameboard.notifyBoardChanged.stream.listen((even) {
+    boardUpdate = _gameService.gameboard.notifyBoardChanged.stream.listen((even) {
       setState(() {
         // Executed for when a new letter is placed
         _visualLetters = _gameService.easel.getLetterList().toList();
       });
     });
+  }
 
+  @override
+  void dispose() {
+    super.dispose();
+
+    easelUpdate!.cancel();
+    boardUpdate!.cancel();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return DragTarget<Letter>(
         builder: (context, letters, rejectedItems) {
           return Container(
@@ -101,8 +110,7 @@ class _EaselState extends State<EaselWidget> {
                         .entries
                         .map(
                           (letter) => DragTarget(
-                            builder: (BuildContext context,
-                                List<Object?> candidateData,
+                            builder: (BuildContext context, List<Object?> candidateData,
                                 List<dynamic> rejectedData) {
                               return EaselLetter(
                                 value: letter.value,
@@ -131,10 +139,10 @@ class EaselLetter extends StatelessWidget {
 
   EaselLetter(
       {super.key,
-        required this.value,
-        required this.index,
-        required this.dragKey,
-        required this.widgetSize});
+      required this.value,
+      required this.index,
+      required this.dragKey,
+      required this.widgetSize});
 
   final Letter value;
   final int index;
@@ -147,10 +155,14 @@ class EaselLetter extends StatelessWidget {
       data: value,
       delay: const Duration(milliseconds: 100),
       feedback: DraggedLetter(value: value, dragKey: dragKey),
-      child: LetterWidget(character: value.character, points: value.points, widgetSize: 75, opacity: value != Letter.EMPTY ? 1 : 0.75,),
+      child: LetterWidget(
+        character: value.character,
+        points: value.points,
+        widgetSize: 75,
+        opacity: value != Letter.EMPTY ? 1 : 0.75,
+      ),
       onDragStarted: () => _gameService.dragLetterFromEasel(index),
       onDraggableCanceled: (v, o) => _gameService.cancelDragLetter(),
     );
   }
 }
-
