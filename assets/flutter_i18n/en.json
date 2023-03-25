@@ -11,7 +11,19 @@
         "create_game": "Create a game",
         "join_game": "Join a game",
         "join_chat": "Join a chat room",
-        "change_language": "Change language"
+        "score": "Leaderboard",
+        "change_language": "Change language",
+        "settings": {
+            "user": "User settings",
+            "theme": "Themes settings",
+            "disconnect": "Log out"
+        },
+        "high_scores": {
+            "error" : "Error while fetching the high scores",
+            "title": "High Scores",
+            "label_score": "Scores",
+            "label_player": "Players"
+        }
     },
     "form": {
         "username_field": "Enter your username here",
@@ -48,7 +60,8 @@
             "password_error": "Enter a password",
             "button": "Sign in",
             "success": "Successful sign in!",
-            "failure": "Error while signing in!"
+            "failure": "Error while signing in!",
+            "button_sign_up": "Create a new account"
         },
         "signup": {
             "title": "Account Creation",
@@ -64,6 +77,9 @@
             "button": "Register",
             "success": "Successful sign up!",
             "failure": "Error while signing up!"
+        },
+        "recaptcha": {
+            "error": "Error in captcha verification"
         }
     },
     "setting": {

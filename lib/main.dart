@@ -13,7 +13,7 @@ import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/language-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
-import 'package:mobile/screens/menu-screen.dart';
+import 'package:mobile/screens/login-screen.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 Future<void> setup() async {
@@ -27,8 +27,12 @@ Future<void> setup() async {
   await dotenv.load(fileName: envFile);
   var serverAddress = dotenv.env["SERVER_URL"];
 
-  getIt.registerLazySingleton<Socket>(() =>
-      io(serverAddress, OptionBuilder().setTransports(["websocket"]).build()));
+  getIt.registerLazySingleton<Socket>(() => io(
+      serverAddress,
+      OptionBuilder()
+          .setTransports(["websocket"])
+          .disableAutoConnect()
+          .build()));
 
   Socket socket = getIt<Socket>();
   socket.onConnect((_) => debugPrint('Socket connection established'));
@@ -70,13 +74,13 @@ class _PolyScrabbleState extends State<PolyScrabble> {
 
     return MaterialApp(
       title: 'PolyScrabble 110',
-      theme: _themeService
-          .getTheme(), // Static mode, will be light theme in dynamic
-      darkTheme: _themeService
-          .getDarkMode(), // Dark mode will be used only in dynamic mode
+      theme: _themeService.getTheme(),
+      // Static mode, will be light theme in dynamic
+      darkTheme: _themeService.getDarkMode(),
+      // Dark mode will be used only in dynamic mode
       themeMode: _themeService.isDynamic ? ThemeMode.system : ThemeMode.light,
       debugShowCheckedModeBanner: false,
-      home: const MenuScreen(title: 'PolyScrabble 101 - Prototype'),
+      home: const LoginScreen(title: 'PolyScrabble 101 - Prototype'),
       localizationsDelegates: [
         FlutterI18nDelegate(
           translationLoader: FileTranslationLoader(
