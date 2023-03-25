@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -116,7 +117,7 @@ class _EaselState extends State<EaselWidget> {
                                 value: letter.value,
                                 index: letter.key,
                                 dragKey: widget.dragKey,
-                                widgetSize: 75,
+                                widgetSize: min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.1,
                               );
                             },
                             onMove: (_) => // For when dragged letter is held on top of easel letter
@@ -153,12 +154,12 @@ class EaselLetter extends StatelessWidget {
   Widget build(BuildContext context) {
     return LongPressDraggable(
       data: value,
-      delay: const Duration(milliseconds: 100),
+      delay: const Duration(milliseconds: 0),
       feedback: DraggedLetter(value: value, dragKey: dragKey),
       child: LetterWidget(
         character: value.character,
         points: value.points,
-        widgetSize: MediaQuery.of(context).size.height * 0.1,
+        widgetSize: widgetSize,
         opacity: value != Letter.EMPTY ? 1 : 0.75,
       ),
       onDragStarted: () => _gameService.dragLetterFromEasel(index),

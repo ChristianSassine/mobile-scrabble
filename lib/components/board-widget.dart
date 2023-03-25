@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -33,7 +34,7 @@ class _BoardState extends State<BoardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    double slotSize = MediaQuery.of(context).size.height * 0.055;
+    double slotSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
     int boardSize = _gameService.gameboard.size;
 
     return Card(
@@ -124,7 +125,7 @@ class SlotWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var SlotSize = MediaQuery.of(context).size.height * 0.055;
+    var SlotSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
 
     return SizedBox(
       height: SlotSize,
