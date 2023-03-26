@@ -15,7 +15,7 @@ class RoomService {
 
   RoomService() {
     // FOR TESTING
-    roomList.add(Room("TEST ROOM", RoomType.PUBLIC, ["TEST PLAYER"]));
+    roomList.add(Room("TEST ROOM", GameVisibility.Public, ["TEST PLAYER"]));
 
     initSocketListeners();
   }

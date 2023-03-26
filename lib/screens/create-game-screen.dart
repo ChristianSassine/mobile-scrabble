@@ -3,7 +3,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/screens/waiting-room-screen.dart';
-
 import '../domain/services/room-service.dart';
 
 class GameCreationScreen extends StatefulWidget {
@@ -52,7 +51,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
   void _createGame() {
     if (_formKey.currentState!.validate()) {
       Room room = Room(_roomNameFieldController.text,
-          _selectedVisibility[0] ? RoomType.PUBLIC : RoomType.PRIVATE, []);
+          _selectedVisibility[0] ? GameVisibility.Public : GameVisibility.Private, []);
       _roomService.createRoom(room);
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => WaitingRoomScreen()));
