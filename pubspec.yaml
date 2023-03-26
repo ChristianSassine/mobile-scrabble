@@ -21,6 +21,7 @@ dependencies:
     provider: ^6.0.5
     http: ^0.13.5
     flutter_i18n: ^0.32.1
+    confirm_dialog: ^1.0.1
     webview_flutter: ^4.0.7
 
 dev_dependencies:

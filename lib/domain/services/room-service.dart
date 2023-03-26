@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/screens/game-screen.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
+import '../enums/socket-events-enum.dart';
 import '../models/room-model.dart';
 
 class RoomService {
