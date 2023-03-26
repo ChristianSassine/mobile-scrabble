@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/services/auth-service.dart';
@@ -8,6 +9,7 @@ import '../models/room-model.dart';
 
 class RoomService {
   final Socket _socket = GetIt.I.get<Socket>();
+
   // AuthService _authService = GetIt.I.get<AuthService>();
   List<Room> roomList = [];
   GameRoom? currentRoom;
@@ -22,8 +24,10 @@ class RoomService {
   }
 
   void initSocketListeners() {
-    _socket.on(
-        RoomSocketEvent.UpdateWaitingRoom.event, (data) => currentRoom = GameRoom.fromJson(data));
+    _socket.on(RoomSocketEvent.UpdateWaitingRoom.event, (data) {
+      debugPrint("Wooooh");
+      currentRoom = GameRoom.fromJson(data);
+    });
   }
 
   void updateRoomList() {
@@ -44,12 +48,12 @@ class RoomService {
   void createRoom(GameCreationQuery creationQuery) {
     _socket.emit(RoomSocketEvent.CreateWaitingRoom.event, creationQuery);
 
-    currentRoom = GameRoom(id: "-",
+    currentRoom = GameRoom(
+        id: "-",
         players: [RoomPlayer(creationQuery.user, "-", "-", PlayerType.User, true)],
         dictionary: creationQuery.dictionary,
         timer: creationQuery.timer,
         gameMode: creationQuery.gameMode,
         visibility: creationQuery.visibility);
   }
-
 }

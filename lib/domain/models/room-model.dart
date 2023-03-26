@@ -19,9 +19,21 @@ class Room {
   Map toJson() => {"name": name, "type": type, "memberList": playerList};
 }
 
+class ImageInfo {
+  final String name;
+  final bool isDefaultPicture;
+  final String? key;
+
+  ImageInfo.fromJson(json)
+      : name = json['name'],
+        isDefaultPicture = json['isDefaultPicture'],
+        key = json['key'];
+}
+
 class IUser {
-  final String? email, profilePicture;
+  final String? email;
   final String username, password;
+  final ImageInfo? profilePicture;
 
   IUser({required this.username, required this.password, this.email, this.profilePicture});
 
@@ -29,7 +41,7 @@ class IUser {
       : email = json['email'],
         username = json['username'],
         password = json['password'],
-        profilePicture = json['profilePicture'];
+        profilePicture = json['profilePicture'] != null ? ImageInfo.fromJson(json['profilePicture']) : null;
 
   Map toJson() => {
         "email": email,
@@ -47,6 +59,15 @@ enum GameMode {
   const GameMode(this.value);
 
   final String value;
+
+  static GameMode? fromString(String sValue) {
+    for (GameMode mode in values) {
+      if (mode.value == sValue) {
+        return mode;
+      }
+    }
+    return null;
+  }
 }
 
 enum GameVisibility {
@@ -57,6 +78,15 @@ enum GameVisibility {
   const GameVisibility(this.value);
 
   final String value;
+
+  static GameVisibility? fromString(String sValue) {
+    for (GameVisibility visibility in values) {
+      if (visibility.value == sValue) {
+        return visibility;
+      }
+    }
+    return null;
+  }
 }
 
 enum GameDifficulty {
@@ -67,6 +97,15 @@ enum GameDifficulty {
   const GameDifficulty(this.value);
 
   final String value;
+
+  static GameDifficulty? fromString(String sValue) {
+    for (GameDifficulty difficulty in values) {
+      if (difficulty.value == sValue) {
+        return difficulty;
+      }
+    }
+    return null;
+  }
 }
 
 enum PlayerType {
@@ -77,6 +116,15 @@ enum PlayerType {
   const PlayerType(this.value);
 
   final String value;
+
+  static PlayerType? fromString(String sValue) {
+    for (PlayerType playerType in values) {
+      if (playerType.value == sValue) {
+        return playerType;
+      }
+    }
+    return null;
+  }
 }
 
 class RoomPlayer {
@@ -87,6 +135,13 @@ class RoomPlayer {
   final bool? isCreater;
 
   RoomPlayer(this.user, this.socketId, this.roomId, this.playerType, this.isCreater);
+
+  RoomPlayer.fromJson(json)
+      : user = IUser.fromJson(json['user']),
+        socketId = json['socketId'],
+        roomId = json['roomId'],
+        playerType = PlayerType.fromString(json['type']),
+        isCreater = json['isCreator'];
 }
 
 class GameRoom {
@@ -108,13 +163,13 @@ class GameRoom {
       this.password});
 
   GameRoom.fromJson(json)
-      : this.id = json['id'],
-        this.players = json['players'],
-        this.dictionary = json['disctionary'],
-        this.timer = json['timer'],
-        this.gameMode = json['mode'],
-        this.visibility = json['visibility'],
-        this.password = json['password'] {}
+      : id = json['id'],
+        players = json['players'].map<RoomPlayer>(RoomPlayer.fromJson).toList(),
+        dictionary = json['dictionary'],
+        timer = json['timer'],
+        gameMode = GameMode.fromString(json['mode'])!,
+        visibility = GameVisibility.fromString(json['visibility'])!,
+        password = json['password'];
 }
 
 class GameCreationQuery {
