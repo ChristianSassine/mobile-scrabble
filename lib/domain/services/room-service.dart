@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
+import 'package:mobile/domain/services/auth-service.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -7,6 +9,7 @@ import '../models/room-model.dart';
 
 class RoomService {
   final Socket _socket = GetIt.I.get<Socket>();
+  final AuthService _authService = GetIt.I.get<AuthService>();
 
   List<GameRoom> roomList = [];
   GameRoom? currentRoom;
@@ -42,6 +45,7 @@ class RoomService {
   void createRoom(GameCreationQuery creationQuery) {
     _socket.emit(RoomSocketEvent.CreateWaitingRoom.event, creationQuery);
 
+    // Temperary
     currentRoom = GameRoom(
         id: "-",
         players: [RoomPlayer(creationQuery.user, "-", "-", PlayerType.User, true)],
@@ -50,4 +54,11 @@ class RoomService {
         gameMode: creationQuery.gameMode,
         visibility: creationQuery.visibility);
   }
+
+  void exitRoom(){
+    UserRoomQuery exitQuery = UserRoomQuery(user: _authService.user!, roomId: currentRoom!.id);
+    _socket.emit(RoomSocketEvent.ExitWaitingRoom.event, exitQuery);
+  }
+
+
 }

@@ -22,7 +22,8 @@ class IUser {
       : email = json['email'],
         username = json['username'],
         password = json['password'],
-        profilePicture = json['profilePicture'] != null ? ImageInfo.fromJson(json['profilePicture']) : null;
+        profilePicture =
+            json['profilePicture'] != null ? ImageInfo.fromJson(json['profilePicture']) : null;
 
   Map toJson() => {
         "email": email,
@@ -180,4 +181,14 @@ class GameCreationQuery {
         "password": password,
         "botDifficulty": botDifficulty.value
       };
+}
+
+class UserRoomQuery {
+  final String roomId;
+  final IUser user;
+  final String? password;
+
+  UserRoomQuery({required this.user, required this.roomId, this.password});
+
+  Map toJson() => {"roomId": roomId, "user": user};
 }

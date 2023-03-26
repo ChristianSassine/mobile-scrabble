@@ -42,6 +42,12 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _roomService.exitRoom();
+  }
+
+  @override
   Widget build(BuildContext context) {
     sub ??= _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
       setState(() {});

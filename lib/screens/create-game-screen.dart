@@ -59,7 +59,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
           visibility: GameVisibility.Public,
           botDifficulty: GameDifficulty.Easy);
       _roomService.createRoom(query);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => WaitingRoomScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const WaitingRoomScreen()));
     }
   }
 
