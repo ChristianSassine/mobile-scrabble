@@ -102,5 +102,11 @@
     },
     "chat": {
         "screen_name": "Salle de clavardage"
+    },
+    "avatar": {
+        "title": "Choisis ton avatar",
+        "close": "Fermer",
+        "error": "Erreur lors du chargement des images. Veuillez réessayer.",
+        "take_image": "Prendre une photo"
     }
 }

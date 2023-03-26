@@ -102,5 +102,11 @@
     },
     "chat": {
         "screen_name": "Chat room"
+    },
+    "avatar": {
+        "title": "Choose your avatar",
+        "close": "Close",
+        "error": "Error while loading the default avatar. Please try again.",
+        "take_image": "Take an image"
     }
 }

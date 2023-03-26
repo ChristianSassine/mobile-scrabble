@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
@@ -48,7 +49,7 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
       _selectAvatarFromList(File(imageURL), name!, index);
     } else {
       _selectAvatarFromCamera();
-      Navigator.pop(context, 'Choisir');
+      Navigator.pop(context);
     }
     setState(() {
       _selectedImageIndex = index;
@@ -61,14 +62,14 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context, 'Choisir');
+              Navigator.pop(context);
             },
-            child: const Text(
-              'Choisir',
+            child: Text(
+              FlutterI18n.translate(context, "avatar.close"),
             ),
           ),
         ],
-        title: const Text('Choisis ton avatar'),
+        title: Text(FlutterI18n.translate(context, "avatar.title")),
         content: Center(
             heightFactor: 1,
             child: Column(
@@ -80,35 +81,35 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       if (snapshot.hasError) {
-                        return Placeholder(); // TODO: Handle error
+                        return Text(
+                          FlutterI18n.translate(context, 'avatar.error'),
+                          style: TextStyle(color: Theme.of(context).errorColor),
+                        );
                       }
                       if (snapshot.hasData) {
                         List<Widget> widgets = [];
                         for (int i = 0; i < snapshot.data.length; i++) {
                           widgets.add(Expanded(
                               child: GestureDetector(
-                                onTap: () =>
-                                    selectAvatar(
-                                        i,
-                                        snapshot.data![snapshot.data.keys
-                                            .elementAt(i)]
-                                        [0], snapshot.data.keys
-                                        .elementAt(i)),
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 3,
-                                            color: _selectedImageIndex == i
-                                                ? Colors.green
-                                                : Colors.transparent)),
-                                    child: Image.network(
-                                      snapshot.data![snapshot.data.keys
-                                          .elementAt(i)]
-                                      [0],
-                                      width: 50,
-                                      height: 50,
-                                    )),
-                              )));
+                            onTap: () => selectAvatar(
+                                i,
+                                snapshot.data![snapshot.data.keys.elementAt(i)]
+                                    [0],
+                                snapshot.data.keys.elementAt(i)),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 3,
+                                        color: _selectedImageIndex == i
+                                            ? Colors.green
+                                            : Colors.transparent)),
+                                child: Image.network(
+                                  snapshot.data![
+                                      snapshot.data.keys.elementAt(i)][0],
+                                  width: 50,
+                                  height: 50,
+                                )),
+                          )));
                         }
                         return Row(children: widgets);
                       }
@@ -129,14 +130,15 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                 ),
                 ElevatedButton(
                     onPressed: () => selectAvatar(AVATAR_FROM_CAMERA),
-                    child: const Text('Prendre une photo')),
+                    child: Text(FlutterI18n.translate(context, "avatar.take_image"))),
               ],
             )));
   }
 }
 
 class AvatarSelector extends StatefulWidget {
-  const AvatarSelector({Key? key, required this.onImageChange}) : super(key: key);
+  const AvatarSelector({Key? key, required this.onImageChange})
+      : super(key: key);
   final ValueChanged<AvatarData?> onImageChange;
 
   @override
@@ -160,7 +162,8 @@ class _AvatarSelectorState extends State<AvatarSelector> {
         _selectedImageFile = File(image.path);
         _selectedImageIndex = AVATAR_FROM_CAMERA;
       });
-      widget.onImageChange(AvatarData(ImageType.DataImage, file: _selectedImageFile));
+      widget.onImageChange(
+          AvatarData(ImageType.DataImage, file: _selectedImageFile));
     } catch (e) {
       print(e);
     }
@@ -171,8 +174,8 @@ class _AvatarSelectorState extends State<AvatarSelector> {
       _selectedImageFile = selectedAvatar;
       _selectedImageIndex = index;
     });
-    print("IN SELECT : ${filename}");
-    widget.onImageChange(AvatarData(ImageType.UrlImage, name: filename, file: _selectedImageFile));
+    widget.onImageChange(AvatarData(ImageType.UrlImage,
+        name: filename, file: _selectedImageFile));
   }
 
   Future openAvatarSelector() async {
