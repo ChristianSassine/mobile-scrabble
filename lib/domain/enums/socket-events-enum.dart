@@ -24,7 +24,7 @@ enum RoomSocketEvent {
   PlayerJoinedWaitingRoom('foundOpponent'),
   ErrorJoining('joiningError'),
   EnterRoomLobby('roomLobby'),
-  KickedFromGameRoom('kickedFromGameRoom'),
+  KickedFromWaitingRoom('kickedFromGameRoom'),
   GameAboutToStart('gameAboutToStart'),
   OpponentLeave('opponentLeave'),
   StartScrabbleGame('startScrabbleGame');

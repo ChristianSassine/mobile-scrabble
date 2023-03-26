@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/game-service.dart';
+import 'package:mobile/screens/game-screen.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -14,7 +16,7 @@ class RoomService {
   List<GameRoom> roomList = [];
   GameRoom? currentRoom;
   Subject<List<GameRoom>> notifyNewRoomList = PublishSubject();
-  Subject<GameRoom> notifyRoomMemberList = PublishSubject();
+  Subject<GameRoom?> notifyRoomMemberList = PublishSubject();
 
   RoomService() {
     initSocketListeners();
@@ -23,7 +25,18 @@ class RoomService {
   void initSocketListeners() {
     _socket.on(RoomSocketEvent.UpdateWaitingRoom.event, (data) {
       currentRoom = GameRoom.fromJson(data);
-      notifyRoomMemberList.add(currentRoom!);
+      notifyRoomMemberList.add(currentRoom);
+    });
+
+    _socket.on(RoomSocketEvent.KickedFromWaitingRoom.event, (data) {
+      currentRoom = null;
+      notifyRoomMemberList.add(currentRoom);
+    });
+
+    _socket.on(RoomSocketEvent.GameAboutToStart.event, (data) {
+      GetIt.I.get<GameService>().inGame = true;
+      Navigator.pushReplacement(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
+          MaterialPageRoute(builder: (context) => const GameScreen()));
     });
   }
 
@@ -45,7 +58,7 @@ class RoomService {
   void createRoom(GameCreationQuery creationQuery) {
     _socket.emit(RoomSocketEvent.CreateWaitingRoom.event, creationQuery);
 
-    // Temperary
+    // Temporary until UpdateWaitingRoom is called
     currentRoom = GameRoom(
         id: "-",
         players: [RoomPlayer(creationQuery.user, "-", "-", PlayerType.User, true)],
@@ -55,10 +68,12 @@ class RoomService {
         visibility: creationQuery.visibility);
   }
 
-  void exitRoom(){
+  void exitRoom() {
     UserRoomQuery exitQuery = UserRoomQuery(user: _authService.user!, roomId: currentRoom!.id);
     _socket.emit(RoomSocketEvent.ExitWaitingRoom.event, exitQuery);
   }
 
-
+  void startScrabbleGame() {
+    _socket.emit(RoomSocketEvent.StartScrabbleGame.event, currentRoom!.id);
+  }
 }

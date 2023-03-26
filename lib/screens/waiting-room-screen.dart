@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 
 import 'game-screen.dart';
@@ -21,16 +22,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   final ScrollController _scrollController = ScrollController();
   StreamSubscription? sub;
 
-  _WaitingRoomState() {
-  }
-
   _startGame() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => GameScreen(
-              title: FlutterI18n.translate(context, "waiting_room.game"))),
-    );
+    _roomService.startScrabbleGame();
   }
 
   Widget _buildRoomMemberCard(String playerName) {
@@ -44,12 +37,21 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   @override
   void dispose() {
     super.dispose();
-    _roomService.exitRoom();
+    sub?.cancel();
+
+    if(! GetIt.I.get<GameService>().inGame) {
+      _roomService.exitRoom();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     sub ??= _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
+      if(newRoomState == null){
+        // Exit waiting room (From kick or host closed the)
+        Navigator.pop(context);
+        return;
+      }
       setState(() {});
     });
 

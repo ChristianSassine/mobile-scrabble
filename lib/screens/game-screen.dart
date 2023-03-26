@@ -4,9 +4,7 @@ import 'package:mobile/components/easel-widget.dart';
 import 'package:mobile/screens/end-game-screen.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key, required this.title});
-
-  final String title;
+  const GameScreen({super.key,});
 
   @override
   State<GameScreen> createState() => _GameScreenState();

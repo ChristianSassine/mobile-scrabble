@@ -19,6 +19,8 @@ class GameService {
 
   final List<LetterPlacement> _pendingLetters = [];
 
+  bool inGame = false;
+
   GameService() {
     easel.addLetter(Letter.A);
     easel.addLetter(Letter.B);

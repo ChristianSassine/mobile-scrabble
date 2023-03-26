@@ -46,6 +46,8 @@ Future<void> setup() async {
   getIt.registerLazySingleton<LanguageService>(() => LanguageService());
   getIt.registerLazySingleton<RoomService>(() => RoomService());
   getIt.registerLazySingleton<GameService>(() => GameService());
+
+  getIt.registerSingleton<GlobalKey<NavigatorState>>(GlobalKey<NavigatorState>());
 }
 
 Future<void> main() async {
@@ -91,6 +93,7 @@ class _PolyScrabbleState extends State<PolyScrabble> {
           },
         )
       ],
+      navigatorKey: GetIt.I.get<GlobalKey<NavigatorState>>(),
     );
   }
 }

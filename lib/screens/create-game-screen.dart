@@ -53,7 +53,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
     if (_formKey.currentState!.validate()) {
       GameCreationQuery query = GameCreationQuery(
           user: _authService.user!,
-          dictionary: "Francais",
+          dictionary: "Mon dictionnaire",
           timer: 60,
           gameMode: GameMode.Solo,
           visibility: GameVisibility.Public,
