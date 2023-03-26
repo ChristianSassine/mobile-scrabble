@@ -18,15 +18,30 @@ class Board {
         layout = BoardLayout(15) {}
 
   bool isSlotEmpty(int x, int y) {
-    return _boardMatrix[x][y] == null;
+    return isSlotValid(x, y) && _boardMatrix[x][y] == null;
+  }
+
+  bool isSlotValid(int x, int y){
+    return (0 <= x && x < size && 0 <= y && y < size);
+  }
+
+  bool isEmpty(){
+    for(int x = 0; x < size; ++x){
+      for(int y = 0; y < size; ++y){
+        if(_boardMatrix[x][y] != null) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   Letter? getSlot(int x, int y) {
-    return _boardMatrix[x][y];
+    return isSlotValid(x, y) ? _boardMatrix[x][y] : Letter.INVALID;
   }
 
   void placeLetter(int x, int y, Letter letter) {
-    if (!isSlotEmpty(x, y)) {
+    if (!isSlotValid(x, y) || !isSlotEmpty(x, y)) {
       return;
     }
 
@@ -35,7 +50,7 @@ class Board {
   }
 
   Letter? removeLetter(int x, int y) {
-    if (isSlotEmpty(x, y)) {
+    if (!isSlotValid(x, y) || isSlotEmpty(x, y)) {
       return null;
     }
 
@@ -75,10 +90,10 @@ class BoardLayout {
     for (int i = 0; i < 4; ++i) {
       bool a = (i & 1) > 0, b = (i & 2) > 0;
 
-
       // Double word
       for (int i = 1; i < halfSize - 2; ++i) {
-        layoutMatrix[a ? size - i - 1 : i][b ? size - i - 1: i] = Modifier.DOUBLE_WORD;
+        layoutMatrix[a ? size - i - 1 : i][b ? size - i - 1 : i] =
+            Modifier.DOUBLE_WORD;
       }
 
       // Triple word
@@ -95,16 +110,16 @@ class BoardLayout {
           Modifier.DOUBLE_LETTER;
       layoutMatrix[b ? size - 3 : 2][a ? halfSize - 1 : halfSize + 1] =
           Modifier.DOUBLE_LETTER;
-      layoutMatrix[a ? halfSize - 1 : halfSize + 1][b ? halfSize - 1 : halfSize + 1] =
-          Modifier.DOUBLE_LETTER;
+      layoutMatrix[a ? halfSize - 1 : halfSize + 1]
+          [b ? halfSize - 1 : halfSize + 1] = Modifier.DOUBLE_LETTER;
 
       // Triple letter
       layoutMatrix[a ? size - 2 : 1][b ? halfSize - 2 : halfSize + 2] =
           Modifier.TRIPLE_LETTER;
       layoutMatrix[b ? halfSize - 2 : halfSize + 2][a ? size - 2 : 1] =
           Modifier.TRIPLE_LETTER;
-      layoutMatrix[a ? halfSize - 2 : halfSize + 2][b ? halfSize - 2 : halfSize + 2] =
-          Modifier.TRIPLE_LETTER;
+      layoutMatrix[a ? halfSize - 2 : halfSize + 2]
+          [b ? halfSize - 2 : halfSize + 2] = Modifier.TRIPLE_LETTER;
 
       layoutMatrix[halfSize][halfSize] = Modifier.START;
     }
