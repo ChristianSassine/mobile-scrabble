@@ -31,8 +31,7 @@ class IUser {
         password = json['password'],
         profilePicture = json['profilePicture'];
 
-  Map toJson() =>
-      {
+  Map toJson() => {
         "email": email,
         "username": username,
         "password": password,
@@ -79,22 +78,22 @@ class GameCreationQuery {
   final String? password;
   final GameDifficulty botDifficulty;
 
-  GameCreationQuery({required this.user,
-    required this.dictionary,
-    required this.timer,
-    required this.gameMode,
-    required this.visibility,
-    this.password,
-    required this.botDifficulty});
+  GameCreationQuery(
+      {required this.user,
+      required this.dictionary,
+      required this.timer,
+      required this.gameMode,
+      required this.visibility,
+      this.password,
+      required this.botDifficulty});
 
-  Map toJson() =>
-      {
+  Map toJson() => {
         "user": user.toJson(),
         "dictionary": dictionary,
         "timer": timer,
         "gameMode": gameMode.value,
         "visibility": visibility.value,
         "password": password,
-        "botDifficulty": botDifficulty
+        "botDifficulty": botDifficulty.value
       };
 }
