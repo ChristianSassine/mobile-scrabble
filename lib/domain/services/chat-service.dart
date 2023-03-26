@@ -37,7 +37,7 @@ class ChatService {
   }
 
   void submitMessage(String msg) {
-    ChatMessage newMessage = ChatMessage(authService.username!,
+    ChatMessage newMessage = ChatMessage(authService.user!.username,
         MessageType.CLIENT.value, msg, DateFormat.Hms().format(DateTime.now()));
     chatBox.addMessage(newMessage);
     socket.emit(RoomSocketEvents.SendHomeMessage.event, newMessage);
@@ -52,13 +52,13 @@ class ChatService {
   }
 
   void _receivedMessage(ChatMessage incommingMessage) {
-    if (incommingMessage.username != authService.username!) {
+    if (incommingMessage.username != authService.user!.username) {
       chatBox.addMessage(incommingMessage);
     }
   }
 
   void _userJoined(String username) {
-    if (authService.username! != username) {
+    if (authService.user!.username != username) {
       chatBox.addMessage(ChatMessage(
           "",
           MessageType.SYSTEM.value,

@@ -28,3 +28,23 @@ enum RoomType {
 
   final String value;
 }
+
+class IUser {
+  final String? email, profilePicture;
+  final String username, password;
+
+  IUser({required this.username, required this.password, this.email, this.profilePicture});
+
+
+  IUser.fromJson(json)
+      : email = json['email'],
+        username = json['username'],
+        password = json ['password'],
+        profilePicture = json['profilePicture'];
+
+  Map toJson() =>
+      {"email": email,
+        "username": username,
+        "password": password,
+        "profilePicture": profilePicture};
+}

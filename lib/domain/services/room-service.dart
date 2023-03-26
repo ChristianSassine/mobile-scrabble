@@ -40,7 +40,7 @@ class RoomService {
   }
 
   void createRoom(Room room) {
-    room.playerList.add(_authService.username!);
+    room.playerList.add(_authService.user!.username);
     selectedRoom = room;
   }
 
