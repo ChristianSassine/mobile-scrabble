@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/high-scores-widget.dart';
 import 'package:mobile/components/language-dropdown-widget.dart';
 import 'package:mobile/components/settings-widget.dart';
 import 'package:mobile/domain/services/auth-service.dart';
@@ -68,6 +69,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -126,7 +128,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 topRight: Radius.circular(100),
                 bottomRight: Radius.circular(100),
               ),
-              color: Theme.of(context).backgroundColor,
+              color: theme.backgroundColor,
             ),
             child: IconButton(
                 onPressed: () => _scaffoldKey.currentState!.openDrawer(),
@@ -165,8 +167,15 @@ class _MenuScreenState extends State<MenuScreen> {
                         height: size.height * 0.05,
                       ),
                       ElevatedButton(
-                        onPressed: () => {},
-                        child: Text(FlutterI18n.translate(context, "menu_screen.score")),
+                        onPressed: () => {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => Dialog(
+                                    child: HighScores(),
+                                  ))
+                        },
+                        child: Text(FlutterI18n.translate(
+                            context, "menu_screen.score")),
                       ),
                     ]))),
           ),
@@ -199,9 +208,11 @@ class _FooterState extends State<Footer> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       height: widget.size.height * 0.1,
-      color: Theme.of(context).backgroundColor,
+      color: theme.backgroundColor,
       child: Stack(
         fit: StackFit.expand,
         children: [
