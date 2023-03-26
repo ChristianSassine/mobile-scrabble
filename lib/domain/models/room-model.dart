@@ -69,6 +69,54 @@ enum GameDifficulty {
   final String value;
 }
 
+enum PlayerType {
+  User("user"),
+  Bot("bot"),
+  Observer("observer");
+
+  const PlayerType(this.value);
+
+  final String value;
+}
+
+class RoomPlayer {
+  final IUser user;
+  final String socketId;
+  final String roomId;
+  final PlayerType? playerType;
+  final bool? isCreater;
+
+  RoomPlayer(this.user, this.socketId, this.roomId, this.playerType, this.isCreater);
+}
+
+class GameRoom {
+  final String id;
+  final List<RoomPlayer> players;
+  final String dictionary;
+  final int timer;
+  final GameMode gameMode;
+  final GameVisibility visibility;
+  final String? password;
+
+  GameRoom(
+      {required this.id,
+      required this.players,
+      required this.dictionary,
+      required this.timer,
+      required this.gameMode,
+      required this.visibility,
+      this.password});
+
+  GameRoom.fromJson(json)
+      : this.id = json['id'],
+        this.players = json['players'],
+        this.dictionary = json['disctionary'],
+        this.timer = json['timer'],
+        this.gameMode = json['mode'],
+        this.visibility = json['visibility'],
+        this.password = json['password'] {}
+}
+
 class GameCreationQuery {
   final IUser user;
   final String dictionary;
@@ -91,7 +139,7 @@ class GameCreationQuery {
         "user": user.toJson(),
         "dictionary": dictionary,
         "timer": timer,
-        "gameMode": gameMode.value,
+        "mode": gameMode.value,
         "visibility": visibility.value,
         "password": password,
         "botDifficulty": botDifficulty.value

@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -6,10 +7,10 @@ import 'package:socket_io_client/socket_io_client.dart';
 import '../models/room-model.dart';
 
 class RoomService {
-  // Socket _socket = GetIt.I.get<Socket>();
-  AuthService _authService = GetIt.I.get<AuthService>();
+  final Socket _socket = GetIt.I.get<Socket>();
+  // AuthService _authService = GetIt.I.get<AuthService>();
   List<Room> roomList = [];
-  Room? selectedRoom;
+  GameRoom? currentRoom;
   Subject<List<Room>> notifyNewRoomList = PublishSubject();
   Subject<Room> notifyRoomMemberList = PublishSubject();
 
@@ -21,15 +22,16 @@ class RoomService {
   }
 
   void initSocketListeners() {
-    // TODO SERVER IMPLEMENTATION
+    _socket.on(
+        RoomSocketEvent.UpdateWaitingRoom.event, (data) => currentRoom = GameRoom.fromJson(data));
   }
 
   void updateRoomList() {
     // TODO SERVER IMPLEMENTATION
   }
 
-  void joinRoom(Room room){
-    selectedRoom = room;
+  void joinRoom(Room room) {
+    // selectedRoom = room;
 
     //TODO SERVER IMPLEMENTATION
   }
@@ -39,9 +41,15 @@ class RoomService {
     notifyNewRoomList.add(incommingRoomList);
   }
 
-  void createRoom(Room room) {
-    room.playerList.add(_authService.user!.username);
-    selectedRoom = room;
+  void createRoom(GameCreationQuery creationQuery) {
+    _socket.emit(RoomSocketEvent.CreateWaitingRoom.event, creationQuery);
+
+    currentRoom = GameRoom(id: "-",
+        players: [RoomPlayer(creationQuery.user, "-", "-", PlayerType.User, true)],
+        dictionary: creationQuery.dictionary,
+        timer: creationQuery.timer,
+        gameMode: creationQuery.gameMode,
+        visibility: creationQuery.visibility);
   }
 
 }

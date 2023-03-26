@@ -18,12 +18,10 @@ class WaitingRoomScreen extends StatefulWidget {
 
 class _WaitingRoomState extends State<WaitingRoomScreen> {
   final _roomService = GetIt.I.get<RoomService>();
-  late Room currentRoom;
   final ScrollController _scrollController = ScrollController();
   StreamSubscription? sub;
 
   _WaitingRoomState() {
-    currentRoom = _roomService.selectedRoom!;
   }
 
   _startGame() {
@@ -46,16 +44,14 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   @override
   Widget build(BuildContext context) {
     sub ??= _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
-      setState(() {
-        currentRoom = newRoomState;
-      });
+      setState(() {});
     });
 
     return Scaffold(
       appBar: AppBar(title: Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(currentRoom.name, style: const TextStyle(fontSize: 50)),
+          // Text(_roomService.currentRoom., style: const TextStyle(fontSize: 50)),
           const SizedBox(height: 100),
           Text(FlutterI18n.translate(context, "waiting_room.players"),
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
@@ -72,8 +68,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
                 child: ListView(
                   controller: _scrollController,
                   children: [
-                    for (String playerName in currentRoom.playerList)
-                      _buildRoomMemberCard(playerName)
+                    for (RoomPlayer playerName in _roomService.currentRoom!.players)
+                      _buildRoomMemberCard(playerName.user.username)
                   ],
                 ),
               ),
