@@ -25,7 +25,6 @@ dependencies:
     webview_flutter: ^4.0.7
     path: ^1.8.2
     http_parser: ^4.0.2
-    dio: ^5.0.3
 
 dev_dependencies:
     flutter_test:
