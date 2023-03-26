@@ -40,8 +40,8 @@ class RoomService {
   }
 
   void createRoom(Room room) {
-    room.playerList.add(_authService.username!);
-    selectedRoom = room;
+    room.playerList.add(Player(_authService.username!));
+    currentRoom = room;
   }
 
 }
