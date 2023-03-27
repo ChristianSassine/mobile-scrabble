@@ -6,21 +6,21 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
+import 'package:mobile/domain/models/profile-image-info-model.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 
-const AVATAR_FROM_CAMERA = -1;
-
 class AvatarSelectorDialog extends StatefulWidget {
-  final Function(File, String, int) selectAvatarFromList;
+  final Function(File, String) selectAvatarFromList;
   final Function() selectAvatarFromCamera;
-  int? selectedImageIndex;
 
   AvatarSelectorDialog({
     super.key,
     required this.selectAvatarFromList,
     required this.selectAvatarFromCamera,
-    this.selectedImageIndex,
+    this.selectedName,
   });
+
+  final selectedName;
 
   @override
   _AvatarSelectorDialogState createState() => _AvatarSelectorDialogState();
@@ -30,9 +30,9 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
   final _avatarService = GetIt.I.get<AvatarService>();
   late Future<dynamic> _images;
 
-  int? _selectedImageIndex;
+  String? _selectedImageName;
 
-  late final Function(File, String, int) _selectAvatarFromList;
+  late final Function(File, String) _selectAvatarFromList;
   late final Function() _selectAvatarFromCamera;
 
   @override
@@ -40,20 +40,19 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
     super.initState();
     _selectAvatarFromList = widget.selectAvatarFromList;
     _selectAvatarFromCamera = widget.selectAvatarFromCamera;
-    _selectedImageIndex = widget.selectedImageIndex;
+    _selectedImageName = widget.selectedName;
     _images = _avatarService.getDefaultAvatars();
   }
 
-  void selectAvatar(int index, [String? imageURL, String? name]) {
-    if (index >= 0 && imageURL!.isNotEmpty) {
-      _selectAvatarFromList(File(imageURL), name!, index);
+  void selectAvatar([String? imageURL, String? name]) {
+    if (imageURL != null && imageURL.isNotEmpty) {
+      _selectAvatarFromList(File(imageURL), name!);
+      _selectedImageName = name;
     } else {
       _selectAvatarFromCamera();
       Navigator.pop(context);
     }
-    setState(() {
-      _selectedImageIndex = index;
-    });
+    setState(() {});
   }
 
   @override
@@ -92,7 +91,6 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                           widgets.add(Expanded(
                               child: GestureDetector(
                             onTap: () => selectAvatar(
-                                i,
                                 snapshot.data![snapshot.data.keys.elementAt(i)]
                                     [0],
                                 snapshot.data.keys.elementAt(i)),
@@ -100,7 +98,8 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         width: 3,
-                                        color: _selectedImageIndex == i
+                                        color: _selectedImageName ==
+                                                snapshot.data.keys.elementAt(i)
                                             ? Colors.green
                                             : Colors.transparent)),
                                 child: Image.network(
@@ -129,17 +128,21 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                   margin: const EdgeInsets.symmetric(vertical: 10.0),
                 ),
                 ElevatedButton(
-                    onPressed: () => selectAvatar(AVATAR_FROM_CAMERA),
-                    child: Text(FlutterI18n.translate(context, "avatar.take_image"))),
+                    onPressed: () => selectAvatar(),
+                    child: Text(
+                        FlutterI18n.translate(context, "avatar.take_image"))),
               ],
             )));
   }
 }
 
 class AvatarSelector extends StatefulWidget {
-  const AvatarSelector({Key? key, required this.onImageChange})
+  const AvatarSelector(
+      {Key? key, required this.onImageChange, this.currentInfo})
       : super(key: key);
+
   final ValueChanged<AvatarData?> onImageChange;
+  final ProfileImageInfo? currentInfo;
 
   @override
   _AvatarSelectorState createState() => _AvatarSelectorState();
@@ -147,11 +150,19 @@ class AvatarSelector extends StatefulWidget {
 
 class _AvatarSelectorState extends State<AvatarSelector> {
   File? _selectedImageFile;
-  int? _selectedImageIndex;
+  String? _imageName;
+  bool _isImageUrl = false;
 
   @override
   void initState() {
     super.initState();
+    if (widget.currentInfo != null) { // TODO: TO TEST
+      _selectedImageFile = File(widget.currentInfo!.key!);
+      if (widget.currentInfo!.isDefaultPicture) {
+        _imageName = widget.currentInfo!.name;
+      }
+      _isImageUrl = true;
+    }
   }
 
   Future selectAvatarFromCamera() async {
@@ -160,19 +171,22 @@ class _AvatarSelectorState extends State<AvatarSelector> {
       if (image == null) return;
       setState(() {
         _selectedImageFile = File(image.path);
-        _selectedImageIndex = AVATAR_FROM_CAMERA;
+        _imageName = null;
+        _isImageUrl = false;
       });
       widget.onImageChange(
-          AvatarData(ImageType.DataImage, file: _selectedImageFile));
+        AvatarData(ImageType.DataImage, file: _selectedImageFile),
+      );
     } catch (e) {
       print(e);
     }
   }
 
-  void selectAvatarFromList(File selectedAvatar, String filename, int index) {
+  void selectAvatarFromList(File selectedAvatar, String filename) {
     setState(() {
       _selectedImageFile = selectedAvatar;
-      _selectedImageIndex = index;
+      _imageName = filename;
+      _isImageUrl = true;
     });
     widget.onImageChange(AvatarData(ImageType.UrlImage,
         name: filename, file: _selectedImageFile));
@@ -184,15 +198,14 @@ class _AvatarSelectorState extends State<AvatarSelector> {
         builder: (BuildContext context) => AvatarSelectorDialog(
               selectAvatarFromList: selectAvatarFromList,
               selectAvatarFromCamera: selectAvatarFromCamera,
-              selectedImageIndex: _selectedImageIndex,
+              selectedName: _imageName,
             ));
   }
 
   setAvatar() {
     if (_selectedImageFile == null) {
       return null;
-    } else if (_selectedImageFile != null &&
-        _selectedImageIndex! != AVATAR_FROM_CAMERA) {
+    } else if (_selectedImageFile != null && _isImageUrl) {
       return NetworkImage(_selectedImageFile!.path);
     } else {
       return FileImage(_selectedImageFile!);
