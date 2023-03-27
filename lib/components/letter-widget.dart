@@ -7,13 +7,15 @@ class LetterWidget extends StatelessWidget {
   final int points;
   final double widgetSize;
   final double opacity;
+  final bool highlighted;
 
   const LetterWidget(
       {super.key,
       required this.character,
       required this.points,
       required this.widgetSize,
-      this.opacity = 1});
+      this.opacity = 1,
+      this.highlighted = false});
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +23,13 @@ class LetterWidget extends StatelessWidget {
         height: widgetSize,
         width: widgetSize,
         child: Card(
-          color: Colors.orangeAccent[100]!.withOpacity(opacity),
+          color: Colors.orange[highlighted ? 100 : 200]!.withOpacity(opacity),
           child: Stack(
             children: [
               Center(
                   child: Text(
                 character != Letter.EMPTY.character ? character : "",
-                style:
-                    TextStyle(fontSize: 0.4 * widgetSize, color: Colors.black),
+                style: TextStyle(fontSize: 0.4 * widgetSize, color: Colors.black),
               )),
               Positioned(
                 bottom: widgetSize * 0.1,
@@ -64,8 +65,7 @@ class DraggedLetter extends StatelessWidget {
             key: dragKey,
             borderRadius: BorderRadius.circular(12.0),
             child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 6.0, right: 6.0, top: 2.0, bottom: 0.0),
+                padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 2.0, bottom: 0.0),
                 child: LetterWidget(
                   character: value.character,
                   points: value.points,

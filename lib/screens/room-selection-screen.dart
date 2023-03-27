@@ -17,7 +17,7 @@ class RoomSelectionScreen extends StatefulWidget {
 
 class _RoomListState extends State<RoomSelectionScreen> {
   final _roomService = GetIt.I.get<RoomService>();
-  List<Room> roomList = [];
+  List<GameRoom> roomList = [];
   final ScrollController _scrollController = ScrollController();
   StreamSubscription? sub;
 
@@ -25,7 +25,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
     roomList = _roomService.roomList;
   }
 
-  void _joinRoom(Room room) {
+  void _joinRoom(GameRoom room) {
     _roomService.joinRoom(room);
     Navigator.push(
       context,
@@ -35,10 +35,10 @@ class _RoomListState extends State<RoomSelectionScreen> {
     );
   }
 
-  Widget _buildRoomCard(Room room) {
+  Widget _buildRoomCard(GameRoom room) {
     return Card(
       child: ListTile(
-        title: Text(room.name),
+        title: Text(room.id),
         trailing: IconButton(
             icon: const Icon(Icons.login),
             color: Colors.green,
@@ -69,7 +69,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
             child: Scrollbar(
               child: ListView(
                 controller: _scrollController,
-                children: [for (Room room in roomList) _buildRoomCard(room)],
+                children: [for (GameRoom room in roomList) _buildRoomCard(room)],
               ),
             ),
           ),

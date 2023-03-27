@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 
 import 'game-screen.dart';
@@ -18,21 +19,11 @@ class WaitingRoomScreen extends StatefulWidget {
 
 class _WaitingRoomState extends State<WaitingRoomScreen> {
   final _roomService = GetIt.I.get<RoomService>();
-  late Room currentRoom;
   final ScrollController _scrollController = ScrollController();
   StreamSubscription? sub;
 
-  _WaitingRoomState() {
-    currentRoom = _roomService.selectedRoom!;
-  }
-
   _startGame() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => GameScreen(
-              title: FlutterI18n.translate(context, "waiting_room.game"))),
-    );
+    _roomService.startScrabbleGame();
   }
 
   Widget _buildRoomMemberCard(String playerName) {
@@ -44,18 +35,31 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    sub?.cancel();
+
+    if(! GetIt.I.get<GameService>().inGame) {
+      _roomService.exitRoom();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     sub ??= _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
-      setState(() {
-        currentRoom = newRoomState;
-      });
+      if(newRoomState == null){
+        // Exit waiting room (From kick or host closed the)
+        Navigator.pop(context);
+        return;
+      }
+      setState(() {});
     });
 
     return Scaffold(
       appBar: AppBar(title: Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(currentRoom.name, style: const TextStyle(fontSize: 50)),
+          // Text(_roomService.currentRoom., style: const TextStyle(fontSize: 50)),
           const SizedBox(height: 100),
           Text(FlutterI18n.translate(context, "waiting_room.players"),
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
@@ -72,8 +76,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
                 child: ListView(
                   controller: _scrollController,
                   children: [
-                    for (String playerName in currentRoom.playerList)
-                      _buildRoomMemberCard(playerName)
+                    for (RoomPlayer playerName in _roomService.currentRoom!.players)
+                      _buildRoomMemberCard(playerName.user.username)
                   ],
                 ),
               ),
