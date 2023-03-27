@@ -19,9 +19,9 @@ class AuthService {
   final _avatarService = GetIt.I.get<AvatarService>();
   final _socket = GetIt.I.get<Socket>();
 
-  // I don't like doing a lot of subjects but it works for now
   Subject<bool> notifyLogin = PublishSubject();
   Subject<bool> notifyLogout = PublishSubject();
+  Subject<bool> notifyRegister = PublishSubject();
   Subject<String> notifyError = PublishSubject();
 
   Future<void> connectUser(String username, String password) async {
@@ -63,6 +63,7 @@ class AuthService {
         final String imageKey =  jsonDecode(response.body)['imageKey'];
         await _httpService.sendAvatarRequest(data.file!, imageKey);
       }
+      notifyRegister.add(true);
 
       await connectUser(username, password);
       return;

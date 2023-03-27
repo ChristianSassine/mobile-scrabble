@@ -94,14 +94,14 @@ class _SignUpFormState extends State<SignUpForm> {
   AvatarData? avatarData;
 
   final _authService = GetIt.I.get<AuthService>();
-  late final StreamSubscription loginSub;
+  late final StreamSubscription registerSub;
   late final StreamSubscription errorSub;
 
   @override
   void initState() {
     super.initState();
 
-    loginSub = _authService.notifyLogin.stream.listen((event) {
+    registerSub = _authService.notifyRegister.stream.listen((event) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(
           FlutterI18n.translate(context, "auth.signup.success")));
       Navigator.of(context).pushAndRemoveUntil(
@@ -120,7 +120,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   void dispose() {
-    loginSub.cancel();
+    registerSub.cancel();
     errorSub.cancel();
     super.dispose();
   }
