@@ -46,6 +46,27 @@ class HttpHandlerService {
     return response;
   }
 
+  // TODO: Test when implementing user profile (changing avatar feature)
+  Future<http.Response> updateImageAvatar(String avatarName) {
+    return client.patch(Uri.parse("$baseUrl/image/profile-picture"),
+        body: {"filename": avatarName});
+  }
+
+  // TODO: Test when implementing user profile (changing avatar feature)
+  changeImageAvatar(File newAvatarFile) async {
+    final request = http.MultipartRequest(
+        "PUT", Uri.parse("${baseUrl}/image/profile-picture"));
+    request.headers['Content-Type'] = 'multipart/form-data';
+
+    final imageFile = await http.MultipartFile.fromPath('image', newAvatarFile.path,
+        contentType: MediaType("image", "*"));
+
+    request.files.add(imageFile);
+    final response = await request.send();
+    return response;
+  }
+
+  // High Scores requests
   Future<http.Response> fetchHighScoresRequest() {
     return client.get(Uri.parse("${baseUrl}/highScore/classique"));
   }
