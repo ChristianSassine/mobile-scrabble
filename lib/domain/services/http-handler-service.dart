@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class HttpHandlerService {
   late final http.Client client;
@@ -15,9 +18,55 @@ class HttpHandlerService {
   }
 
   Future<http.Response> signUpRequest(Object body) {
-    return client.post(Uri.parse("${baseUrl}/auth/signUp"), body: body);
+    return client.post(Uri.parse("${baseUrl}/auth/signUp"),
+        headers: {'Content-Type': 'application/json'}, body: body);
   }
 
+  // Profile Avatar requests
+  Future<http.Response> getDefaultAvatarsRequest() {
+    return client.get(
+      Uri.parse("${baseUrl}/image/default-pictures"),
+    );
+  }
+
+  Future<http.StreamedResponse> sendAvatarRequest(
+      File image, String key) async {
+    final request = http.MultipartRequest(
+        "POST", Uri.parse("${baseUrl}/image/profile-picture"));
+
+    request.headers['Content-Type'] = 'multipart/form-data';
+
+    final imageFile = await http.MultipartFile.fromPath('data', image.path,
+        contentType: MediaType("image", "*"));
+
+    request.files.add(imageFile);
+    request.fields['ImageKey'] = key;
+
+    final response = await request.send();
+    return response;
+  }
+
+  // TODO: Test when implementing user profile (changing avatar feature)
+  Future<http.Response> updateImageAvatar(String avatarName) {
+    return client.patch(Uri.parse("$baseUrl/image/profile-picture"),
+        body: {"filename": avatarName});
+  }
+
+  // TODO: Test when implementing user profile (changing avatar feature)
+  changeImageAvatar(File newAvatarFile) async {
+    final request = http.MultipartRequest(
+        "PUT", Uri.parse("${baseUrl}/image/profile-picture"));
+    request.headers['Content-Type'] = 'multipart/form-data';
+
+    final imageFile = await http.MultipartFile.fromPath('image', newAvatarFile.path,
+        contentType: MediaType("image", "*"));
+
+    request.files.add(imageFile);
+    final response = await request.send();
+    return response;
+  }
+
+  // High Scores requests
   Future<http.Response> fetchHighScoresRequest() {
     return client.get(Uri.parse("${baseUrl}/highScore/classique"));
   }

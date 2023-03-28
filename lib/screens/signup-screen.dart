@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/avatar-selector-widget.dart';
 import 'package:mobile/components/recaptcha-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
+import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
@@ -63,8 +65,8 @@ class _SignupScreenState extends State<SignupScreen> {
               });
               return;
             }
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBarFactory.redSnack(FlutterI18n.translate(context, "auth.recaptcha.error")));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
+                FlutterI18n.translate(context, "auth.recaptcha.error")));
             Navigator.of(context).pop();
           },
           autoVerify: false,
@@ -89,16 +91,17 @@ class _SignUpFormState extends State<SignUpForm> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _emailController = TextEditingController();
+  AvatarData? avatarData;
 
   final _authService = GetIt.I.get<AuthService>();
-  late final StreamSubscription loginSub;
+  late final StreamSubscription registerSub;
   late final StreamSubscription errorSub;
 
   @override
   void initState() {
     super.initState();
 
-    loginSub = _authService.notifyLogin.stream.listen((event) {
+    registerSub = _authService.notifyRegister.stream.listen((event) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(
           FlutterI18n.translate(context, "auth.signup.success")));
       Navigator.of(context).pushAndRemoveUntil(
@@ -117,14 +120,20 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   void dispose() {
-    loginSub.cancel();
+    registerSub.cancel();
     errorSub.cancel();
     super.dispose();
   }
 
   void _registerAccount() {
     _authService.createUser(_usernameController.text, _emailController.text,
-        _passwordController.text);
+        _passwordController.text, avatarData!);
+  }
+
+  void _checkIfValid() {
+    setState(() {
+      _valid = _formKey.currentState!.validate() && avatarData != null;
+    });
   }
 
   @override
@@ -141,26 +150,26 @@ class _SignUpFormState extends State<SignUpForm> {
                   DefaultTextStyle.of(context).style.apply(fontSizeFactor: 2.0),
             ),
             const SizedBox(height: 16),
+            AvatarSelector(onImageChange: (data) {
+              avatarData = data;
+              _checkIfValid();
+            }),
             TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 controller: _usernameController,
                 decoration: InputDecoration(
                   hintText: FlutterI18n.translate(
                       context, "auth.signup.username_label"),
                 ),
                 validator: (value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      value.length < 3 ||
-                      value.length > 16) {
+                  if (value == null || value.isEmpty) {
                     return FlutterI18n.translate(
                         context, "auth.signup.username_error");
                   }
                   return null;
                 },
                 onChanged: (String _) {
-                  setState(() {
-                    _valid = _formKey.currentState!.validate();
-                  });
+                  _checkIfValid();
                 }),
             const SizedBox(height: 16),
             TextFormField(
@@ -180,9 +189,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   return null;
                 },
                 onChanged: (String _) {
-                  setState(() {
-                    _valid = _formKey.currentState!.validate();
-                  });
+                  _checkIfValid();
                 }),
             const SizedBox(height: 16),
             TextFormField(
@@ -193,19 +200,14 @@ class _SignUpFormState extends State<SignUpForm> {
                 ),
                 obscureText: true,
                 validator: (value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      value.length < 8 ||
-                      value.length > 16) {
+                  if (value == null || value.isEmpty) {
                     return FlutterI18n.translate(
                         context, "auth.signup.password_error");
                   }
                   return null;
                 },
                 onChanged: (String _) {
-                  setState(() {
-                    _valid = _formKey.currentState!.validate();
-                  });
+                  _checkIfValid();
                 }),
             const SizedBox(height: 16),
             TextFormField(
@@ -227,9 +229,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 return null;
               },
               onChanged: (String _) {
-                setState(() {
-                  _valid = _formKey.currentState!.validate();
-                });
+                _checkIfValid();
               },
             ),
             const SizedBox(height: 32),

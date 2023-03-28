@@ -1,54 +1,23 @@
 import 'dart:core';
 
-class ImageInfo {
-  final String name;
-  final bool isDefaultPicture;
-  final String? key;
-
-  ImageInfo.fromJson(json)
-      : name = json['name'],
-        isDefaultPicture = json['isDefaultPicture'],
-        key = json['key'];
-}
-
-class IUser {
-  final String? email;
-  final String username, password;
-  final ImageInfo? profilePicture;
-
-  IUser({required this.username, required this.password, this.email, this.profilePicture});
-
-  IUser.fromJson(json)
-      : email = json['email'],
-        username = json['username'],
-        password = json['password'],
-        profilePicture =
-            json['profilePicture'] != null ? ImageInfo.fromJson(json['profilePicture']) : null;
-
-  Map toJson() => {
-        "email": email,
-        "username": username,
-        "password": password,
-        "profilePicture": profilePicture
-      };
-}
+import 'package:mobile/domain/models/iuser-model.dart';
 
 enum GameMode {
   Null(""),
   Solo("solo"),
-  Multi("multi");
+  Multi("classique");
 
   const GameMode(this.value);
 
   final String value;
 
-  static GameMode? fromString(String sValue) {
+  static GameMode fromString(String sValue) {
     for (GameMode mode in values) {
       if (mode.value == sValue) {
         return mode;
       }
     }
-    return null;
+    return GameMode.Null;
   }
 }
 
@@ -111,19 +80,27 @@ enum PlayerType {
 
 class RoomPlayer {
   final IUser user;
-  final String socketId;
+  final String? socketId;
   final String roomId;
   final PlayerType? playerType;
-  final bool? isCreater;
+  final bool? isCreator;
 
-  RoomPlayer(this.user, this.socketId, this.roomId, this.playerType, this.isCreater);
+  RoomPlayer(this.user, this.roomId, {this.socketId, this.playerType, this.isCreator,});
 
   RoomPlayer.fromJson(json)
       : user = IUser.fromJson(json['user']),
         socketId = json['socketId'],
         roomId = json['roomId'],
         playerType = PlayerType.fromString(json['type']),
-        isCreater = json['isCreator'];
+        isCreator = json['isCreator'];
+
+  Map toJson() => {
+    "user": user.toJson(),
+    "socketId": socketId,
+    "roomId": roomId,
+    "playerType": playerType?.value,
+    "isCreator": isCreator,
+  };
 }
 
 class GameRoom {

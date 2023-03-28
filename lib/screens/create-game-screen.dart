@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/waiting-room-screen.dart';
+
 import '../domain/services/room-service.dart';
 
 class GameCreationScreen extends StatefulWidget {
@@ -24,7 +25,8 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
   // Form objects
   final _formKey = GlobalKey<FormState>();
   final List<bool> _selectedVisibility = <bool>[true, false];
-  final TextEditingController _roomNameFieldController = TextEditingController();
+  final TextEditingController _roomNameFieldController =
+      TextEditingController();
 
   List<Widget> _getGameVisibilities() {
     return <Widget>[
@@ -59,7 +61,8 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
           visibility: GameVisibility.Public,
           botDifficulty: GameDifficulty.Easy);
       _roomService.createRoom(query);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const WaitingRoomScreen()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const WaitingRoomScreen()));
     }
   }
 
@@ -89,15 +92,18 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                               controller: _roomNameFieldController,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
-                                hintText: FlutterI18n.translate(context, "form.username_field"),
+                                hintText: FlutterI18n.translate(
+                                    context, "form.username_field"),
                               ),
                               onFieldSubmitted: (_) => _createGame(),
                             ),
-                            Text(FlutterI18n.translate(context, "form.game_visibility")),
+                            Text(FlutterI18n.translate(
+                                context, "form.game_visibility")),
                             const SizedBox(height: 5),
                             ToggleButtons(
                               onPressed: _chooseVisibility,
-                              borderRadius: const BorderRadius.all(Radius.circular(8)),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
                               selectedBorderColor: Colors.green[700],
                               selectedColor: Colors.white,
                               fillColor: Colors.green[200],
@@ -117,7 +123,8 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: _createGame,
-                      child: Text(FlutterI18n.translate(context, "form.create_game")),
+                      child: Text(
+                          FlutterI18n.translate(context, "form.create_game")),
                     )
                   ],
                 ),

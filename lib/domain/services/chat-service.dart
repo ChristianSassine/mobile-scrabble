@@ -16,7 +16,6 @@ class ChatService {
       _subLogin; // There's no destructor method in dart, hopefully this does gets destroyed when the class is destroyed
 
   ChatService() {
-
     initSocketListeners();
 
     _subLogin ??= authService.notifyLogin.stream.listen((event) {
@@ -32,8 +31,8 @@ class ChatService {
 
     socket.on(ChatRoomSocketEvents.BroadCastMessageHome.event,
         (data) => {_receivedMessage(ChatMessage.fromJson(data))});
-    socket.on(
-        ChatRoomSocketEvents.UserJoinedRoom.event, (data) => {_userJoined(data)});
+    socket.on(ChatRoomSocketEvents.UserJoinedRoom.event,
+        (data) => {_userJoined(data)});
   }
 
   void submitMessage(String msg) {

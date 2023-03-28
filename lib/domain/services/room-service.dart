@@ -1,5 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/enums/socket-events-enum.dart';
+import 'package:mobile/domain/models/iuser-model.dart';
+import 'package:mobile/domain/models/joingameparams-model.dart';
+import 'package:mobile/domain/models/userimageinfo-model.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/screens/game-screen.dart';
@@ -9,6 +14,7 @@ import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
 
 class RoomService {
+  // FOR TESTING
   final Socket _socket = GetIt.I.get<Socket>();
   final AuthService _authService = GetIt.I.get<AuthService>();
 
@@ -16,12 +22,29 @@ class RoomService {
   GameRoom? currentRoom;
   Subject<List<GameRoom>> notifyNewRoomList = PublishSubject();
   Subject<GameRoom?> notifyRoomMemberList = PublishSubject();
+  Subject<GameRoom?> notifyRoomJoin = PublishSubject();
 
   RoomService() {
     initSocketListeners();
   }
 
+  void connectToRooms() {
+    _socket.emit(RoomSocketEvent.EnterRoomLobby.event);
+  }
+
   void initSocketListeners() {
+    _socket.on(RoomSocketEvent.UpdateGameRooms.event, (data) {
+      final newRooms =
+          (data as List<dynamic>).map((e) => GameRoom.fromJson(e)).toList();
+      _updateRoomList(newRooms);
+    });
+
+    _socket.on(RoomSocketEvent.JoinedValidWaitingRoom.event, (data) {
+      final gameRoom = GameRoom.fromJson(data);
+      debugPrint("Join Room request accepted");
+      _joinRoom(gameRoom);
+    });
+
     _socket.on(RoomSocketEvent.UpdateWaitingRoom.event, (data) {
       currentRoom = GameRoom.fromJson(data);
       notifyRoomMemberList.add(currentRoom);
@@ -34,24 +57,28 @@ class RoomService {
 
     _socket.on(RoomSocketEvent.GameAboutToStart.event, (_) {
       GetIt.I.get<GameService>().inGame = true;
-      Navigator.pushReplacement(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
+      Navigator.pushReplacement(
+          GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
           MaterialPageRoute(builder: (context) => const GameScreen()));
     });
   }
 
-  void updateRoomList() {
-    // TODO SERVER IMPLEMENTATION
+  void _updateRoomList(List<GameRoom> newRooms) {
+    roomList = newRooms;
+    notifyNewRoomList.add(newRooms);
   }
 
-  void joinRoom(GameRoom room) {
+  void requestJoinRoom(GameRoom room) {
     currentRoom = room;
 
-    //TODO SERVER IMPLEMENTATION
+    final player = RoomPlayer(_authService.user!, room.id);
+    _socket.emit(RoomSocketEvent.JoinWaitingRoom.event, player);
   }
 
-  void _receivedRoomList(List<GameRoom> incommingRoomList) {
-    roomList = incommingRoomList;
-    notifyNewRoomList.add(incommingRoomList);
+  void _joinRoom(GameRoom newRoom) {
+    currentRoom = newRoom;
+    notifyRoomJoin.add(currentRoom!);
+    debugPrint("Room Joined");
   }
 
   void createRoom(GameCreationQuery creationQuery) {
@@ -60,7 +87,9 @@ class RoomService {
     // Temporary until UpdateWaitingRoom is called
     currentRoom = GameRoom(
         id: "-",
-        players: [RoomPlayer(creationQuery.user, "-", "-", PlayerType.User, true)],
+        players: [
+          RoomPlayer(creationQuery.user, "-", playerType: PlayerType.User, isCreator: true)
+        ],
         dictionary: creationQuery.dictionary,
         timer: creationQuery.timer,
         gameMode: creationQuery.gameMode,
@@ -68,7 +97,8 @@ class RoomService {
   }
 
   void exitRoom() {
-    UserRoomQuery exitQuery = UserRoomQuery(user: _authService.user!, roomId: currentRoom!.id);
+    UserRoomQuery exitQuery =
+        UserRoomQuery(user: _authService.user!, roomId: currentRoom!.id);
     _socket.emit(RoomSocketEvent.ExitWaitingRoom.event, exitQuery);
   }
 
