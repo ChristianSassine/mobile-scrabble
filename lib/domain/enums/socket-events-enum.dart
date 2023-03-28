@@ -7,7 +7,12 @@ enum ChatRoomSocketEvents {
   LeaveHomeRoom('leaveHomeRoom'),
   userLeftHomeRoom('userLeftHomeRoom'),
   UserConnected('userConnected'),
-  usernameTaken('usernameTaken');
+  usernameTaken('usernameTaken'),
+  RoomLobby('roomLobby'),
+  UpdateRoomJoinable('updateListOfRooms'),
+  PlayerJoinGameAvailable('roomJoin'),
+  JoinValidGame('joinValid'),
+  ExitWaitingRoom('exitWaitingRoom');
 
   const ChatRoomSocketEvents(this.event);
 
@@ -19,8 +24,8 @@ enum RoomSocketEvent {
   JoinWaitingRoom('roomJoin'),
   UpdateWaitingRoom('gameCreatedConfirmation'),
   ExitWaitingRoom('exitWaitingRoom'),
-  JoinedValidWaitingRoom('joinValid'),
   UpdateGameRooms('updateListOfRooms'),
+  JoinedValidWaitingRoom('joinValid'),
   PlayerJoinedWaitingRoom('foundOpponent'),
   ErrorJoining('joiningError'),
   EnterRoomLobby('roomLobby'),

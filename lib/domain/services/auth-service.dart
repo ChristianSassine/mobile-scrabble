@@ -6,6 +6,7 @@ import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/models/iuser-model.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -37,7 +38,8 @@ class AuthService {
       _socket
         ..disconnect()
         ..connect();
-      user = IUser(username: username, password: "");
+
+      user = IUser.fromJson(jsonDecode(response.body)['userData']);
       notifyLogin.add(true);
       return;
     }
