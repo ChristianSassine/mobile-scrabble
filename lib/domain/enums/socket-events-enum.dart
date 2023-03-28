@@ -1,4 +1,4 @@
-enum SocketEvents {
+enum ChatRoomSocketEvents {
   JoinHomeRoom('joinHomeRoom'),
   UserJoinedRoom('userJoinedRoom'),
   RoomIsFull('roomIsFull'),
@@ -12,10 +12,29 @@ enum SocketEvents {
   UpdateRoomJoinable('updateListOfRooms'),
   PlayerJoinGameAvailable('roomJoin'),
   JoinValidGame('joinValid'),
-  ExitWaitingRoom('exitWaitingRoom')
-  ;
+  ExitWaitingRoom('exitWaitingRoom');
 
-  const SocketEvents(this.event);
+  const ChatRoomSocketEvents(this.event);
+
+  final String event;
+}
+
+enum RoomSocketEvent {
+  CreateWaitingRoom('createGame'),
+  JoinWaitingRoom('roomJoin'),
+  UpdateWaitingRoom('gameCreatedConfirmation'),
+  ExitWaitingRoom('exitWaitingRoom'),
+  UpdateGameRooms('updateListOfRooms'),
+  JoinedValidWaitingRoom('joinValid'),
+  PlayerJoinedWaitingRoom('foundOpponent'),
+  ErrorJoining('joiningError'),
+  EnterRoomLobby('roomLobby'),
+  KickedFromWaitingRoom('kickedFromGameRoom'),
+  GameAboutToStart('gameAboutToStart'),
+  OpponentLeave('opponentLeave'),
+  StartScrabbleGame('startScrabbleGame');
+
+  const RoomSocketEvent(this.event);
 
   final String event;
 }

@@ -8,6 +8,7 @@
         "disconnect": "Se déconnecter",
         "sign_up_screen": "Page de création de compte",
         "sign_up": "Créer un compte",
+        "sign_up_screen": "Création de compte",
         "create_game": "Créer une partie",
         "join_game": "Rejoindre une partie",
         "join_chat": "Rejoindre une salle de clavardage",
@@ -17,6 +18,12 @@
             "user": "Paramètres utilisateur",
             "theme": "Paramètres de thème",
             "disconnect": "Déconnexion"
+        },
+        "high_scores": {
+            "error" : "Erreur lors de la récupération des meilleurs scores",
+            "title": "Meilleurs Scores",
+            "label_score": "Scores",
+            "label_player": "Joueurs"
         }
     },
     "form": {
@@ -71,6 +78,9 @@
             "button": "Créer",
             "success": "Succès de création de compte!",
             "failure": "Erreur dans la création du compte!"
+        },
+        "recaptcha": {
+            "error": "Erreur dans la verification du recaptcha"
         }
     },
     "setting": {

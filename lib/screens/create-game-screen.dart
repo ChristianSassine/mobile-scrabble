@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/waiting-room-screen.dart';
 
 import '../domain/services/room-service.dart';
@@ -18,6 +19,7 @@ class GameCreationScreen extends StatefulWidget {
 const List<Widget> gameModes = <Widget>[Text('4 Joueurs')];
 
 class _GameCreationScreenState extends State<GameCreationScreen> {
+  final _authService = GetIt.I.get<AuthService>();
   final _roomService = GetIt.I.get<RoomService>();
 
   // Form objects
@@ -51,11 +53,16 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
 
   void _createGame() {
     if (_formKey.currentState!.validate()) {
-      Room room = Room(_roomNameFieldController.text, [], "", 0,
-          _selectedVisibility[0] ? RoomType.PUBLIC : RoomType.PRIVATE);
-      _roomService.createRoom(room);
+      GameCreationQuery query = GameCreationQuery(
+          user: _authService.user!,
+          dictionary: "Mon dictionnaire",
+          timer: 60,
+          gameMode: GameMode.Solo,
+          visibility: GameVisibility.Public,
+          botDifficulty: GameDifficulty.Easy);
+      _roomService.createRoom(query);
       Navigator.push(context,
-          MaterialPageRoute(builder: (context) => WaitingRoomScreen()));
+          MaterialPageRoute(builder: (context) => const WaitingRoomScreen()));
     }
   }
 

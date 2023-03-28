@@ -1,17 +1,28 @@
 import 'package:mobile/domain/models/userimageinfo-model.dart';
 
 class IUser {
-  String username;
-  UserImageInfo? profilePicture;
+  final String? email;
+  final String username, password;
+  final UserImageInfo? profilePicture;
 
-  IUser(this.username, {this.profilePicture});
+  IUser(
+      {required this.username,
+        required this.password,
+        this.email,
+        this.profilePicture});
 
   IUser.fromJson(json)
-      : profilePicture = UserImageInfo.fromJson(json['profilePicture']),
-        username = json['username'];
+      : email = json['email'],
+        username = json['username'],
+        password = json['password'],
+        profilePicture = json['profilePicture'] != null
+            ? UserImageInfo.fromJson(json['profilePicture'])
+            : null;
 
   Map toJson() => {
-        "username": username,
-        "profilePicture": profilePicture,
-      };
+    "email": email,
+    "username": username,
+    "password": password,
+    "profilePicture": profilePicture
+  };
 }

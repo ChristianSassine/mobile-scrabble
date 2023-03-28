@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 
 import 'game-screen.dart';
 
 class WaitingRoomScreen extends StatefulWidget {
-
   const WaitingRoomScreen({Key? key}) : super(key: key);
 
   @override
@@ -19,33 +19,29 @@ class WaitingRoomScreen extends StatefulWidget {
 class _WaitingRoomState extends State<WaitingRoomScreen> {
   final _roomService = GetIt.I.get<RoomService>();
   late final StreamSubscription newMemberSub;
+
   // late final StreamSubscription kickedOutSub;
 
-  late Room currentRoom;
+  late GameRoom currentRoom;
   final ScrollController _scrollController = ScrollController();
 
   @override
-  initState(){
+  initState() {
     super.initState();
 
-    newMemberSub = _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
-      setState(() {
-        currentRoom = newRoomState;
-      });
+    newMemberSub =
+        _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
+      if (newRoomState == null) {
+        // Exit waiting room (From kick or host closed the)
+        Navigator.pop(context);
+        return;
+      }
+      setState(() {});
     });
   }
 
-  _WaitingRoomState() {
-    currentRoom = _roomService.selectedRoom!;
-  }
-
   _startGame() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => GameScreen(
-              title: FlutterI18n.translate(context, "waiting_room.game"))),
-    );
+    _roomService.startScrabbleGame();
   }
 
   Widget _buildRoomMemberCard(String playerName) {
@@ -55,22 +51,28 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       ),
     );
   }
-  Future<bool> _onWillPop() {
-    _roomService.exitWaitingRoom();
-    return Future(() => true);
+
+  @override
+  void dispose() {
+    super.dispose();
+    newMemberSub.cancel();
+
+    if (!GetIt.I.get<GameService>().inGame) {
+      _roomService.exitRoom();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
-
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: AppBar(title: Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
-        body: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(currentRoom.id, style: const TextStyle(fontSize: 50)),
+    return Scaffold(
+      appBar: AppBar(
+          title:
+              Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Text(_roomService.currentRoom., style: const TextStyle(fontSize: 50)),
             const SizedBox(height: 100),
             Text(FlutterI18n.translate(context, "waiting_room.players"),
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
@@ -87,20 +89,21 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
                   child: ListView(
                     controller: _scrollController,
                     children: [
-                      for (String playerName in currentRoom.users.map((e) => e.username))
-                        _buildRoomMemberCard(playerName)
+                      for (RoomPlayer playerName
+                          in _roomService.currentRoom!.players)
+                        _buildRoomMemberCard(playerName.user.username)
                     ],
                   ),
                 ),
               ),
-            ),
-          ]),
+            )
+          ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _startGame,
-          tooltip: FlutterI18n.translate(context, "waiting_room.start_game"),
-          child: const Icon(Icons.play_arrow),
-        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _startGame,
+        tooltip: FlutterI18n.translate(context, "waiting_room.start_game"),
+        child: const Icon(Icons.play_arrow),
       ),
     );
   }

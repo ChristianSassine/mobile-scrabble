@@ -16,7 +16,6 @@ class ChatService {
       _subLogin; // There's no destructor method in dart, hopefully this does gets destroyed when the class is destroyed
 
   ChatService() {
-
     initSocketListeners();
 
     _subLogin ??= authService.notifyLogin.stream.listen((event) {
@@ -28,19 +27,19 @@ class ChatService {
     // When left service is undefined (user is not connected to a username) the client crashes because data is null
     // socket.on(
     //     RoomSocketEvents.userLeftHomeRoom.event, (data) => {_userLeft(data)});
-    socket.on(SocketEvents.UserJoinedRoom.event, (data) => {});
+    socket.on(ChatRoomSocketEvents.UserJoinedRoom.event, (data) => {});
 
-    socket.on(SocketEvents.BroadCastMessageHome.event,
+    socket.on(ChatRoomSocketEvents.BroadCastMessageHome.event,
         (data) => {_receivedMessage(ChatMessage.fromJson(data))});
-    socket.on(
-        SocketEvents.UserJoinedRoom.event, (data) => {_userJoined(data)});
+    socket.on(ChatRoomSocketEvents.UserJoinedRoom.event,
+        (data) => {_userJoined(data)});
   }
 
   void submitMessage(String msg) {
-    ChatMessage newMessage = ChatMessage(authService.username!,
+    ChatMessage newMessage = ChatMessage(authService.user!.username,
         MessageType.CLIENT.value, msg, DateFormat.Hms().format(DateTime.now()));
     chatBox.addMessage(newMessage);
-    socket.emit(SocketEvents.SendHomeMessage.event, newMessage);
+    socket.emit(ChatRoomSocketEvents.SendHomeMessage.event, newMessage);
   }
 
   // void requestFetchMessages() {
@@ -52,13 +51,13 @@ class ChatService {
   }
 
   void _receivedMessage(ChatMessage incommingMessage) {
-    if (incommingMessage.username != authService.username!) {
+    if (incommingMessage.username != authService.user!.username) {
       chatBox.addMessage(incommingMessage);
     }
   }
 
   void _userJoined(String username) {
-    if (authService.username! != username) {
+    if (authService.user!.username != username) {
       chatBox.addMessage(ChatMessage(
           "",
           MessageType.SYSTEM.value,

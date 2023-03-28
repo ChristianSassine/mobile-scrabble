@@ -19,11 +19,20 @@ class RoomSelectionScreen extends StatefulWidget {
 
 class _RoomListState extends State<RoomSelectionScreen> {
   final _roomService = GetIt.I.get<RoomService>();
-  List<Room> roomList = [];
+  List<GameRoom> roomList = [];
 
   final ScrollController _scrollController = ScrollController();
   late final StreamSubscription newRoomSub;
   late final StreamSubscription validJoinSub;
+
+  final roomsLabels = [
+    'Joueurs',
+    'Hote',
+    'Difficulté',
+    'Minuterie',
+    'Dictionnaire',
+    ''
+  ];
 
   @override
   initState() {
@@ -56,27 +65,25 @@ class _RoomListState extends State<RoomSelectionScreen> {
     roomList = _roomService.roomList;
   }
 
-  void _joinRoom(Room room) {
+  void _joinRoom(GameRoom room) {
     _roomService.requestJoinRoom(room);
-
   }
 
-  DataRow _buildRoomListing(Room room) {
-    return DataRow(
-        cells: [
+  DataRow _buildRoomListing(GameRoom room) {
+    return DataRow(cells: [
       DataCell(
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Icon(Icons.people),
             Text(
-              "${room.users.length}/4",
+              "${room.players.length}/4",
             ),
           ],
         ),
       ),
       DataCell(
-        Text(room.users.length > 0 ? room.users[0].username : "?"),
+        Text(room.players.isNotEmpty ? room.players[0].user.username : "?"),
       ),
       const DataCell(
         Text("HARDCODED"),
@@ -115,44 +122,13 @@ class _RoomListState extends State<RoomSelectionScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: DataTable(
-                    columns: const [
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Joueurs',
-                          ),
-                        ),
-                      ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Hote',
-                          ),
-                        ),
-                      ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Difficulté',
-                          ),
-                        ),
-                      ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Minuterie',
-                          ),
-                        ),
-                      ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Dictionnaire',
-                          ),
-                        ),
-                      ),
-                      DataColumn(label: SizedBox()),
-                    ],
+                    columns: roomsLabels
+                        .map((label) => DataColumn(
+                              label: Expanded(
+                                child: Text(label),
+                              ),
+                            ))
+                        .toList(),
                     rows: roomList
                         .map((room) => _buildRoomListing(room))
                         .toList(),

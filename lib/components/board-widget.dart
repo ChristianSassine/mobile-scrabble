@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -23,13 +24,19 @@ class _BoardState extends State<BoardWidget> {
   StreamSubscription? boardUpdate;
 
   @override
-  Widget build(BuildContext context) {
-    boardUpdate ??=
-        _gameService.gameboard.notifyBoardChanged.stream.listen((event) {
+  initState() {
+    super.initState();
+
+    boardUpdate = _gameService.gameboard.notifyBoardChanged.stream.listen((event) {
       setState(() {});
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    double slotSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
     int boardSize = _gameService.gameboard.size;
+
     return Card(
       color: Colors.green[900],
       shape: Border.all(width: 0),
@@ -39,31 +46,33 @@ class _BoardState extends State<BoardWidget> {
           children: List.generate(
               boardSize,
               (vIndex) => Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25),
-                child: Row(
+                    padding: const EdgeInsets.only(left: 25, right: 25),
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
                           boardSize,
                           (hIndex) => Stack(children: [
                                 SlotWidget(
-                                    value: _gameService.gameboard.layout
-                                        .layoutMatrix[hIndex][vIndex],
+                                    value: _gameService.gameboard.layout.layoutMatrix[hIndex]
+                                        [vIndex],
                                     x: vIndex,
                                     y: hIndex),
-                                !_gameService.gameboard
-                                        .isSlotEmpty(vIndex, hIndex)
-                                    ? BoardLetter(
-                                        value: _gameService.gameboard
-                                            .getSlot(vIndex, hIndex)!,
-                                        dragKey: widget.dragKey,
-                                        widgetSize: 35,
-                                        x: vIndex,
-                                        y: hIndex)
+                                !_gameService.gameboard.isSlotEmpty(vIndex, hIndex)
+                                    ? _gameService.isPendingLetter(vIndex, hIndex)
+                                        ? PendingBoardLetter(
+                                            value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
+                                            dragKey: widget.dragKey,
+                                            widgetSize: slotSize,
+                                            x: vIndex,
+                                            y: hIndex)
+                                        : BoardLetter(
+                                            value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
+                                            widgetSize: slotSize)
                                     : const SizedBox.shrink()
                               ])).toList(),
                     ),
-              )).toList()),
+                  )).toList()),
     );
   }
 }
@@ -73,8 +82,7 @@ class SlotWidget extends StatelessWidget {
   final Modifier value;
   final int x, y;
 
-  SlotWidget(
-      {super.key, required this.value, required this.x, required this.y});
+  SlotWidget({super.key, required this.value, required this.x, required this.y});
 
   getCardFromModifier(context, value) {
     Color? color;
@@ -117,9 +125,11 @@ class SlotWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var SlotSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
+
     return SizedBox(
-      height: 35,
-      width: 35,
+      height: SlotSize,
+      width: SlotSize,
       child: DragTarget<Letter>(
         builder: (context, letters, rejectedItems) {
           if (letters.isEmpty) {
@@ -127,7 +137,7 @@ class SlotWidget extends StatelessWidget {
           } else {
             return Stack(children: [
               getCardFromModifier(context, value),
-              GhostLetter(value: letters[0]!, widgetSize: 35)
+              GhostLetter(value: letters[0]!, widgetSize: SlotSize)
             ]);
           }
         },
@@ -138,9 +148,21 @@ class SlotWidget extends StatelessWidget {
 }
 
 class BoardLetter extends StatelessWidget {
+  BoardLetter({super.key, required this.value, required this.widgetSize});
+
+  final Letter value;
+  final double widgetSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return LetterWidget(character: value.character, points: value.points, widgetSize: widgetSize);
+  }
+}
+
+class PendingBoardLetter extends StatelessWidget {
   final _gameService = GetIt.I.get<GameService>();
 
-  BoardLetter(
+  PendingBoardLetter(
       {super.key,
       required this.value,
       required this.dragKey,
@@ -155,17 +177,25 @@ class BoardLetter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LongPressDraggable(
-      data: value,
-      delay: const Duration(milliseconds: 100),
-      feedback: DraggedLetter(value: value, dragKey: dragKey),
-      child: LetterWidget(
-          character: value.character,
-          points: value.points,
-          widgetSize: widgetSize),
-      onDragStarted: () => _gameService.removeLetterFromBoard(x, y),
-      onDraggableCanceled: (_v, _o) =>
-          _gameService.placeLetterOnBoard(x, y, value),
-    );
+    return _gameService.isPlacedLetterRemovalValid(x, y)
+        ? LongPressDraggable(
+            data: value,
+            delay: const Duration(milliseconds: 0),
+            feedback: DraggedLetter(value: value, dragKey: dragKey),
+            child: LetterWidget(
+              character: value.character,
+              points: value.points,
+              widgetSize: widgetSize,
+              highlighted: true,
+            ),
+            onDragStarted: () => _gameService.dragLetterFromBoard(x, y),
+            onDraggableCanceled: (_v, _o) => _gameService.cancelDragLetter(),
+          )
+        : LetterWidget(
+            character: value.character,
+            points: value.points,
+            widgetSize: widgetSize,
+            highlighted: true,
+          );
   }
 }
