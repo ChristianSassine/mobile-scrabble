@@ -64,6 +64,17 @@ class Board {
     return _boardMatrix;
   }
 
+  void updateFromString(List<String> gameboard) {
+    for(int x = 0; x < size; ++x){
+      for(int y = 0; y < size; ++y){
+        String character = gameboard[x + y * size];
+        _boardMatrix[x][y] = character != '' ? Letter.fromCharacter(character) : null;
+      }
+    }
+
+    notifyBoardChanged.add(true);
+  }
+
 // Board.fromJson(json)
 //       : boardMatrix = json['board'];
 

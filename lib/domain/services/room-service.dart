@@ -5,9 +5,8 @@ import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/screens/game-screen.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:socket_io_client/socket_io_client.dart';
-
-import '../enums/socket-events-enum.dart';
-import '../models/room-model.dart';
+import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/enums/socket-events-enum.dart';
 
 class RoomService {
   final Socket _socket = GetIt.I.get<Socket>();
@@ -28,12 +27,12 @@ class RoomService {
       notifyRoomMemberList.add(currentRoom);
     });
 
-    _socket.on(RoomSocketEvent.KickedFromWaitingRoom.event, (data) {
+    _socket.on(RoomSocketEvent.KickedFromWaitingRoom.event, (_) {
       currentRoom = null;
       notifyRoomMemberList.add(currentRoom);
     });
 
-    _socket.on(RoomSocketEvent.GameAboutToStart.event, (data) {
+    _socket.on(RoomSocketEvent.GameAboutToStart.event, (_) {
       GetIt.I.get<GameService>().inGame = true;
       Navigator.pushReplacement(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
           MaterialPageRoute(builder: (context) => const GameScreen()));
@@ -74,6 +73,7 @@ class RoomService {
   }
 
   void startScrabbleGame() {
+    GetIt.I.get<GameService>(); // Init Game Service
     _socket.emit(RoomSocketEvent.StartScrabbleGame.event, currentRoom!.id);
   }
 }

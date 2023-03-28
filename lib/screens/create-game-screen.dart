@@ -55,7 +55,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
           user: _authService.user!,
           dictionary: "Mon dictionnaire",
           timer: 60,
-          gameMode: GameMode.Solo,
+          gameMode: GameMode.Multi,
           visibility: GameVisibility.Public,
           botDifficulty: GameDifficulty.Easy);
       _roomService.createRoom(query);

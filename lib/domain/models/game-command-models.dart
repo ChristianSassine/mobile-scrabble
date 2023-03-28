@@ -1,3 +1,5 @@
+import 'package:mobile/components/game-info-widget.dart';
+import 'package:mobile/domain/enums/letter-enum.dart';
 import 'package:mobile/domain/models/room-model.dart';
 
 class Coordinate {
@@ -28,11 +30,23 @@ class PlaceLetterCommandInfo {
 }
 
 class PlayerInformation{
+  RoomPlayer player;
+  int score;
+  List<Letter> rack;
 
+  PlayerInformation.fromJson(json):
+        player = RoomPlayer.fromJson(json['player']),
+        score = json['score'],
+        rack = json['rack']?.map<Letter>((letter) => Letter.fromCharacter(letter['value'])!)?.toList();
 }
 
 class GameInfo {
   List<String> gameboard;
-  List<PlayerInfo> players;
+  List<PlayerInformation> players;
   IUser? activePlayer;
+
+  GameInfo.fromJson(json):
+  gameboard = json['gameboard']?.map<String>((letter) => letter as String)?.toList(),
+  players = json['players'].map<PlayerInformation>(PlayerInformation.fromJson).toList(),
+  activePlayer = IUser.fromJson(json['activePlayer']);
 }

@@ -2,11 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/models/player-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:rxdart/rxdart.dart';
 import '../enums/letter-enum.dart';
@@ -21,6 +23,7 @@ class LetterPlacement {
 
 class GameService {
   final _socket = GetIt.I.get<Socket>();
+  final _authService = GetIt.I.get<AuthService>();
 
   Subject<bool> notifyGameInfoChange = PublishSubject();
 
@@ -44,7 +47,8 @@ class GameService {
   bool inGame = false;
 
   GameService() {
-    startGame();
+    setupSocketListeners();
+    // startGame();
   }
 
   void startGame() async {
@@ -71,7 +75,16 @@ class GameService {
   }
 
   void setupSocketListeners() {
-    // _socket.on("updateClientView", )
+    debugPrint("Listenning to games");
+    _socket.on(RoomSocketEvent.PublicViewUpdate.event, (data) => _publicViewUpdate(data));
+  }
+
+  void _publicViewUpdate(data){
+    GameInfo gameInfo = GameInfo.fromJson(data);
+    gameboard.updateFromString(gameInfo.gameboard);
+    easel.updateFromRack(gameInfo.players.firstWhere((PlayerInformation player) => player.player.user.username == _authService.user?.username).rack);
+
+    notifyGameInfoChange.add(true);
   }
 
   void placeLetterOnBoard(int x, int y, Letter letter) {
