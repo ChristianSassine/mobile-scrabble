@@ -99,7 +99,7 @@ class _EaselState extends State<EaselWidget> {
   Widget build(BuildContext context) {
     return DragTarget<Letter>(
         builder: (context, letters, rejectedItems) {
-          return Container(
+          return SizedBox(
             height: min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.1,
             child: Card(
                 color: Colors.green[700],

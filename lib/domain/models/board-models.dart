@@ -15,7 +15,7 @@ class Board {
   Board(this.size)
       : _boardMatrix = List.generate(
             size, (i) => List.filled(size, null, growable: false)),
-        layout = BoardLayout(15) {}
+        layout = BoardLayout(15);
 
   bool isSlotEmpty(int x, int y) {
     return isSlotValid(x, y) && _boardMatrix[x][y] == null;

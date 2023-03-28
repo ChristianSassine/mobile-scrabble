@@ -125,11 +125,11 @@ class SlotWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var SlotSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
+    var slotSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
 
     return SizedBox(
-      height: SlotSize,
-      width: SlotSize,
+      height: slotSize,
+      width: slotSize,
       child: DragTarget<Letter>(
         builder: (context, letters, rejectedItems) {
           if (letters.isEmpty) {
@@ -137,7 +137,7 @@ class SlotWidget extends StatelessWidget {
           } else {
             return Stack(children: [
               getCardFromModifier(context, value),
-              GhostLetter(value: letters[0]!, widgetSize: SlotSize)
+              GhostLetter(value: letters[0]!, widgetSize: slotSize)
             ]);
           }
         },
@@ -148,7 +148,7 @@ class SlotWidget extends StatelessWidget {
 }
 
 class BoardLetter extends StatelessWidget {
-  BoardLetter({super.key, required this.value, required this.widgetSize});
+  const BoardLetter({super.key, required this.value, required this.widgetSize});
 
   final Letter value;
   final double widgetSize;
@@ -189,7 +189,7 @@ class PendingBoardLetter extends StatelessWidget {
               highlighted: true,
             ),
             onDragStarted: () => _gameService.dragLetterFromBoard(x, y),
-            onDraggableCanceled: (_v, _o) => _gameService.cancelDragLetter(),
+            onDraggableCanceled: (v, o) => _gameService.cancelDragLetter(),
           )
         : LetterWidget(
             character: value.character,

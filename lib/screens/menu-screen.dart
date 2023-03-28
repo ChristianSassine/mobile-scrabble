@@ -156,7 +156,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => RoomSelectionScreen(),
+                              builder: (context) => const RoomSelectionScreen(),
                             ),
                           )
                         },

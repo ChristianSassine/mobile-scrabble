@@ -7,7 +7,7 @@ class SnackBarFactory {
         text,
         textAlign: TextAlign.center,
       ),
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       backgroundColor: Colors.green,
     );
   }
@@ -18,7 +18,7 @@ class SnackBarFactory {
         text,
         textAlign: TextAlign.center,
       ),
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       backgroundColor: Colors.red,
     );
   }

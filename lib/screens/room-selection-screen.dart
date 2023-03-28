@@ -75,7 +75,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Icon(Icons.people),
+            const Icon(Icons.people),
             Text(
               "${room.players.length}/4",
             ),

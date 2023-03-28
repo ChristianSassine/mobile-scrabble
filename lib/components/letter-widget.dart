@@ -75,7 +75,7 @@ class DraggedLetter extends StatelessWidget {
 }
 
 class GhostLetter extends StatelessWidget {
-  GhostLetter({super.key, required this.value, required this.widgetSize});
+  const GhostLetter({super.key, required this.value, required this.widgetSize});
 
   final Letter value;
   final double widgetSize;

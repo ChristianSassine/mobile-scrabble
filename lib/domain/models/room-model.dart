@@ -126,7 +126,7 @@ class GameRoom {
         players = json['players'].map<RoomPlayer>(RoomPlayer.fromJson).toList(),
         dictionary = json['dictionary'],
         timer = json['timer'],
-        gameMode = GameMode.fromString(json['mode'])!,
+        gameMode = GameMode.fromString(json['mode']),
         visibility = GameVisibility.fromString(json['visibility'])!,
         password = json['password'];
 }

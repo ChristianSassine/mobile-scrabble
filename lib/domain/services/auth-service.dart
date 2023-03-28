@@ -31,7 +31,7 @@ class AuthService {
 
     if (response.statusCode == HttpStatus.ok) {
       // JWT token
-      String? rawCookie = response.headers!['set-cookie'];
+      String? rawCookie = response.headers['set-cookie'];
       _cookie = Cookie.fromSetCookieValue(rawCookie!);
 
       _socket.io.options['extraHeaders'] = {'cookie': _cookie};

@@ -5,8 +5,6 @@ import 'package:mobile/components/game-info-widget.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:mobile/screens/end-game-screen.dart';
 
-import '../components/chatbox-widget.dart';
-
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key,});
 
@@ -45,19 +43,18 @@ class _GameScreenState extends State<GameScreen> {
         ],
       )),
       bottomNavigationBar: BottomAppBar(
-          child: Container(
-              child: EaselWidget(
+          child: EaselWidget(
         dragKey: _draggableKey,
-      ))),
+      )),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.red,
           child: const Icon(Icons.flag),
           onPressed: () async {
             if (await confirm(context,
-                textOK: Text("Oui"),
-                textCancel: Text("Non"),
-                content: Text("Êtes vous sûr de vouloir abandonner?"))) {
+                textOK: const Text("Oui"),
+                textCancel: const Text("Non"),
+                content: const Text("Êtes vous sûr de vouloir abandonner?"))) {
               _abandonGame();
             }
           }),
