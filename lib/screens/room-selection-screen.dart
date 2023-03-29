@@ -34,6 +34,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
     'Difficulté',
     'Minuterie',
     'Dictionnaire',
+    '',
     ''
   ];
 
@@ -82,7 +83,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
               children: [
                 Icon(Icons.smart_toy),
                 Text(
-                  "${room.players.where((player) => player.playerType == PlayerType.Bot).length}/4",
+                  "${room.players.where((player) => player.playerType == PlayerType.Bot).length}",
                 ),
               ],
             ),
@@ -100,7 +101,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
               children: [
                 Icon(Icons.preview),
                 Text(
-                  "${room.players.where((player) => player.playerType == PlayerType.Observer).length}/4",
+                  "${room.players.where((player) => player.playerType == PlayerType.Observer).length}",
                 ),
               ],
             ),
@@ -126,11 +127,20 @@ class _RoomListState extends State<RoomSelectionScreen> {
         Text(room.dictionary),
       ),
       DataCell(
-        IconButton(
-            color: Theme.of(context).primaryColor,
-            onPressed: () => _joinRoom(room),
-            icon: const Icon(Icons.login)),
+        room.visibility == GameVisibility.Locked
+            ? Icon(
+                Icons.lock,
+                color: Theme.of(context).hintColor,
+              )
+            : const SizedBox(),
       ),
+      DataCell(OutlinedButton(
+        onPressed: () => {
+          if (room.visibility == GameVisibility.Public)
+          _joinRoom(room)
+        },
+        child: const Icon(Icons.login),
+      )),
     ]);
   }
 
