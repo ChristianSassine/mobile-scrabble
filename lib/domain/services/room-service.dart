@@ -2,9 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
-import 'package:mobile/domain/models/iuser-model.dart';
-import 'package:mobile/domain/models/joingameparams-model.dart';
-import 'package:mobile/domain/models/userimageinfo-model.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/screens/game-screen.dart';
@@ -68,10 +65,11 @@ class RoomService {
     notifyNewRoomList.add(newRooms);
   }
 
-  void requestJoinRoom(GameRoom room) {
+  void requestJoinRoom(GameRoom room, [String? password]) {
     currentRoom = room;
+    print(password);
 
-    final player = RoomPlayer(_authService.user!, room.id);
+    final player = RoomPlayer(_authService.user!, room.id, password: password);
     _socket.emit(RoomSocketEvent.JoinWaitingRoom.event, player);
   }
 

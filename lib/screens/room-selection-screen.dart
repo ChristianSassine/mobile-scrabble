@@ -23,6 +23,8 @@ class _RoomListState extends State<RoomSelectionScreen> {
   List<GameRoom> roomList = [];
 
   final ScrollController _scrollController = ScrollController();
+  final _passwordController = TextEditingController();
+
   late final StreamSubscription newRoomSub;
   late final StreamSubscription validJoinSub;
 
@@ -69,8 +71,8 @@ class _RoomListState extends State<RoomSelectionScreen> {
     roomList = _roomService.roomList;
   }
 
-  void _joinRoom(GameRoom room) {
-    _roomService.requestJoinRoom(room);
+  void _joinRoom(GameRoom room, [String? password]) {
+    _roomService.requestJoinRoom(room, password);
   }
 
   DataRow _buildRoomListing(GameRoom room) {
@@ -134,9 +136,30 @@ class _RoomListState extends State<RoomSelectionScreen> {
               )
             : const SizedBox(),
       ),
-      DataCell(OutlinedButton(
+      DataCell(
+          OutlinedButton(
         onPressed: () => {
-          if (room.visibility == GameVisibility.Public)
+          if (room.visibility == GameVisibility.Locked)
+            {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                        title: Text("Room password"),
+                        content: TextFormField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            hintText: "Password",
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.login),
+                              onPressed: () {
+                                Navigator.of(context).pop(_passwordController.text);
+                                _passwordController.clear();
+                              },
+                            ),
+                          ),
+                        ),
+                      )).then((password) => _joinRoom(room, password))
+            },
           _joinRoom(room)
         },
         child: const Icon(Icons.login),
