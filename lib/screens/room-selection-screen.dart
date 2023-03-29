@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/models/iuser-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/screens/waiting-room-screen.dart';
@@ -25,6 +26,8 @@ class _RoomListState extends State<RoomSelectionScreen> {
   late final StreamSubscription newRoomSub;
   late final StreamSubscription validJoinSub;
 
+  // HardCoded since there's no dynamic way to do it (Might need to implement it another way or use a library)
+  static const double ROW_HEIGHTS = 75;
   final roomsLabels = [
     'Joueurs',
     'Hote',
@@ -77,9 +80,27 @@ class _RoomListState extends State<RoomSelectionScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                Icon(Icons.smart_toy),
+                Text(
+                  "${room.players.where((player) => player.playerType == PlayerType.Bot).length}/4",
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
                 Icon(Icons.people),
                 Text(
-                  "${room.players.length}/4",
+                  "${room.players.where((player) => player.playerType == PlayerType.User).length}/4",
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(Icons.preview),
+                Text(
+                  "${room.players.where((player) => player.playerType == PlayerType.Observer).length}/4",
                 ),
               ],
             ),
@@ -89,7 +110,8 @@ class _RoomListState extends State<RoomSelectionScreen> {
       DataCell(
         Text(room.players.isNotEmpty
             ? room.players
-                .firstWhere((player) => player.isCreator ?? false)
+                .firstWhere((player) => player.isCreator ?? false,
+                    orElse: () => RoomPlayer(IUser(username: '?'), room.id))
                 .user
                 .username
             : "?"),
@@ -131,6 +153,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: DataTable(
+                    dataRowHeight: _RoomListState.ROW_HEIGHTS,
                     columns: roomsLabels
                         .map((label) => DataColumn(
                               label: Expanded(
