@@ -72,18 +72,27 @@ class _RoomListState extends State<RoomSelectionScreen> {
   DataRow _buildRoomListing(GameRoom room) {
     return DataRow(cells: [
       DataCell(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        Column(
           children: [
-            Icon(Icons.people),
-            Text(
-              "${room.players.length}/4",
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(Icons.people),
+                Text(
+                  "${room.players.length}/4",
+                ),
+              ],
             ),
           ],
         ),
       ),
       DataCell(
-        Text(room.players.isNotEmpty ? room.players[0].user.username : "?"),
+        Text(room.players.isNotEmpty
+            ? room.players
+                .firstWhere((player) => player.isCreator ?? false)
+                .user
+                .username
+            : "?"),
       ),
       const DataCell(
         Text("HARDCODED"),
