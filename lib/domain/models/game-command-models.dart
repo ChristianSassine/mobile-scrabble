@@ -15,12 +15,12 @@ class Coordinate {
 }
 
 
-class PlaceLetterCommandInfo {
+class PlaceWordCommandInfo {
   Coordinate firstCoordinate;
   bool? isHorizontal;
   List<String> letters;
 
-  PlaceLetterCommandInfo(this.firstCoordinate, this.isHorizontal, this.letters);
+  PlaceWordCommandInfo(this.firstCoordinate, this.isHorizontal, this.letters);
 
   Map toJson() => {
     "firstCoordinate": firstCoordinate.toJson(),

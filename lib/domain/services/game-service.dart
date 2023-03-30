@@ -272,7 +272,7 @@ class GameService {
     List<String> letters = List.generate(
         pendingLetters.length, (index) => pendingLetters[index].letter.name);
 
-    // _socket.emit("playGame", CommandInfo(firstCoordonate, isHorizontal, letters));
+    _socket.emit(GameSocketEvent.PlaceWordCommand.event, PlaceWordCommandInfo(firstCoordonate, isHorizontal, letters));
 
     // if(isHorizontal){
     //   for(int x = pendingLetters.first.x; x <= pendingLetters.last.x; ++x){
