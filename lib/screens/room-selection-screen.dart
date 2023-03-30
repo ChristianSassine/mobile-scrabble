@@ -25,6 +25,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
 
   final ScrollController _scrollController = ScrollController();
   final _passwordController = TextEditingController();
+  final _roomIDController = TextEditingController();
 
   late final StreamSubscription _newRoomSub;
   late final StreamSubscription _validJoinSub;
@@ -79,12 +80,12 @@ class _RoomListState extends State<RoomSelectionScreen> {
     roomList = _roomService.roomList;
   }
 
-  void _joinRoom(GameRoom room, [String? password]) {
-    _roomService.requestJoinRoom(room, password);
+  void _joinRoom(String roomId, [String? password]) {
+    _roomService.requestJoinRoom(roomId, password);
   }
 
+
   AlertDialog _buildPasswordInput() {
-    // TODO: Translate + Check if password is not empty (maybe)?
     return AlertDialog(
       title: Text(FlutterI18n.translate(context, "rooms_lobby.password.title")),
       content: TextFormField(
@@ -176,11 +177,11 @@ class _RoomListState extends State<RoomSelectionScreen> {
                       context: context,
                       builder: (BuildContext context) => _buildPasswordInput())
                   .then((password) {
-                if (!password.isEmpty) _joinRoom(room, password);
+                if (!password.isEmpty) _joinRoom(room.id, password);
               })
             }
           else
-            _joinRoom(room)
+            _joinRoom(room.id)
         },
         child: const Icon(Icons.login),
       )),
@@ -224,6 +225,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      controller: _roomIDController,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         hintText:
@@ -231,6 +233,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.login),
                           onPressed: () {
+                            _joinRoom(_roomIDController.text);
                           },
                         ),
                       ),

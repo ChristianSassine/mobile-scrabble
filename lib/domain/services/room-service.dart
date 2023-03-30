@@ -86,10 +86,9 @@ class RoomService {
     notifyNewRoomList.add(newRooms);
   }
 
-  void requestJoinRoom(GameRoom room, [String? password]) {
-    currentRoom = room;
+  void requestJoinRoom(String roomId, [String? password]) {
 
-    final player = RoomPlayer(_authService.user!, room.id, password: password);
+    final player = RoomPlayer(_authService.user!, roomId, password: password);
     _socket.emit(RoomSocketEvent.JoinWaitingRoom.event, player);
   }
 
