@@ -48,6 +48,7 @@
         "game": "Partie"
     },
     "rooms_lobby": {
+        "id_label" : "Rejoindre une salle avec un ID",
         "password": {
             "title": "Mot de passe de la salle",
             "label": "Mot de passe"

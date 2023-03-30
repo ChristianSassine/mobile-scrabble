@@ -47,6 +47,7 @@
         "game": "Game"
     },
     "rooms_lobby": {
+        "id_label" : "Enter Room ID",
         "password": {
             "title": "Room password",
             "label": "Password"

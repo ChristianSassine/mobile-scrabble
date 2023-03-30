@@ -227,7 +227,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         hintText:
-                        "Enter Room ID",
+                        FlutterI18n.translate(context, "rooms_lobby.id_label"),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.login),
                           onPressed: () {
