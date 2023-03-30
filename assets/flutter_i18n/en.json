@@ -47,6 +47,13 @@
         "game": "Game"
     },
     "rooms_lobby": {
+        "table": {
+            "users": "Users",
+            "host": "Host",
+            "difficulty": "Difficulty",
+            "timer": "Timer",
+            "dictionary": "Dictionary"
+        },
         "id_label" : "Enter Room ID",
         "password": {
             "title": "Room password",

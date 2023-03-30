@@ -33,15 +33,6 @@ class _RoomListState extends State<RoomSelectionScreen> {
 
   // HardCoded since there's no dynamic way to do it (Might need to implement it another way or use a library)
   static const double ROW_HEIGHTS = 75;
-  final roomsLabels = [
-    'Joueurs',
-    'Hote',
-    'Difficulté',
-    'Minuterie',
-    'Dictionnaire',
-    '',
-    ''
-  ];
 
   @override
   initState() {
@@ -83,7 +74,6 @@ class _RoomListState extends State<RoomSelectionScreen> {
   void _joinRoom(String roomId, [String? password]) {
     _roomService.requestJoinRoom(roomId, password);
   }
-
 
   AlertDialog _buildPasswordInput() {
     return AlertDialog(
@@ -190,6 +180,16 @@ class _RoomListState extends State<RoomSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final roomsLabels = [
+      FlutterI18n.translate(context, "rooms_lobby.table.users"),
+      FlutterI18n.translate(context, "rooms_lobby.table.host"),
+      FlutterI18n.translate(context, "rooms_lobby.table.difficulty"),
+      FlutterI18n.translate(context, "rooms_lobby.table.timer"),
+      FlutterI18n.translate(context, "rooms_lobby.table.dictionary"),
+      '',
+      ''
+    ];
+
     return Scaffold(
       appBar: AppBar(
           title: Text(FlutterI18n.translate(context, "menu_screen.join_game"))),
@@ -228,8 +228,8 @@ class _RoomListState extends State<RoomSelectionScreen> {
                       controller: _roomIDController,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        hintText:
-                        FlutterI18n.translate(context, "rooms_lobby.id_label"),
+                        hintText: FlutterI18n.translate(
+                            context, "rooms_lobby.id_label"),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.login),
                           onPressed: () {

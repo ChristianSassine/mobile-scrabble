@@ -48,6 +48,13 @@
         "game": "Partie"
     },
     "rooms_lobby": {
+        "table": {
+            "users": "Joueurs",
+            "host": "Hote",
+            "difficulty": "Difficulté",
+            "timer": "Minuterie",
+            "dictionary": "Dictionnaire"
+        },
         "id_label" : "Rejoindre une salle avec un ID",
         "password": {
             "title": "Mot de passe de la salle",
