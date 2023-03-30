@@ -40,14 +40,22 @@ class GameInfo extends StatefulWidget {
 class _GameInfoState extends State<GameInfo> {
   final _gameService = GetIt.I.get<GameService>();
 
-  StreamSubscription? _gameInfoUpdate;
+  late StreamSubscription _gameInfoUpdate;
+
+  _GameInfoState(){
+    _gameInfoUpdate = _gameService.notifyGameInfoChange.stream.listen((event) {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _gameInfoUpdate.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
-    _gameInfoUpdate ??= _gameService.notifyGameInfoChange.stream.listen((event) {
-      setState(() {});
-    });
-
     return Column(
       children: [
         SizedBox(
@@ -115,13 +123,22 @@ class _PlayerInfoState extends State<PlayerInfo> {
   final _roomService = GetIt.I.get<RoomService>();
   final _gameService = GetIt.I.get<GameService>();
 
-  StreamSubscription? _gameInfoUpdate;
+  late StreamSubscription _gameInfoUpdate;
+
+  _PlayerInfoState(){
+    _gameInfoUpdate = _gameService.notifyGameInfoChange.stream.listen((event) {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _gameInfoUpdate.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
-    _gameInfoUpdate ??= _gameService.notifyGameInfoChange.stream.listen((event) {
-      setState(() {});
-    });
 
     return SizedBox(
       width: 300,

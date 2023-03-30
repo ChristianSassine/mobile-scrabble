@@ -39,3 +39,18 @@ enum RoomSocketEvent {
 
   final String event;
 }
+
+enum GameSocketEvent {
+  PlaceWordCommand('placeWord'),
+  Exchange('ExchangeLetters'),
+  Skip('skip'),
+  QuitGame('quitGame'),
+  ReserveCommand('reserveCommand'),
+  ClueCommand('clueCommand'),
+  NextTurn('nextTurn'),
+  GameEnded('endGame');
+
+  const GameSocketEvent(this.event);
+
+  final String event;
+}

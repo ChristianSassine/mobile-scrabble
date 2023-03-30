@@ -1,15 +1,16 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
-import 'package:mobile/domain/models/player-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
+import 'package:mobile/screens/end-game-screen.dart';
 import 'package:rxdart/rxdart.dart';
 import '../enums/letter-enum.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -53,16 +54,10 @@ class GameService {
 
   void startGame() async {
     _gameStarted = true;
-    activePlayer = _gameRoom.players[0];
     fillEaselWithReserve();
 
     while (_gameStarted) {
       turnTimer += 1;
-
-      if (turnTimer >= turnLength) {
-        nextTurn();
-      }
-
       notifyGameInfoChange.add(true);
       await Future.delayed(const Duration(seconds: 1));
     }
@@ -75,16 +70,42 @@ class GameService {
   }
 
   void setupSocketListeners() {
-    debugPrint("Listenning to games");
-    _socket.on(RoomSocketEvent.PublicViewUpdate.event, (data) => _publicViewUpdate(data));
+    _socket.on(RoomSocketEvent.PublicViewUpdate.event, (data) =>
+        _publicViewUpdate(GameInfo.fromJson(data)));
+    _socket.on(RoomSocketEvent.GameAboutToStart.event, (_) => startGame());
+
+    _socket.on(GameSocketEvent.NextTurn.event, (data) => _nextTurn(GameInfo.fromJson(data)));
+    _socket.on(GameSocketEvent.GameEnded.event, (_) => _endGame());
   }
 
-  void _publicViewUpdate(data){
-    GameInfo gameInfo = GameInfo.fromJson(data);
+  void _publicViewUpdate(GameInfo gameInfo) {
     gameboard.updateFromString(gameInfo.gameboard);
-    easel.updateFromRack(gameInfo.players.firstWhere((PlayerInformation player) => player.player.user.username == _authService.user?.username).rack);
+    easel.updateFromRack(gameInfo.players
+        .firstWhere((PlayerInformation player) =>
+    player.player.user.username == _authService.user?.username)
+        .rack);
+    activePlayer = _gameRoom.players.firstWhere((player) => player.user.username ==
+        gameInfo.activePlayer?.username);
 
     notifyGameInfoChange.add(true);
+  }
+
+  void _nextTurn(GameInfo gameInfo) {
+    turnTimer = 0;
+    activePlayer = _gameRoom.players.firstWhere((player) => player.user.username ==
+        gameInfo.activePlayer?.username);
+
+    notifyGameInfoChange.add(true);
+  }
+
+  void _endGame() {
+    inGame = false;
+    debugPrint("end game");
+    Navigator.pushReplacement(
+        GetIt.I
+            .get<GlobalKey<NavigatorState>>()
+            .currentContext!,
+        MaterialPageRoute(builder: (context) => const EndGameScreen()));
   }
 
   void placeLetterOnBoard(int x, int y, Letter letter) {
@@ -238,7 +259,9 @@ class GameService {
 
   void fillEaselWithReserve() {
     // TEMPORARY
-    while(easel.getLetterList().length != easel.maxSize){
+    while (easel
+        .getLetterList()
+        .length != easel.maxSize) {
       easel.addLetter(getRandomLetter());
     }
   }
@@ -270,7 +293,6 @@ class GameService {
 
   void skipTurn() {
     _socket.emit("skip");
-    nextTurn();
   }
 
   void abandonGame() {

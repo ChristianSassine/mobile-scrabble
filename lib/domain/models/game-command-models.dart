@@ -48,5 +48,5 @@ class GameInfo {
   GameInfo.fromJson(json):
   gameboard = json['gameboard']?.map<String>((letter) => letter as String)?.toList(),
   players = json['players'].map<PlayerInformation>(PlayerInformation.fromJson).toList(),
-  activePlayer = IUser.fromJson(json['activePlayer']);
+  activePlayer = json['activePlayer'] != null ? IUser.fromJson(json['activePlayer']) : null;
 }
