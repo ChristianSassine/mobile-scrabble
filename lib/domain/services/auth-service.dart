@@ -36,7 +36,8 @@ class AuthService {
 
       user = IUser.fromJson(jsonDecode(response.body)['userData']);
       final urlResponse =  await _httpService.getProfilePicture();
-      user!.profilePicture!.key = urlResponse.body;
+      user!.profilePicture!.key = jsonDecode(urlResponse.body)['url'];
+      print(user!.profilePicture!.key);
 
       _socket.io.options['extraHeaders'] = {'cookie': _cookie};
       _socket
