@@ -67,6 +67,7 @@ class RoomService {
             .add(parseServerError(ServerError.fromString(errorMsg))));
   }
 
+  // TODO: move to more global service if there's other errors we need to parse
   String parseServerError(ServerError error) {
     switch (error) {
       case ServerError.RoomNotAvailable:
@@ -87,7 +88,6 @@ class RoomService {
 
   void requestJoinRoom(GameRoom room, [String? password]) {
     currentRoom = room;
-    print(password);
 
     final player = RoomPlayer(_authService.user!, room.id, password: password);
     _socket.emit(RoomSocketEvent.JoinWaitingRoom.event, player);

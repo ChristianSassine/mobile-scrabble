@@ -86,11 +86,12 @@ class _RoomListState extends State<RoomSelectionScreen> {
   AlertDialog _buildPasswordInput() {
     // TODO: Translate + Check if password is not empty (maybe)?
     return AlertDialog(
-      title: Text("Room password"),
+      title: Text(FlutterI18n.translate(context, "rooms_lobby.password.title")),
       content: TextFormField(
         controller: _passwordController,
         decoration: InputDecoration(
-          hintText: "Password",
+          hintText:
+              FlutterI18n.translate(context, "rooms_lobby.password.label"),
           suffixIcon: IconButton(
             icon: const Icon(Icons.login),
             onPressed: () {
@@ -197,25 +198,43 @@ class _RoomListState extends State<RoomSelectionScreen> {
             side: const BorderSide(color: Colors.white70, width: 1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            scrollDirection: Axis.vertical,
+          child: IntrinsicHeight(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DataTable(
-                    dataRowHeight: _RoomListState.ROW_HEIGHTS,
-                    columns: roomsLabels
-                        .map((label) => DataColumn(
-                              label: Expanded(
-                                child: Text(label),
-                              ),
-                            ))
-                        .toList(),
-                    rows: roomList
-                        .map((room) => _buildRoomListing(room))
-                        .toList(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      dataRowHeight: _RoomListState.ROW_HEIGHTS,
+                      columns: roomsLabels
+                          .map((label) => DataColumn(
+                                label: Expanded(
+                                  child: Text(label),
+                                ),
+                              ))
+                          .toList(),
+                      rows: roomList
+                          .map((room) => _buildRoomListing(room))
+                          .toList(),
+                    ),
+                  ),
+                ),
+                IntrinsicWidth(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText:
+                        "Enter Room ID",
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.login),
+                          onPressed: () {
+                          },
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],

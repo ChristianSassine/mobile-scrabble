@@ -47,6 +47,10 @@
         "game": "Game"
     },
     "rooms_lobby": {
+        "password": {
+            "title": "Room password",
+            "label": "Password"
+        },
         "errors": {
             "not_available": "The room is not available",
             "wrong_password": "Wrong password",

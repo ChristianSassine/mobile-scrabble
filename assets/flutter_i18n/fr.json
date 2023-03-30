@@ -48,6 +48,10 @@
         "game": "Partie"
     },
     "rooms_lobby": {
+        "password": {
+            "title": "Mot de passe de la salle",
+            "label": "Mot de passe"
+        },
         "errors": {
             "not_available": "La salle n'est pas disponible",
             "wrong_password": "Le mot de passe pour la salle est erronée",
