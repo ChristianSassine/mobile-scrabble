@@ -20,6 +20,7 @@ class RoomService {
   Subject<List<GameRoom>> notifyNewRoomList = PublishSubject();
   Subject<GameRoom?> notifyRoomMemberList = PublishSubject();
   Subject<GameRoom?> notifyRoomJoin = PublishSubject();
+  Subject<String> notifyError = PublishSubject();
 
   RoomService() {
     initSocketListeners();
@@ -58,6 +59,9 @@ class RoomService {
           GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
           MaterialPageRoute(builder: (context) => const GameScreen()));
     });
+
+    _socket.on(RoomSocketEvent.ErrorJoining.event,
+        (errorMsg) => notifyError.add(errorMsg));
   }
 
   void _updateRoomList(List<GameRoom> newRooms) {
@@ -86,7 +90,8 @@ class RoomService {
     currentRoom = GameRoom(
         id: "-",
         players: [
-          RoomPlayer(creationQuery.user, "-", playerType: PlayerType.User, isCreator: true)
+          RoomPlayer(creationQuery.user, "-",
+              playerType: PlayerType.User, isCreator: true)
         ],
         dictionary: creationQuery.dictionary,
         timer: creationQuery.timer,

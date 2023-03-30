@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/iuser-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
@@ -25,8 +26,9 @@ class _RoomListState extends State<RoomSelectionScreen> {
   final ScrollController _scrollController = ScrollController();
   final _passwordController = TextEditingController();
 
-  late final StreamSubscription newRoomSub;
-  late final StreamSubscription validJoinSub;
+  late final StreamSubscription _newRoomSub;
+  late final StreamSubscription _validJoinSub;
+  late final StreamSubscription _errorSub;
 
   // HardCoded since there's no dynamic way to do it (Might need to implement it another way or use a library)
   static const double ROW_HEIGHTS = 75;
@@ -44,26 +46,33 @@ class _RoomListState extends State<RoomSelectionScreen> {
   initState() {
     super.initState();
 
-    newRoomSub = _roomService.notifyNewRoomList.stream.listen((newRoomList) {
+    _newRoomSub = _roomService.notifyNewRoomList.stream.listen((newRoomList) {
       setState(() {
         roomList = newRoomList;
         debugPrint("roomsUpdated");
       });
     });
 
-    validJoinSub = _roomService.notifyRoomJoin.stream.listen((room) {
+    _validJoinSub = _roomService.notifyRoomJoin.stream.listen((room) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const WaitingRoomScreen()),
       );
+    });
+
+    _errorSub = _roomService.notifyError.stream.listen((event) {
+      print(event);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBarFactory.redSnack(event));
     });
     _roomService.connectToRooms();
   }
 
   @override
   dispose() {
-    newRoomSub.cancel();
-    validJoinSub.cancel();
+    _newRoomSub.cancel();
+    _validJoinSub.cancel();
+    _errorSub.cancel();
     super.dispose();
   }
 
@@ -75,17 +84,42 @@ class _RoomListState extends State<RoomSelectionScreen> {
     _roomService.requestJoinRoom(room, password);
   }
 
+  AlertDialog _buildPasswordInput() {
+    // TODO: Translate + Check if password is not empty (maybe)?
+    return AlertDialog(
+      title: Text("Room password"),
+      content: TextFormField(
+        controller: _passwordController,
+        decoration: InputDecoration(
+          hintText: "Password",
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.login),
+            onPressed: () {
+              Navigator.of(context).pop(_passwordController.text);
+              _passwordController.clear();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   DataRow _buildRoomListing(GameRoom room) {
+    final isRoomLocked = room.visibility == GameVisibility.Locked;
+
     return DataRow(cells: [
       DataCell(
         Column(
           children: [
+            // TODO: Refactor rows
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Icon(Icons.smart_toy),
                 Text(
-                  "${room.players.where((player) => player.playerType == PlayerType.Bot).length}",
+                  "${room.players
+                      .where((player) => player.playerType == PlayerType.Bot)
+                      .length}",
                 ),
               ],
             ),
@@ -94,7 +128,9 @@ class _RoomListState extends State<RoomSelectionScreen> {
               children: [
                 Icon(Icons.people),
                 Text(
-                  "${room.players.where((player) => player.playerType == PlayerType.User).length}/4",
+                  "${room.players
+                      .where((player) => player.playerType == PlayerType.User)
+                      .length}/4",
                 ),
               ],
             ),
@@ -103,7 +139,10 @@ class _RoomListState extends State<RoomSelectionScreen> {
               children: [
                 Icon(Icons.preview),
                 Text(
-                  "${room.players.where((player) => player.playerType == PlayerType.Observer).length}",
+                  "${room.players
+                      .where((player) =>
+                  player.playerType == PlayerType.Observer)
+                      .length}",
                 ),
               ],
             ),
@@ -113,10 +152,10 @@ class _RoomListState extends State<RoomSelectionScreen> {
       DataCell(
         Text(room.players.isNotEmpty
             ? room.players
-                .firstWhere((player) => player.isCreator ?? false,
-                    orElse: () => RoomPlayer(IUser(username: '?'), room.id))
-                .user
-                .username
+            .firstWhere((player) => player.isCreator ?? false,
+            orElse: () => RoomPlayer(IUser(username: '?'), room.id))
+            .user
+            .username
             : "?"),
       ),
       const DataCell(
@@ -129,38 +168,29 @@ class _RoomListState extends State<RoomSelectionScreen> {
         Text(room.dictionary),
       ),
       DataCell(
-        room.visibility == GameVisibility.Locked
+        isRoomLocked
             ? Icon(
-                Icons.lock,
-                color: Theme.of(context).hintColor,
-              )
+          Icons.lock,
+          color: Theme
+              .of(context)
+              .hintColor,
+        )
             : const SizedBox(),
       ),
-      DataCell(
-          OutlinedButton(
-        onPressed: () => {
-          if (room.visibility == GameVisibility.Locked)
+      DataCell(OutlinedButton(
+        onPressed: () =>
+        {
+          if (isRoomLocked)
             {
               showDialog(
                   context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                        title: Text("Room password"),
-                        content: TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            hintText: "Password",
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.login),
-                              onPressed: () {
-                                Navigator.of(context).pop(_passwordController.text);
-                                _passwordController.clear();
-                              },
-                            ),
-                          ),
-                        ),
-                      )).then((password) => _joinRoom(room, password))
-            },
-          _joinRoom(room)
+                  builder: (BuildContext context) => _buildPasswordInput())
+                  .then((password) {
+                if (!password.isEmpty) _joinRoom(room, password);
+              })
+            }
+          else
+            _joinRoom(room)
         },
         child: const Icon(Icons.login),
       )),
@@ -188,11 +218,12 @@ class _RoomListState extends State<RoomSelectionScreen> {
                   child: DataTable(
                     dataRowHeight: _RoomListState.ROW_HEIGHTS,
                     columns: roomsLabels
-                        .map((label) => DataColumn(
-                              label: Expanded(
-                                child: Text(label),
-                              ),
-                            ))
+                        .map((label) =>
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(label),
+                          ),
+                        ))
                         .toList(),
                     rows: roomList
                         .map((room) => _buildRoomListing(room))
