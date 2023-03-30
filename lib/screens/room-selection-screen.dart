@@ -60,10 +60,9 @@ class _RoomListState extends State<RoomSelectionScreen> {
       );
     });
 
-    _errorSub = _roomService.notifyError.stream.listen((event) {
-      print(event);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBarFactory.redSnack(event));
+    _errorSub = _roomService.notifyError.stream.listen((errorKey) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBarFactory.redSnack(FlutterI18n.translate(context, errorKey)));
     });
     _roomService.connectToRooms();
   }
@@ -117,9 +116,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
               children: [
                 Icon(Icons.smart_toy),
                 Text(
-                  "${room.players
-                      .where((player) => player.playerType == PlayerType.Bot)
-                      .length}",
+                  "${room.players.where((player) => player.playerType == PlayerType.Bot).length}",
                 ),
               ],
             ),
@@ -128,9 +125,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
               children: [
                 Icon(Icons.people),
                 Text(
-                  "${room.players
-                      .where((player) => player.playerType == PlayerType.User)
-                      .length}/4",
+                  "${room.players.where((player) => player.playerType == PlayerType.User).length}/4",
                 ),
               ],
             ),
@@ -139,10 +134,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
               children: [
                 Icon(Icons.preview),
                 Text(
-                  "${room.players
-                      .where((player) =>
-                  player.playerType == PlayerType.Observer)
-                      .length}",
+                  "${room.players.where((player) => player.playerType == PlayerType.Observer).length}",
                 ),
               ],
             ),
@@ -152,10 +144,10 @@ class _RoomListState extends State<RoomSelectionScreen> {
       DataCell(
         Text(room.players.isNotEmpty
             ? room.players
-            .firstWhere((player) => player.isCreator ?? false,
-            orElse: () => RoomPlayer(IUser(username: '?'), room.id))
-            .user
-            .username
+                .firstWhere((player) => player.isCreator ?? false,
+                    orElse: () => RoomPlayer(IUser(username: '?'), room.id))
+                .user
+                .username
             : "?"),
       ),
       const DataCell(
@@ -170,21 +162,18 @@ class _RoomListState extends State<RoomSelectionScreen> {
       DataCell(
         isRoomLocked
             ? Icon(
-          Icons.lock,
-          color: Theme
-              .of(context)
-              .hintColor,
-        )
+                Icons.lock,
+                color: Theme.of(context).hintColor,
+              )
             : const SizedBox(),
       ),
       DataCell(OutlinedButton(
-        onPressed: () =>
-        {
+        onPressed: () => {
           if (isRoomLocked)
             {
               showDialog(
-                  context: context,
-                  builder: (BuildContext context) => _buildPasswordInput())
+                      context: context,
+                      builder: (BuildContext context) => _buildPasswordInput())
                   .then((password) {
                 if (!password.isEmpty) _joinRoom(room, password);
               })
@@ -218,12 +207,11 @@ class _RoomListState extends State<RoomSelectionScreen> {
                   child: DataTable(
                     dataRowHeight: _RoomListState.ROW_HEIGHTS,
                     columns: roomsLabels
-                        .map((label) =>
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(label),
-                          ),
-                        ))
+                        .map((label) => DataColumn(
+                              label: Expanded(
+                                child: Text(label),
+                              ),
+                            ))
                         .toList(),
                     rows: roomList
                         .map((room) => _buildRoomListing(room))

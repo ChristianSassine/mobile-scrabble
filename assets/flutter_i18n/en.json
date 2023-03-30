@@ -46,6 +46,13 @@
         "start_game": "Start the game",
         "game": "Game"
     },
+    "rooms_lobby": {
+        "errors": {
+            "not_available": "The room is not available",
+            "wrong_password": "Wrong password",
+            "same_user" : "The room has a user with the same username"
+        }
+    },
     "end_game": {
         "screen_name": "End of game",
         "game_ended": "Game ended",
