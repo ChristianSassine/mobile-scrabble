@@ -9,6 +9,7 @@ import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/screens/create-game-screen.dart';
 import 'package:mobile/screens/login-screen.dart';
 import 'package:mobile/screens/room-selection-screen.dart';
+import 'package:mobile/screens/user-profile-screen.dart';
 
 enum DropDownOption {
   UserSettings("userSettings"),
@@ -48,6 +49,8 @@ class _MenuScreenState extends State<MenuScreen> {
       case DropDownOption.UserSettings:
         {
           // TODO: Add user settings
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const UserProfileScreen()));
         }
         break;
       case DropDownOption.Disconnect:
