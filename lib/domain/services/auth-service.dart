@@ -36,16 +36,12 @@ class AuthService {
       _httpService.updateCookie(_cookie!);
 
       IUser user = IUser.fromJson(jsonDecode(response.body)['userData']);
-
-      final urlResponse = await _httpService.getProfilePicture();
-      user.profilePicture!.key = jsonDecode(urlResponse.body)['url'];
+      _userService.updateUser(user);
 
       _socket.io.options['extraHeaders'] = {'cookie': _cookie};
       _socket
         ..disconnect()
         ..connect();
-
-      _userService.updateUser(user);
 
       notifyLogin.add(true);
       return;
@@ -58,14 +54,14 @@ class AuthService {
     final avatarData = await _avatarService.formatAvatarData(data);
     final profileImageInfo = _avatarService.generateImageInfo(avatarData);
 
-    final msg = jsonEncode({
+    final signUpForm = jsonEncode({
       "username": username,
       "email": email,
       "password": password,
       "profilePicture": profileImageInfo
     }); // TODO: Make a model later maybe? (Will only be used here)
 
-    var response = await _httpService.signUpRequest(msg);
+    var response = await _httpService.signUpRequest(signUpForm);
 
     if (response.statusCode == HttpStatus.ok) {
       if (data.type == ImageType.DataImage) {

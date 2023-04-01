@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
+import 'package:mobile/domain/models/iuser-model.dart';
 import 'package:mobile/domain/models/userimageinfo-model.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:path/path.dart';
@@ -18,7 +21,7 @@ class AvatarService {
       return responseData;
     } else {
       debugPrint('Request failed with status: ${response.statusCode}.');
-      throw("error");
+      throw ("error");
     }
   }
 
@@ -27,12 +30,24 @@ class AvatarService {
 
     if (avatar.type == ImageType.UrlImage) {
       avatar.url = data.file!.path;
-    }
-    else {
+    } else {
       avatar.name = basename(data.file!.path);
       avatar.file = data.file;
     }
     return avatar;
+  }
+
+  Future<IUser?> changeAvatar(AvatarData data) async {
+    final avatarData = await formatAvatarData(data);
+    IUser? user;
+    final response = avatarData.type == ImageType.UrlImage
+        ? await httpService.updateImageAvatar(data.name!)
+        : await httpService.changeImageAvatar(data.file!);
+    if (response.statusCode == HttpStatus.ok){
+      final body = response is StreamedResponse ? response.stream.toString() : (response as Response).body;
+      user = IUser.fromJson(jsonDecode(body));
+    }
+    return user;
   }
 
   UserImageInfo generateImageInfo(AvatarData data) {
