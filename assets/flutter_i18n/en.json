@@ -46,6 +46,25 @@
         "start_game": "Start the game",
         "game": "Game"
     },
+    "rooms_lobby": {
+        "table": {
+            "users": "Users",
+            "host": "Host",
+            "difficulty": "Difficulty",
+            "timer": "Timer",
+            "dictionary": "Dictionary"
+        },
+        "id_label" : "Enter Room ID",
+        "password": {
+            "title": "Room password",
+            "label": "Password"
+        },
+        "errors": {
+            "not_available": "The room is not available",
+            "wrong_password": "Wrong password",
+            "same_user" : "The room has a user with the same username"
+        }
+    },
     "end_game": {
         "screen_name": "End of game",
         "game_ended": "Game ended",

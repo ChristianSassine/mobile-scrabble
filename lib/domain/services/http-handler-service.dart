@@ -6,6 +6,7 @@ import 'package:http_parser/http_parser.dart';
 class HttpHandlerService {
   late final http.Client client;
   late final String baseUrl;
+  Map<String, String> headers = {};
 
   HttpHandlerService(String serverAddress) {
     client = http.Client();
@@ -27,6 +28,11 @@ class HttpHandlerService {
     return client.get(
       Uri.parse("${baseUrl}/image/default-pictures"),
     );
+  }
+
+  Future<http.Response> getProfilePicture() {
+    return client.get(Uri.parse("$baseUrl/image/profile-picture"),
+        headers: headers);
   }
 
   Future<http.StreamedResponse> sendAvatarRequest(
@@ -58,7 +64,8 @@ class HttpHandlerService {
         "PUT", Uri.parse("${baseUrl}/image/profile-picture"));
     request.headers['Content-Type'] = 'multipart/form-data';
 
-    final imageFile = await http.MultipartFile.fromPath('image', newAvatarFile.path,
+    final imageFile = await http.MultipartFile.fromPath(
+        'image', newAvatarFile.path,
         contentType: MediaType("image", "*"));
 
     request.files.add(imageFile);
@@ -69,5 +76,10 @@ class HttpHandlerService {
   // High Scores requests
   Future<http.Response> fetchHighScoresRequest() {
     return client.get(Uri.parse("${baseUrl}/highScore/classique"));
+  }
+
+  // Common utilities
+  void updateCookie(Cookie cookie) {
+    headers['cookie'] = "${cookie.name}=${cookie.value}";
   }
 }

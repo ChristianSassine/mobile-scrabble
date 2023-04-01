@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/classes/snackbar-factory.dart';
+import 'package:mobile/domain/models/iuser-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/screens/waiting-room-screen.dart';
@@ -22,42 +24,46 @@ class _RoomListState extends State<RoomSelectionScreen> {
   List<GameRoom> roomList = [];
 
   final ScrollController _scrollController = ScrollController();
-  late final StreamSubscription newRoomSub;
-  late final StreamSubscription validJoinSub;
+  final _passwordController = TextEditingController();
+  final _roomIDController = TextEditingController();
 
-  final roomsLabels = [
-    'Joueurs',
-    'Hote',
-    'Difficulté',
-    'Minuterie',
-    'Dictionnaire',
-    ''
-  ];
+  late final StreamSubscription _newRoomSub;
+  late final StreamSubscription _validJoinSub;
+  late final StreamSubscription _errorSub;
+
+  // HardCoded since there's no dynamic way to do it (Might need to implement it another way or use a library)
+  static const double ROW_HEIGHTS = 75;
 
   @override
   initState() {
     super.initState();
 
-    newRoomSub = _roomService.notifyNewRoomList.stream.listen((newRoomList) {
+    _newRoomSub = _roomService.notifyNewRoomList.stream.listen((newRoomList) {
       setState(() {
         roomList = newRoomList;
         debugPrint("roomsUpdated");
       });
     });
 
-    validJoinSub = _roomService.notifyRoomJoin.stream.listen((room) {
+    _validJoinSub = _roomService.notifyRoomJoin.stream.listen((room) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const WaitingRoomScreen()),
       );
+    });
+
+    _errorSub = _roomService.notifyError.stream.listen((errorKey) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBarFactory.redSnack(FlutterI18n.translate(context, errorKey)));
     });
     _roomService.connectToRooms();
   }
 
   @override
   dispose() {
-    newRoomSub.cancel();
-    validJoinSub.cancel();
+    _newRoomSub.cancel();
+    _validJoinSub.cancel();
+    _errorSub.cancel();
     super.dispose();
   }
 
@@ -65,25 +71,76 @@ class _RoomListState extends State<RoomSelectionScreen> {
     roomList = _roomService.roomList;
   }
 
-  void _joinRoom(GameRoom room) {
-    _roomService.requestJoinRoom(room);
+  void _joinRoom(String roomId, [String? password]) {
+    _roomService.requestJoinRoom(roomId, password);
+  }
+
+  AlertDialog _buildPasswordInput() {
+    return AlertDialog(
+      title: Text(FlutterI18n.translate(context, "rooms_lobby.password.title")),
+      content: TextFormField(
+        controller: _passwordController,
+        decoration: InputDecoration(
+          hintText:
+              FlutterI18n.translate(context, "rooms_lobby.password.label"),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.login),
+            onPressed: () {
+              Navigator.of(context).pop(_passwordController.text);
+              _passwordController.clear();
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   DataRow _buildRoomListing(GameRoom room) {
+    final isRoomLocked = room.visibility == GameVisibility.Locked;
+
     return DataRow(cells: [
       DataCell(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        Column(
           children: [
-            Icon(Icons.people),
-            Text(
-              "${room.players.length}/4",
+            // TODO: Refactor rows
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(Icons.smart_toy),
+                Text(
+                  "${room.players.where((player) => player.playerType == PlayerType.Bot).length}",
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(Icons.people),
+                Text(
+                  "${room.players.where((player) => player.playerType == PlayerType.User).length}/4",
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(Icons.preview),
+                Text(
+                  "${room.players.where((player) => player.playerType == PlayerType.Observer).length}",
+                ),
+              ],
             ),
           ],
         ),
       ),
       DataCell(
-        Text(room.players.isNotEmpty ? room.players[0].user.username : "?"),
+        Text(room.players.isNotEmpty
+            ? room.players
+                .firstWhere((player) => player.isCreator ?? false,
+                    orElse: () => RoomPlayer(IUser(username: '?'), room.id))
+                .user
+                .username
+            : "?"),
       ),
       const DataCell(
         Text("HARDCODED"),
@@ -95,16 +152,44 @@ class _RoomListState extends State<RoomSelectionScreen> {
         Text(room.dictionary),
       ),
       DataCell(
-        IconButton(
-            color: Theme.of(context).primaryColor,
-            onPressed: () => _joinRoom(room),
-            icon: const Icon(Icons.login)),
+        isRoomLocked
+            ? Icon(
+                Icons.lock,
+                color: Theme.of(context).hintColor,
+              )
+            : const SizedBox(),
       ),
+      DataCell(OutlinedButton(
+        onPressed: () => {
+          if (isRoomLocked)
+            {
+              showDialog(
+                      context: context,
+                      builder: (BuildContext context) => _buildPasswordInput())
+                  .then((password) {
+                if (!password.isEmpty) _joinRoom(room.id, password);
+              })
+            }
+          else
+            _joinRoom(room.id)
+        },
+        child: const Icon(Icons.login),
+      )),
     ]);
   }
 
   @override
   Widget build(BuildContext context) {
+    final roomsLabels = [
+      FlutterI18n.translate(context, "rooms_lobby.table.users"),
+      FlutterI18n.translate(context, "rooms_lobby.table.host"),
+      FlutterI18n.translate(context, "rooms_lobby.table.difficulty"),
+      FlutterI18n.translate(context, "rooms_lobby.table.timer"),
+      FlutterI18n.translate(context, "rooms_lobby.table.dictionary"),
+      '',
+      ''
+    ];
+
     return Scaffold(
       appBar: AppBar(
           title: Text(FlutterI18n.translate(context, "menu_screen.join_game"))),
@@ -114,24 +199,45 @@ class _RoomListState extends State<RoomSelectionScreen> {
             side: const BorderSide(color: Colors.white70, width: 1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            scrollDirection: Axis.vertical,
+          child: IntrinsicHeight(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DataTable(
-                    columns: roomsLabels
-                        .map((label) => DataColumn(
-                              label: Expanded(
-                                child: Text(label),
-                              ),
-                            ))
-                        .toList(),
-                    rows: roomList
-                        .map((room) => _buildRoomListing(room))
-                        .toList(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      dataRowHeight: _RoomListState.ROW_HEIGHTS,
+                      columns: roomsLabels
+                          .map((label) => DataColumn(
+                                label: Expanded(
+                                  child: Text(label),
+                                ),
+                              ))
+                          .toList(),
+                      rows: roomList
+                          .map((room) => _buildRoomListing(room))
+                          .toList(),
+                    ),
+                  ),
+                ),
+                IntrinsicWidth(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: _roomIDController,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: FlutterI18n.translate(
+                            context, "rooms_lobby.id_label"),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.login),
+                          onPressed: () {
+                            _joinRoom(_roomIDController.text);
+                          },
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],

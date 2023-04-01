@@ -73,6 +73,7 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
+    final imageUrl = _authService.user?.profilePicture?.key;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -91,8 +92,12 @@ class _MenuScreenState extends State<MenuScreen> {
                   _handleOption(option);
                 },
                 offset: const Offset(0, kTextTabBarHeight),
-                icon: const CircleAvatar(
-                    child: Icon(CupertinoIcons.profile_circled)),
+                icon: CircleAvatar(
+                    backgroundImage:
+                        imageUrl != null ? NetworkImage(imageUrl) : null,
+                    child: imageUrl != null
+                        ? null
+                        : const Icon(CupertinoIcons.profile_circled)),
                 itemBuilder: (BuildContext context) {
                   return [
                     PopupMenuItem(
