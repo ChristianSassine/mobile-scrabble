@@ -63,10 +63,8 @@ class GameService {
   }
 
   void _publicViewUpdate(GameInfo gameInfo) {
-    if(game == null){
-      // If game is not yet initialized.
-      return;
-    }
+    if (game == null) return;
+
 
     game!.update(gameInfo);
     notifyGameInfoChange.add(true);
@@ -232,7 +230,8 @@ class GameService {
 
   void confirmWordPlacement() {
     Coordinate firstCoordonate = Coordinate(pendingLetters[0].x, pendingLetters[0].y);
-    bool? isHorizontal = pendingLetters.length > 1 ? pendingLetters[0].y == pendingLetters[1].y : null;
+    bool? isHorizontal =
+        pendingLetters.length > 1 ? pendingLetters[0].y == pendingLetters[1].y : null;
     List<String> letters =
         List.generate(pendingLetters.length, (index) => pendingLetters[index].letter.character);
 

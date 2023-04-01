@@ -5,7 +5,7 @@ import 'package:mobile/domain/models/iuser-model.dart';
 enum GameMode {
   Null(""),
   Solo("solo"),
-  Multi("classique");
+  Multi("multi");
 
   const GameMode(this.value);
 
