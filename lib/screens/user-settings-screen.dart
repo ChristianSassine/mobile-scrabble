@@ -17,9 +17,12 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
   final _usernameFormKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
+  final _passwordFormKey = GlobalKey<FormState>();
+  final _passwordController = TextEditingController();
   AvatarData? currentAvatar;
 
   bool _usernameChangeValid = false;
+  bool _passwordChangeValid = false;
   bool _avatarChangeValid = false;
 
   @override
@@ -132,10 +135,11 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                   )),
                               VerticalDivider(),
                               Form(
+                                key: _passwordFormKey,
                                   onChanged: () {
                                     setState(() {
-                                      _usernameChangeValid =
-                                          _usernameFormKey.currentState!.validate();
+                                      _passwordChangeValid =
+                                          _passwordFormKey.currentState!.validate();
                                     });
                                   },
                                   child: IntrinsicWidth(
@@ -151,7 +155,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextFormField(
-                                            controller: _usernameController,
+                                            controller: _passwordController,
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
                                                 hintText: "New password"),
@@ -170,7 +174,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                 border: OutlineInputBorder(),
                                                 hintText: "Confirm new password"),
                                             validator: (value) {
-                                              if (value != _usernameController.text) {
+                                              if (value != _passwordController.text) {
                                                 return FlutterI18n.translate(context,
                                                     "user_settings.password_confirmation_error");
                                               }
@@ -178,7 +182,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                           ),
                                         ),
                                         ElevatedButton(
-                                            onPressed: _usernameChangeValid ? () {} : null,
+                                            onPressed: _passwordChangeValid ? () {} : null,
                                             child: Text("Submit Change")),
                                       ],
                                     ),
