@@ -55,7 +55,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
     super.dispose();
     newMemberSub.cancel();
 
-    if (!GetIt.I.get<GameService>().inGame) {
+    if (GetIt.I.get<GameService>().game == null) {
       _roomService.exitRoom();
     }
   }

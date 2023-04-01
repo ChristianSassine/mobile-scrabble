@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
+import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/screens/game-screen.dart';
@@ -50,8 +51,10 @@ class RoomService {
       notifyRoomMemberList.add(currentRoom);
     });
 
-    _socket.on(RoomSocketEvent.GameAboutToStart.event, (_) {
-      GetIt.I.get<GameService>().inGame = true;
+    _socket.on(RoomSocketEvent.GameAboutToStart.event, (data) {
+      if(data == null) return;
+      GameService gameService = GetIt.I.get<GameService>();
+      gameService.startGame(GameInfo.fromJson(data));
       Navigator.pushReplacement(
           GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
           MaterialPageRoute(builder: (context) => const GameScreen()));

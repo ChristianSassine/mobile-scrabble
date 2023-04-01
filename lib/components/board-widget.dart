@@ -21,21 +21,31 @@ class BoardWidget extends StatefulWidget {
 class _BoardState extends State<BoardWidget> {
   final _gameService = GetIt.I.get<GameService>();
 
-  StreamSubscription? boardUpdate;
+  late StreamSubscription boardUpdate;
 
   @override
   initState() {
     super.initState();
 
-    boardUpdate = _gameService.gameboard.notifyBoardChanged.stream.listen((event) {
+    boardUpdate = _gameService.game!.gameboard.notifyBoardChanged.stream.listen((event) {
       setState(() {});
     });
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    boardUpdate.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if(_gameService.game == null){
+      return const SizedBox();
+    }
+
     double slotSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
-    int boardSize = _gameService.gameboard.size;
+    int boardSize = _gameService.game!.gameboard.size;
 
     return Card(
       color: Colors.green[900],
@@ -54,20 +64,20 @@ class _BoardState extends State<BoardWidget> {
                           boardSize,
                           (hIndex) => Stack(children: [
                                 SlotWidget(
-                                    value: _gameService.gameboard.layout.layoutMatrix[hIndex]
+                                    value: _gameService.game!.gameboard.layout.layoutMatrix[hIndex]
                                         [vIndex],
                                     x: vIndex,
                                     y: hIndex),
-                                !_gameService.gameboard.isSlotEmpty(vIndex, hIndex)
+                                !_gameService.game!.gameboard.isSlotEmpty(vIndex, hIndex)
                                     ? _gameService.isPendingLetter(vIndex, hIndex)
                                         ? PendingBoardLetter(
-                                            value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
+                                            value: _gameService.game!.gameboard.getSlot(vIndex, hIndex)!,
                                             dragKey: widget.dragKey,
                                             widgetSize: slotSize,
                                             x: vIndex,
                                             y: hIndex)
                                         : BoardLetter(
-                                            value: _gameService.gameboard.getSlot(vIndex, hIndex)!,
+                                            value: _gameService.game!.gameboard.getSlot(vIndex, hIndex)!,
                                             widgetSize: slotSize)
                                     : const SizedBox.shrink()
                               ])).toList(),

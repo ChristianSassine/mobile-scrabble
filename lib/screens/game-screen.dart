@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mobile/components/board-widget.dart';
 import 'package:mobile/components/easel-widget.dart';
 import 'package:mobile/components/game-info-widget.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
+import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/screens/end-game-screen.dart';
 
 class GameScreen extends StatefulWidget {
@@ -17,7 +19,7 @@ class _GameScreenState extends State<GameScreen> {
 
   _abandonGame() {
     // TODO: Prompt user confirmation
-
+    GetIt.I.get<GameService>().abandonGame();
     Navigator.push(context, MaterialPageRoute(builder: (context) => const EndGameScreen()));
   }
 

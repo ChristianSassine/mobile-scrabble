@@ -7,6 +7,7 @@ import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
+import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
@@ -28,84 +29,59 @@ class GameService {
 
   Subject<bool> notifyGameInfoChange = PublishSubject();
 
-  final GameRoom _gameRoom = GetIt.I
-      .get<RoomService>()
-      .currentRoom!;
-  bool _gameStarted = false;
-
-  final Board gameboard = Board(15);
-  final Easel easel = Easel(7);
+  GameRoom? _gameRoom;
   Letter? draggedLetter;
-
-  RoomPlayer? activePlayer;
-
-  static const turnLength = 60;
-  int turnTimer = 0;
-
-
   List<LetterPlacement> pendingLetters = [];
 
-  bool inGame = false;
+  static const turnLength = 60;
+
+  Game? game;
 
   GameService() {
     setupSocketListeners();
-    // startGame();
   }
 
-  void startGame() async {
-    _gameStarted = true;
-    fillEaselWithReserve();
+  void startGame(GameInfo initialGameInfo) async {
+    _gameRoom = GetIt.I.get<RoomService>().currentRoom!;
+    game = Game(_gameRoom!, _authService.user!);
 
-    while (_gameStarted) {
-      turnTimer += 1;
+    _publicViewUpdate(initialGameInfo);
+
+    while (game != null) {
+      game!.turnTimer += 1;
       notifyGameInfoChange.add(true);
       await Future.delayed(const Duration(seconds: 1));
     }
   }
 
-  void nextTurn() {
-    turnTimer = 0;
-    int lastActivePlayer = _gameRoom.players.indexOf(activePlayer!);
-    activePlayer = _gameRoom.players[(lastActivePlayer + 1) % _gameRoom.players.length];
-  }
-
   void setupSocketListeners() {
-    _socket.on(RoomSocketEvent.PublicViewUpdate.event, (data) =>
-        _publicViewUpdate(GameInfo.fromJson(data)));
-    _socket.on(RoomSocketEvent.GameAboutToStart.event, (_) => startGame());
+    _socket.on(RoomSocketEvent.PublicViewUpdate.event,
+        (data) => _publicViewUpdate(GameInfo.fromJson(data)));
 
     _socket.on(GameSocketEvent.NextTurn.event, (data) => _nextTurn(GameInfo.fromJson(data)));
     _socket.on(GameSocketEvent.GameEnded.event, (_) => _endGame());
   }
 
   void _publicViewUpdate(GameInfo gameInfo) {
-    gameboard.updateFromString(gameInfo.gameboard);
-    easel.updateFromRack(gameInfo.players
-        .firstWhere((PlayerInformation player) =>
-    player.player.user.username == _authService.user?.username)
-        .rack);
-    activePlayer = _gameRoom.players.firstWhere((player) => player.user.username ==
-        gameInfo.activePlayer?.username);
+    if(game == null){
+      // If game is not yet initialized.
+      return;
+    }
 
+    game!.update(gameInfo);
     notifyGameInfoChange.add(true);
   }
 
   void _nextTurn(GameInfo gameInfo) {
-    turnTimer = 0;
-    activePlayer = _gameRoom.players.firstWhere((player) => player.user.username ==
-        gameInfo.activePlayer?.username);
-
+    game!.nextTurn(gameInfo);
     notifyGameInfoChange.add(true);
   }
 
   void _endGame() {
-    inGame = false;
-    debugPrint("end game");
-    Navigator.pushReplacement(
-        GetIt.I
-            .get<GlobalKey<NavigatorState>>()
-            .currentContext!,
+    Navigator.pushReplacement(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
         MaterialPageRoute(builder: (context) => const EndGameScreen()));
+
+    game = null;
   }
 
   void placeLetterOnBoard(int x, int y, Letter letter) {
@@ -115,7 +91,7 @@ class GameService {
       return;
     }
 
-    gameboard.placeLetter(x, y, letter);
+    game!.gameboard.placeLetter(x, y, letter);
     pendingLetters.add(LetterPlacement(x, y, letter));
     pendingLetters.sort((a, b) => a.x.compareTo(b.x) + a.y.compareTo(b.y));
 
@@ -123,24 +99,24 @@ class GameService {
   }
 
   bool _isLetterPlacementValid(int x, int y, Letter letter) {
-    if (!gameboard.isSlotEmpty(x, y)) return false;
+    if (!game!.gameboard.isSlotEmpty(x, y)) return false;
 
     if (pendingLetters.isEmpty) {
-      return _isAdjacentToOtherLetters(x, y) || gameboard.isEmpty();
+      return _isAdjacentToOtherLetters(x, y) || game!.gameboard.isEmpty();
     }
 
     LetterPlacement lastPlacement = pendingLetters.last;
-    bool sameColumn = lastPlacement.x == x,
-        sameRow = lastPlacement.y == y;
+    bool sameColumn = lastPlacement.x == x, sameRow = lastPlacement.y == y;
     if (!(sameColumn || sameRow)) return false;
 
     if (sameColumn) {
       if (pendingLetters.any((placement) => placement.x != x)) {
         return false; // Not all on the same column
       }
-      for (int checkY = lastPlacement.y; (y - checkY).abs() > 0;
-      checkY += y.compareTo(lastPlacement.y)) {
-        if (gameboard.isSlotEmpty(x, checkY)) {
+      for (int checkY = lastPlacement.y;
+          (y - checkY).abs() > 0;
+          checkY += y.compareTo(lastPlacement.y)) {
+        if (game!.gameboard.isSlotEmpty(x, checkY)) {
           return false; // Empty slot between last placement
         }
       }
@@ -149,9 +125,9 @@ class GameService {
         return false; // Not all on the same row
       }
       for (int checkX = lastPlacement.x;
-      (x - checkX).abs() > 0;
-      checkX += x.compareTo(lastPlacement.x)) {
-        if (gameboard.isSlotEmpty(checkX, y)) {
+          (x - checkX).abs() > 0;
+          checkX += x.compareTo(lastPlacement.x)) {
+        if (game!.gameboard.isSlotEmpty(checkX, y)) {
           return false; // Empty slot between last placement
         }
       }
@@ -160,12 +136,12 @@ class GameService {
   }
 
   bool _isAdjacentToOtherLetters(int x, int y) {
-    if (!gameboard.isSlotEmpty(x, y)) return false;
+    if (!game!.gameboard.isSlotEmpty(x, y)) return false;
 
-    Letter? left = gameboard.getSlot(x - 1, y),
-        right = gameboard.getSlot(x + 1, y),
-        top = gameboard.getSlot(x, y - 1),
-        down = gameboard.getSlot(x, y + 1);
+    Letter? left = game!.gameboard.getSlot(x - 1, y),
+        right = game!.gameboard.getSlot(x + 1, y),
+        top = game!.gameboard.getSlot(x, y - 1),
+        down = game!.gameboard.getSlot(x, y + 1);
 
     return left != null || right != null || top != null || down != null;
   }
@@ -178,10 +154,9 @@ class GameService {
       pendingLetters.removeWhere((placement) => placement.x == x && placement.y == y);
 
       debugPrint(
-          "[GAME SERVICE] Remove letter from the board: board[$x][$y] = ${gameboard.getSlot(
-              x, y)}");
+          "[GAME SERVICE] Remove letter from the board: board[$x][$y] = ${game!.gameboard.getSlot(x, y)}");
 
-      return gameboard.removeLetter(x, y);
+      return game!.gameboard.removeLetter(x, y);
     } else {
       return null;
     }
@@ -204,16 +179,14 @@ class GameService {
 
   void addLetterInEasel(Letter letter) {
     debugPrint(
-        "[GAME SERVICE] Add letter to the end of easel: easel[${easel
-            .getLetterList()
-            .length}] = $letter");
-    easel.addLetter(letter);
+        "[GAME SERVICE] Add letter to the end of easel: easel[${game!.easel.getLetterList().length}] = $letter");
+    game!.easel.addLetter(letter);
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
   }
 
   void addLetterInEaselAt(int index, Letter letter) {
-    easel.addLetterAt(index, letter);
+    game!.easel.addLetterAt(index, letter);
     debugPrint("[GAME SERVICE] Add letter to easel[$index] = $letter");
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
@@ -221,7 +194,7 @@ class GameService {
 
   /// @return null if index is out of bound
   Letter? removeLetterFromEaselAt(int index) {
-    Letter? removedLetter = easel.removeLetterAt(index);
+    Letter? removedLetter = game!.easel.removeLetterAt(index);
     debugPrint("[GAME SERVICE] Remove letter from easel[$index] - $removedLetter");
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
@@ -250,45 +223,24 @@ class GameService {
   /// Remove the first letter in the easel from left to right
   /// @return null if letter is not in easel
   Letter? removeLetterFromEasel(Letter letter) {
-    Letter? removedLetter = easel.removeLetter(letter);
+    Letter? removedLetter = game!.easel.removeLetter(letter);
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
 
     return removedLetter;
   }
 
-  void fillEaselWithReserve() {
-    // TEMPORARY
-    while (easel
-        .getLetterList()
-        .length != easel.maxSize) {
-      easel.addLetter(getRandomLetter());
-    }
-  }
-
   void confirmWordPlacement() {
     Coordinate firstCoordonate = Coordinate(pendingLetters[0].x, pendingLetters[0].y);
-    bool isHorizontal = pendingLetters[0].y == pendingLetters[1].y;
-    List<String> letters = List.generate(
-        pendingLetters.length, (index) => pendingLetters[index].letter.name);
+    bool? isHorizontal = pendingLetters.length > 1 ? pendingLetters[0].y == pendingLetters[1].y : null;
+    List<String> letters =
+        List.generate(pendingLetters.length, (index) => pendingLetters[index].letter.character);
 
-    _socket.emit(GameSocketEvent.PlaceWordCommand.event, PlaceWordCommandInfo(firstCoordonate, isHorizontal, letters));
-
-    // if(isHorizontal){
-    //   for(int x = pendingLetters.first.x; x <= pendingLetters.last.x; ++x){
-    //     activePlayer?.score += gameboard.getSlot(x, pendingLetters.first.y)!.points;
-    //   }
-    // }
-    // else{
-    //   for(int y = pendingLetters.first.y; y <= pendingLetters.last.y; ++y){
-    //     activePlayer?.score += gameboard.getSlot(pendingLetters.first.x, y)!.points;
-    //   }
-    // }
+    _socket.emit(GameSocketEvent.PlaceWordCommand.event,
+        PlaceWordCommandInfo(firstCoordonate, isHorizontal, letters));
 
     pendingLetters = [];
-    gameboard.notifyBoardChanged.add(true);
-    fillEaselWithReserve();
-    nextTurn();
+    game!.gameboard.notifyBoardChanged.add(true);
   }
 
   void skipTurn() {
@@ -297,6 +249,7 @@ class GameService {
 
   void abandonGame() {
     _socket.emit("AbandonGame");
+    game = null;
   }
 
   void quitGame() {
@@ -339,5 +292,4 @@ class GameService {
 
     return allLetters[letterIndex];
   }
-
 }

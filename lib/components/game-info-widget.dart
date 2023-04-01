@@ -42,7 +42,7 @@ class _GameInfoState extends State<GameInfo> {
 
   late StreamSubscription _gameInfoUpdate;
 
-  _GameInfoState(){
+  _GameInfoState() {
     _gameInfoUpdate = _gameService.notifyGameInfoChange.stream.listen((event) {
       setState(() {});
     });
@@ -56,6 +56,10 @@ class _GameInfoState extends State<GameInfo> {
 
   @override
   Widget build(BuildContext context) {
+    if (_gameService.game == null) {
+      return const SizedBox();
+    }
+
     return Column(
       children: [
         SizedBox(
@@ -76,12 +80,17 @@ class _GameInfoState extends State<GameInfo> {
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
-                                  children: const [Text("Réserve"), SizedBox(height: 5), Text("100")],
+                                  children: const [
+                                    Text("Réserve"),
+                                    SizedBox(height: 5),
+                                    Text("100")
+                                  ],
                                 ),
                               )),
                           Row(children: [
                             const Icon(Icons.timer),
-                            Text(" ${GameService.turnLength - _gameService.turnTimer} secondes")
+                            Text(
+                                " ${GameService.turnLength - _gameService.game!.turnTimer} secondes")
                           ]),
                         ],
                       )
@@ -93,7 +102,9 @@ class _GameInfoState extends State<GameInfo> {
           children: [
             ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green[400]),
-                onPressed: _gameService.pendingLetters.isEmpty ? null : () => { _gameService.confirmWordPlacement() },
+                onPressed: _gameService.pendingLetters.isEmpty
+                    ? null
+                    : () => {_gameService.confirmWordPlacement()},
                 child: const Padding(
                   padding: EdgeInsets.all(20.0),
                   child: Text("Placer"),
@@ -101,13 +112,14 @@ class _GameInfoState extends State<GameInfo> {
             const SizedBox(width: 50),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                onPressed: () => { _gameService.skipTurn() },
+                onPressed: () => {_gameService.skipTurn()},
                 child: const Padding(
                   padding: EdgeInsets.all(17.0),
                   child: Icon(Icons.skip_next_rounded),
                 ))
           ],
-        )],
+        )
+      ],
     );
   }
 }
@@ -125,7 +137,7 @@ class _PlayerInfoState extends State<PlayerInfo> {
 
   late StreamSubscription _gameInfoUpdate;
 
-  _PlayerInfoState(){
+  _PlayerInfoState() {
     _gameInfoUpdate = _gameService.notifyGameInfoChange.stream.listen((event) {
       setState(() {});
     });
@@ -139,6 +151,9 @@ class _PlayerInfoState extends State<PlayerInfo> {
 
   @override
   Widget build(BuildContext context) {
+    if (_gameService.game == null) {
+      return const SizedBox();
+    }
 
     return SizedBox(
       width: 300,
@@ -153,13 +168,14 @@ class _PlayerInfoState extends State<PlayerInfo> {
                   child: ListTile(
                     title: Text(player.user.username),
                     subtitle: Text("Score: 0"),
-                    trailing: _gameService.activePlayer == player
+                    trailing: _gameService.game?.activePlayer == player
                         ? Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(math.pi),child: CircularProgressIndicator(
-                            value: 1 - (_gameService.turnTimer / GameService.turnLength),
-                            color: Colors.blue,
-                          ))
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(math.pi),
+                            child: CircularProgressIndicator(
+                              value: 1 - (_gameService.game!.turnTimer / GameService.turnLength),
+                              color: Colors.blue,
+                            ))
                         : null,
                   )),
             )

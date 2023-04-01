@@ -24,7 +24,7 @@ class _EaselState extends State<EaselWidget> {
   StreamSubscription? easelUpdate, boardUpdate;
 
   _EaselState() {
-    _visualLetters = _gameService.easel.getLetterList().toList();
+    _visualLetters = _gameService.game!.easel.getLetterList().toList();
   }
 
   void _moveGhostLetterAt(int index) {
@@ -32,12 +32,13 @@ class _EaselState extends State<EaselWidget> {
     if (ghostLetterIndex == index) return;
 
     if (ghostLetterIndex >= 0) {
-      debugPrint("[EASEL WIDGET] Ghost letter will be moved from ${_visualLetters.indexOf(Letter.EMPTY)} to $index");
+      debugPrint(
+          "[EASEL WIDGET] Ghost letter will be moved from ${_visualLetters.indexOf(Letter.EMPTY)} to $index");
       setState(() {
         Letter ghostLetter = _visualLetters.removeAt(ghostLetterIndex);
         _visualLetters.insert(index, ghostLetter);
       });
-    } else if (_visualLetters.length < _gameService.easel.maxSize) {
+    } else if (_visualLetters.length < _gameService.game!.easel.maxSize) {
       debugPrint("[EASEL WIDGET] Ghost letter will be created at $index");
       setState(() {
         _visualLetters.insert(index, Letter.EMPTY);
@@ -51,7 +52,8 @@ class _EaselState extends State<EaselWidget> {
   }
 
   void _onEaselDrop(letter) {
-    debugPrint("[EASEL WIDGET] Letter '$letter' was dropped on the easel and will replace ghost letter at ${_visualLetters.indexOf(Letter.EMPTY)}");
+    debugPrint(
+        "[EASEL WIDGET] Letter '$letter' was dropped on the easel and will replace ghost letter at ${_visualLetters.indexOf(Letter.EMPTY)}");
     int letterIndex = _visualLetters.indexOf(Letter.EMPTY);
     if (letterIndex >= 0) {
       _gameService.addLetterInEaselAt(letterIndex, letter);
@@ -71,18 +73,18 @@ class _EaselState extends State<EaselWidget> {
   void initState() {
     super.initState();
 
-    easelUpdate = _gameService.easel.notifyEaselChanged.stream.listen((letterIndex) {
+    easelUpdate = _gameService.game!.easel.notifyEaselChanged.stream.listen((letterIndex) {
       setState(() {
-        List<Letter> actualEasel = _gameService.easel.getLetterList();
+        List<Letter> actualEasel = _gameService.game!.easel.getLetterList();
 
-          _visualLetters = actualEasel.toList();
+        _visualLetters = actualEasel.toList();
       });
     });
 
-    boardUpdate = _gameService.gameboard.notifyBoardChanged.stream.listen((even) {
+    boardUpdate = _gameService.game!.gameboard.notifyBoardChanged.stream.listen((even) {
       setState(() {
         // Executed for when a new letter is placed
-        _visualLetters = _gameService.easel.getLetterList().toList();
+        _visualLetters = _gameService.game!.easel.getLetterList().toList();
       });
     });
   }
@@ -100,7 +102,8 @@ class _EaselState extends State<EaselWidget> {
     return DragTarget<Letter>(
         builder: (context, letters, rejectedItems) {
           return SizedBox(
-            height: min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.1,
+            height:
+                min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.1,
             child: Card(
                 color: Colors.green[700],
                 margin: EdgeInsets.zero,
@@ -117,7 +120,9 @@ class _EaselState extends State<EaselWidget> {
                                 value: letter.value,
                                 index: letter.key,
                                 dragKey: widget.dragKey,
-                                widgetSize: min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.1,
+                                widgetSize: min(MediaQuery.of(context).size.height,
+                                        MediaQuery.of(context).size.width) *
+                                    0.1,
                               );
                             },
                             onMove: (_) => // For when dragged letter is held on top of easel letter
