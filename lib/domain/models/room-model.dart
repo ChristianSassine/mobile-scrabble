@@ -80,24 +80,24 @@ enum PlayerType {
 
 class RoomPlayer {
   final IUser user;
-  final String? socketId;
   final String roomId;
+  final String? password;
   final PlayerType? playerType;
   final bool? isCreator;
 
-  RoomPlayer(this.user, this.roomId, {this.socketId, this.playerType, this.isCreator,});
+  RoomPlayer(this.user, this.roomId, { this.playerType, this.isCreator, this.password});
 
   RoomPlayer.fromJson(json)
       : user = IUser.fromJson(json['user']),
-        socketId = json['socketId'],
         roomId = json['roomId'],
+        password = json['password'],
         playerType = PlayerType.fromString(json['type']),
         isCreator = json['isCreator'];
 
   Map toJson() => {
     "user": user.toJson(),
-    "socketId": socketId,
     "roomId": roomId,
+    "password": password,
     "playerType": playerType?.value,
     "isCreator": isCreator,
   };

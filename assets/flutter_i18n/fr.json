@@ -47,6 +47,25 @@
         "start_game": "Démarrer la partie",
         "game": "Partie"
     },
+    "rooms_lobby": {
+        "table": {
+            "users": "Joueurs",
+            "host": "Hote",
+            "difficulty": "Difficulté",
+            "timer": "Minuterie",
+            "dictionary": "Dictionnaire"
+        },
+        "id_label" : "Rejoindre une salle avec un ID",
+        "password": {
+            "title": "Mot de passe de la salle",
+            "label": "Mot de passe"
+        },
+        "errors": {
+            "not_available": "La salle n'est pas disponible",
+            "wrong_password": "Le mot de passe pour la salle est erronée",
+            "same_user" : "L'adversaire a le même nom"
+        }
+    },
     "end_game": {
         "screen_name": "Fin de la partie",
         "game_ended": "Fin de la partie",

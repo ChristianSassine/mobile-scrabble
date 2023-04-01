@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/enums/server-errors-enum.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/services/auth-service.dart';
@@ -19,6 +20,7 @@ class RoomService {
   Subject<List<GameRoom>> notifyNewRoomList = PublishSubject();
   Subject<GameRoom?> notifyRoomMemberList = PublishSubject();
   Subject<GameRoom?> notifyRoomJoin = PublishSubject();
+  Subject<String> notifyError = PublishSubject();
 
   RoomService() {
     initSocketListeners();
@@ -59,6 +61,25 @@ class RoomService {
           GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
           MaterialPageRoute(builder: (context) => const GameScreen()));
     });
+
+    _socket.on(
+        RoomSocketEvent.ErrorJoining.event,
+        (errorMsg) => notifyError
+            .add(parseServerError(ServerError.fromString(errorMsg))));
+  }
+
+  // TODO: move to more global service if there's other errors we need to parse
+  String parseServerError(ServerError error) {
+    switch (error) {
+      case ServerError.RoomNotAvailable:
+        return "rooms_lobby.errors.not_available";
+      case ServerError.RoomWrongPassword:
+        return "rooms_lobby.errors.wrong_password";
+      case ServerError.RoomSameUser:
+        return "rooms_lobby.errors.same_user";
+      default:
+        return "ERROR";
+    }
   }
 
   void _updateRoomList(List<GameRoom> newRooms) {
@@ -66,10 +87,9 @@ class RoomService {
     notifyNewRoomList.add(newRooms);
   }
 
-  void requestJoinRoom(GameRoom room) {
-    currentRoom = room;
+  void requestJoinRoom(String roomId, [String? password]) {
 
-    final player = RoomPlayer(_authService.user!, room.id);
+    final player = RoomPlayer(_authService.user!, roomId, password: password);
     _socket.emit(RoomSocketEvent.JoinWaitingRoom.event, player);
   }
 
@@ -86,7 +106,8 @@ class RoomService {
     currentRoom = GameRoom(
         id: "-",
         players: [
-          RoomPlayer(creationQuery.user, "-", playerType: PlayerType.User, isCreator: true)
+          RoomPlayer(creationQuery.user, "-",
+              playerType: PlayerType.User, isCreator: true)
         ],
         dictionary: creationQuery.dictionary,
         timer: creationQuery.timer,

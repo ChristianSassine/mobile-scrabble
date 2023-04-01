@@ -3,10 +3,15 @@ import 'package:mobile/domain/models/userimageinfo-model.dart';
 
 class IUser {
   final String? email;
-  final String username, password;
+  final String username;
+  final String? password;
   final UserImageInfo? profilePicture;
 
-  IUser({required this.username, required this.password, this.email, this.profilePicture});
+  IUser(
+      {required this.username,
+        this.password,
+        this.email,
+        this.profilePicture});
 
   IUser.fromJson(json)
       : email = json['email'],
