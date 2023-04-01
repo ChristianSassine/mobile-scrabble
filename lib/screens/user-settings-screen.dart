@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/avatar-selector-widget.dart';
-import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 
 class UserSettingsScreen extends StatefulWidget {
@@ -50,7 +49,13 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: AvatarSelector(
-                          onImageChange: (avatar) {},
+                          onImageChange: (avatar) {
+                            if (avatar != null){
+                              setState(() {
+                                _avatarChangeValid = true;
+                              });
+                            }
+                          },
                           currentInfo: _userService.user!.profilePicture!,
                         ),
                       ),

@@ -111,9 +111,11 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                             )),
                           ));
                         }
-                        return Container(
-                          width: size.width * 0.40,
-                            child: Wrap(children: widgets));
+                        return Center(
+                          child: Container(
+                            width: size.width * 0.40,
+                              child: Wrap(children: widgets)),
+                        );
                       }
                     }
                     return const CircularProgressIndicator();
