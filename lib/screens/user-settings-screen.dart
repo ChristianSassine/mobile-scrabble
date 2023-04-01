@@ -55,7 +55,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: AvatarSelector(
                           onImageChange: (avatar) {
-                            if (avatar != null){
+                            if (avatar != null) {
                               setState(() {
                                 _avatarChangeValid = true;
                                 currentAvatar = avatar;
@@ -66,10 +66,14 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                         ),
                       ),
                       ElevatedButton(
-                          onPressed: _avatarChangeValid ? () {
-                            _userService.changeUserAvatar(currentAvatar!);
-                            _avatarChangeValid = false;
-                          } : null,
+                          onPressed: _avatarChangeValid
+                              ? () {
+                                  setState(() {
+                                    _avatarChangeValid = false;
+                                  });
+                                  _userService.changeUserAvatar(currentAvatar!);
+                                }
+                              : null,
                           child: Text("Submit Change")),
                       Divider(
                         color: theme.primaryColorDark,
@@ -84,8 +88,9 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                   key: _usernameFormKey,
                                   onChanged: () {
                                     setState(() {
-                                      _usernameChangeValid =
-                                          _usernameFormKey.currentState!.validate();
+                                      _usernameChangeValid = _usernameFormKey
+                                          .currentState!
+                                          .validate();
                                     });
                                   },
                                   child: IntrinsicWidth(
@@ -106,8 +111,10 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                 border: OutlineInputBorder(),
                                                 hintText: "New username"),
                                             validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return FlutterI18n.translate(context,
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return FlutterI18n.translate(
+                                                    context,
                                                     "user_settings.username_error");
                                               }
                                             },
@@ -118,28 +125,34 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                           child: TextFormField(
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
-                                                hintText: "Confirm new username"),
+                                                hintText:
+                                                    "Confirm new username"),
                                             validator: (value) {
-                                              if (value != _usernameController.text) {
-                                                return FlutterI18n.translate(context,
+                                              if (value !=
+                                                  _usernameController.text) {
+                                                return FlutterI18n.translate(
+                                                    context,
                                                     "user_settings.username_confirmation_error");
                                               }
                                             },
                                           ),
                                         ),
                                         ElevatedButton(
-                                            onPressed: _usernameChangeValid ? () {} : null,
+                                            onPressed: _usernameChangeValid
+                                                ? () {}
+                                                : null,
                                             child: Text("Submit Change")),
                                       ],
                                     ),
                                   )),
                               VerticalDivider(),
                               Form(
-                                key: _passwordFormKey,
+                                  key: _passwordFormKey,
                                   onChanged: () {
                                     setState(() {
-                                      _passwordChangeValid =
-                                          _passwordFormKey.currentState!.validate();
+                                      _passwordChangeValid = _passwordFormKey
+                                          .currentState!
+                                          .validate();
                                     });
                                   },
                                   child: IntrinsicWidth(
@@ -160,8 +173,10 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                 border: OutlineInputBorder(),
                                                 hintText: "New password"),
                                             validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return FlutterI18n.translate(context,
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return FlutterI18n.translate(
+                                                    context,
                                                     "user_settings.password_error");
                                               }
                                             },
@@ -172,17 +187,22 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                           child: TextFormField(
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
-                                                hintText: "Confirm new password"),
+                                                hintText:
+                                                    "Confirm new password"),
                                             validator: (value) {
-                                              if (value != _passwordController.text) {
-                                                return FlutterI18n.translate(context,
+                                              if (value !=
+                                                  _passwordController.text) {
+                                                return FlutterI18n.translate(
+                                                    context,
                                                     "user_settings.password_confirmation_error");
                                               }
                                             },
                                           ),
                                         ),
                                         ElevatedButton(
-                                            onPressed: _passwordChangeValid ? () {} : null,
+                                            onPressed: _passwordChangeValid
+                                                ? () {}
+                                                : null,
                                             child: Text("Submit Change")),
                                       ],
                                     ),
