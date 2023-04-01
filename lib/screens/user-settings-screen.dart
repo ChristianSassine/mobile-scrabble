@@ -59,12 +59,13 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                               });
                             }
                           },
-                          currentInfo: _userService.user!.profilePicture!,
+                          currentInfo: _userService.user!.profilePicture,
                         ),
                       ),
                       ElevatedButton(
                           onPressed: _avatarChangeValid ? () {
                             _userService.changeUserAvatar(currentAvatar!);
+                            _avatarChangeValid = false;
                           } : null,
                           child: Text("Submit Change")),
                       Divider(

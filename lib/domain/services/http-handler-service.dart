@@ -54,12 +54,13 @@ class HttpHandlerService {
 
   // TODO: Test when implementing user profile (changing avatar feature)
   Future<http.Response> updateImageAvatar(String avatarName) {
+    print("updateImageAvatar Request sent");
     return client.patch(Uri.parse("$baseUrl/image/profile-picture"),
-        body: {"filename": avatarName}, headers: headers);
+        body: {"fileName": avatarName}, headers: headers);
   }
 
   // TODO: Test when implementing user profile (changing avatar feature)
-  Future<http.StreamedResponse> changeImageAvatar(File newAvatarFile) async {
+  Future<http.Response> changeImageAvatar(File newAvatarFile) async {
     final request = http.MultipartRequest(
         "PUT", Uri.parse("${baseUrl}/image/profile-picture"));
     request.headers["cookie"] = headers["cookie"]!;
@@ -70,7 +71,8 @@ class HttpHandlerService {
         contentType: MediaType("image", "*"));
 
     request.files.add(imageFile);
-    final response = await request.send();
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
     return response;
   }
 

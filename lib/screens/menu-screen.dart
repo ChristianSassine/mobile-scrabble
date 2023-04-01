@@ -51,8 +51,10 @@ class _MenuScreenState extends State<MenuScreen> {
       case DropDownOption.UserSettings:
         {
           // TODO: Add user settings
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const UserProfileScreen()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(
+                  builder: (context) => const UserProfileScreen()))
+              .then((value) { setState(() {}); print("RETURNED");});
         }
         break;
       case DropDownOption.Disconnect:

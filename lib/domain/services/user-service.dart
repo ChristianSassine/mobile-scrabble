@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/models/iuser-model.dart';
@@ -15,10 +16,12 @@ class UserService{
   Future<void> changeUserAvatar(AvatarData data) async {
     final newUser = await _avatarService.changeAvatar(data);
     if (newUser == null) return;
-    user = newUser;
+    print(newUser);
+    updateUser(newUser);
   }
 
   Future<void> updateUser(IUser? newUser) async {
+    debugPrint("Updating user...");
     user = newUser;
     if (newUser == null) return;
     final urlResponse = await _httpService.getProfilePicture();

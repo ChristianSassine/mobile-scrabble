@@ -44,8 +44,8 @@ class AvatarService {
         ? await httpService.updateImageAvatar(data.name!)
         : await httpService.changeImageAvatar(data.file!);
     if (response.statusCode == HttpStatus.ok){
-      final body = response is StreamedResponse ? response.stream.toString() : (response as Response).body;
-      user = IUser.fromJson(jsonDecode(body));
+      print(response.body);
+      user = IUser.fromJson(jsonDecode(response.body)["userData"]);
     }
     return user;
   }
