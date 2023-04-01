@@ -57,6 +57,8 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return AlertDialog(
         actions: [
           TextButton(
@@ -88,29 +90,30 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                       if (snapshot.hasData) {
                         List<Widget> widgets = [];
                         for (int i = 0; i < snapshot.data.length; i++) {
-                          widgets.add(Expanded(
-                              child: GestureDetector(
+                          widgets.add(GestureDetector(
                             onTap: () => selectAvatar(
-                                snapshot.data![snapshot.data.keys.elementAt(i)]
-                                    [0],
-                                snapshot.data.keys.elementAt(i)),
+                            snapshot.data![snapshot.data.keys.elementAt(i)]
+                                [0],
+                            snapshot.data.keys.elementAt(i)),
                             child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 3,
-                                        color: _selectedImageName ==
-                                                snapshot.data.keys.elementAt(i)
-                                            ? Colors.green
-                                            : Colors.transparent)),
-                                child: Image.network(
-                                  snapshot.data![
-                                      snapshot.data.keys.elementAt(i)][0],
-                                  width: 50,
-                                  height: 50,
-                                )),
-                          )));
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 3,
+                                    color: _selectedImageName ==
+                                            snapshot.data.keys.elementAt(i)
+                                        ? Colors.green
+                                        : Colors.transparent)),
+                            child: Image.network(
+                              snapshot.data![
+                                  snapshot.data.keys.elementAt(i)][0],
+                              width: 75,
+                              height: 75,
+                            )),
+                          ));
                         }
-                        return Row(children: widgets);
+                        return Container(
+                          width: size.width * 0.40,
+                            child: Wrap(children: widgets));
                       }
                     }
                     return const CircularProgressIndicator();
@@ -156,7 +159,8 @@ class _AvatarSelectorState extends State<AvatarSelector> {
   @override
   void initState() {
     super.initState();
-    if (widget.currentInfo != null) { // TODO: TO TEST
+    if (widget.currentInfo != null) {
+      // TODO: TO TEST
       _selectedImageFile = File(widget.currentInfo!.key!);
       if (widget.currentInfo!.isDefaultPicture) {
         _imageName = widget.currentInfo!.name;
