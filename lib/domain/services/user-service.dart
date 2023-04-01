@@ -16,7 +16,6 @@ class UserService{
   Future<void> changeUserAvatar(AvatarData data) async {
     final newUser = await _avatarService.changeAvatar(data);
     if (newUser == null) return;
-    print(newUser);
     updateUser(newUser);
   }
 
