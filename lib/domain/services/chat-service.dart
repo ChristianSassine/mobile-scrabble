@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
-import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/user-service.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import '../models/chat-models.dart';
 
 class ChatService {
   Socket socket = GetIt.I.get<Socket>();
-  AuthService authService = GetIt.I.get<AuthService>();
+  UserService _userService = GetIt.I.get<UserService>();
   ChatBox chatBox = ChatBox();
   StreamSubscription?
       _subLogin; // There's no destructor method in dart, hopefully this does gets destroyed when the class is destroyed
@@ -18,9 +18,6 @@ class ChatService {
   ChatService() {
     initSocketListeners();
 
-    _subLogin ??= authService.notifyLogin.stream.listen((event) {
-      _emptyMessages();
-    });
   }
 
   void initSocketListeners() {
@@ -36,7 +33,7 @@ class ChatService {
   }
 
   void submitMessage(String msg) {
-    ChatMessage newMessage = ChatMessage(authService.user!.username,
+    ChatMessage newMessage = ChatMessage(_userService.user!.username,
         MessageType.CLIENT.value, msg, DateFormat.Hms().format(DateTime.now()));
     chatBox.addMessage(newMessage);
     socket.emit(ChatRoomSocketEvents.SendHomeMessage.event, newMessage);
@@ -51,13 +48,13 @@ class ChatService {
   }
 
   void _receivedMessage(ChatMessage incommingMessage) {
-    if (incommingMessage.username != authService.user!.username) {
+    if (incommingMessage.username != _userService.user!.username) {
       chatBox.addMessage(incommingMessage);
     }
   }
 
   void _userJoined(String username) {
-    if (authService.user!.username != username) {
+    if (_userService.user!.username != username) {
       chatBox.addMessage(ChatMessage(
           "",
           MessageType.SYSTEM.value,

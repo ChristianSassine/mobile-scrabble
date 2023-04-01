@@ -4,4 +4,7 @@ import 'package:mobile/domain/models/iuser-model.dart';
 class UserService{
   IUser? user;
 
+  void updateUser(IUser? newUser){
+    user = newUser;
+  }
 }

@@ -14,6 +14,7 @@ import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/language-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
+import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/login-screen.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -48,6 +49,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<RoomService>(() => RoomService());
   getIt.registerLazySingleton<AvatarService>(() => AvatarService());
   getIt.registerLazySingleton<GameService>(() => GameService());
+  getIt.registerLazySingleton<UserService>(() => UserService());
 
   getIt.registerSingleton<GlobalKey<NavigatorState>>(GlobalKey<NavigatorState>());
 }

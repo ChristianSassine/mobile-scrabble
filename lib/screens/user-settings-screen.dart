@@ -13,8 +13,6 @@ class UserSettingsScreen extends StatefulWidget {
 
 class _UserSettingsScreenState extends State<UserSettingsScreen> {
   final _usernameFormKey = GlobalKey<FormState>();
-
-  final _authService = GetIt.I.get<AuthService>();
   final _usernameController = TextEditingController();
 
   bool _usernameChangeValid = false;

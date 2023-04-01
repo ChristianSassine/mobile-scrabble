@@ -7,15 +7,16 @@ import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/models/iuser-model.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
+import 'package:mobile/domain/services/user-service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class AuthService {
-  IUser? user;
   Cookie? _cookie;
 
   // Services
   final _httpService = GetIt.I.get<HttpHandlerService>();
+  final _userService = GetIt.I.get<UserService>();
   final _avatarService = GetIt.I.get<AvatarService>();
   final _socket = GetIt.I.get<Socket>();
 
@@ -38,7 +39,9 @@ class AuthService {
         ..disconnect()
         ..connect();
 
-      user = IUser.fromJson(jsonDecode(response.body)['userData']);
+      final user = IUser.fromJson(jsonDecode(response.body)['userData']);
+      _userService.updateUser(user);
+
       notifyLogin.add(true);
       return;
     }
@@ -73,7 +76,7 @@ class AuthService {
   }
 
   void diconnect() {
-    user = null;
+    _userService.updateUser(null);
     _cookie = null;
     _socket.disconnect();
   }
