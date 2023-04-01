@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/models/player-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/game-service.dart';
@@ -159,15 +160,15 @@ class _PlayerInfoState extends State<PlayerInfo> {
       width: 300,
       child: Column(
         children: [
-          for (RoomPlayer player in _roomService.currentRoom!.players) ...[
+          for (GamePlayer player in _gameService.game!.players) ...[
             Card(
               color: Colors.lightGreen[100],
               elevation: 10,
               child: SizedBox(
                   width: 260,
                   child: ListTile(
-                    title: Text(player.user.username),
-                    subtitle: Text("Score: 0"),
+                    title: Text(player.player.user.username),
+                    subtitle: Text("Score: ${player.score}"),
                     trailing: _gameService.game?.activePlayer == player
                         ? Transform(
                             alignment: Alignment.center,

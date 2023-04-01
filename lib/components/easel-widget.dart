@@ -24,7 +24,7 @@ class _EaselState extends State<EaselWidget> {
   StreamSubscription? easelUpdate, boardUpdate;
 
   _EaselState() {
-    _visualLetters = _gameService.game!.easel.getLetterList().toList();
+    _visualLetters = _gameService.game!.currentPlayer.easel.getLetterList().toList();
   }
 
   void _moveGhostLetterAt(int index) {
@@ -38,7 +38,7 @@ class _EaselState extends State<EaselWidget> {
         Letter ghostLetter = _visualLetters.removeAt(ghostLetterIndex);
         _visualLetters.insert(index, ghostLetter);
       });
-    } else if (_visualLetters.length < _gameService.game!.easel.maxSize) {
+    } else if (_visualLetters.length < _gameService.game!.currentPlayer.easel.maxSize) {
       debugPrint("[EASEL WIDGET] Ghost letter will be created at $index");
       setState(() {
         _visualLetters.insert(index, Letter.EMPTY);
@@ -73,9 +73,9 @@ class _EaselState extends State<EaselWidget> {
   void initState() {
     super.initState();
 
-    easelUpdate = _gameService.game!.easel.notifyEaselChanged.stream.listen((letterIndex) {
+    easelUpdate = _gameService.game!.currentPlayer.easel.notifyEaselChanged.stream.listen((letterIndex) {
       setState(() {
-        List<Letter> actualEasel = _gameService.game!.easel.getLetterList();
+        List<Letter> actualEasel = _gameService.game!.currentPlayer.easel.getLetterList();
 
         _visualLetters = actualEasel.toList();
       });
@@ -84,7 +84,7 @@ class _EaselState extends State<EaselWidget> {
     boardUpdate = _gameService.game!.gameboard.notifyBoardChanged.stream.listen((even) {
       setState(() {
         // Executed for when a new letter is placed
-        _visualLetters = _gameService.game!.easel.getLetterList().toList();
+        _visualLetters = _gameService.game!.currentPlayer.easel.getLetterList().toList();
       });
     });
   }

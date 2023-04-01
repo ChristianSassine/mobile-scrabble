@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
-import 'package:mobile/domain/models/board-models.dart';
-import 'package:mobile/domain/models/easel-model.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
@@ -177,14 +175,14 @@ class GameService {
 
   void addLetterInEasel(Letter letter) {
     debugPrint(
-        "[GAME SERVICE] Add letter to the end of easel: easel[${game!.easel.getLetterList().length}] = $letter");
-    game!.easel.addLetter(letter);
+        "[GAME SERVICE] Add letter to the end of easel: easel[${game!.currentPlayer.easel.getLetterList().length}] = $letter");
+    game!.currentPlayer.easel.addLetter(letter);
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
   }
 
   void addLetterInEaselAt(int index, Letter letter) {
-    game!.easel.addLetterAt(index, letter);
+    game!.currentPlayer.easel.addLetterAt(index, letter);
     debugPrint("[GAME SERVICE] Add letter to easel[$index] = $letter");
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
@@ -192,7 +190,7 @@ class GameService {
 
   /// @return null if index is out of bound
   Letter? removeLetterFromEaselAt(int index) {
-    Letter? removedLetter = game!.easel.removeLetterAt(index);
+    Letter? removedLetter = game!.currentPlayer.easel.removeLetterAt(index);
     debugPrint("[GAME SERVICE] Remove letter from easel[$index] - $removedLetter");
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
@@ -221,7 +219,7 @@ class GameService {
   /// Remove the first letter in the easel from left to right
   /// @return null if letter is not in easel
   Letter? removeLetterFromEasel(Letter letter) {
-    Letter? removedLetter = game!.easel.removeLetter(letter);
+    Letter? removedLetter = game!.currentPlayer.easel.removeLetter(letter);
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
 
