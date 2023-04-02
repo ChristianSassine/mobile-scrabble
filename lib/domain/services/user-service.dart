@@ -13,6 +13,7 @@ class UserService{
   IUser? user;
   final _avatarService = GetIt.I.get<AvatarService>();
   final _httpService = GetIt.I.get<HttpHandlerService>();
+  final Future<List<HistoryEvent>> histories = <HistoryEvent>[] as Future<List<HistoryEvent>>;
 
   final mockMatches = [
     MatchHistory(true, '19:30 - 19/03/2022'),
@@ -30,6 +31,10 @@ class UserService{
     final newUser = await _avatarService.changeAvatar(data);
     if (newUser == null) return;
     updateUser(newUser);
+  }
+
+  fetchHistories() {
+    // TODO: Fetch Histories
   }
 
   Future<List<ConnectionHistory>> getConnections() async {
