@@ -36,7 +36,7 @@ class AuthService {
       _httpService.updateCookie(_cookie!);
 
       IUser user = IUser.fromJson(jsonDecode(response.body)['userData']);
-      _userService.updateUser(user);
+      await _userService.updateUser(user);
 
       _socket.io.options['extraHeaders'] = {'cookie': _cookie};
       _socket
