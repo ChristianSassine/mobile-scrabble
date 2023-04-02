@@ -7,13 +7,15 @@ import 'package:mobile/domain/models/iuser-model.dart';
 import 'package:mobile/domain/models/user-profile-models.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
+import 'package:rxdart/rxdart.dart';
 
 // TODO : move user logic to this service
 class UserService{
   IUser? user;
   final _avatarService = GetIt.I.get<AvatarService>();
   final _httpService = GetIt.I.get<HttpHandlerService>();
-  final Future<List<HistoryEvent>> histories = <HistoryEvent>[] as Future<List<HistoryEvent>>;
+  final Future<List<HistoryEvent>> histories = Future(() => <HistoryEvent>[]);
+  final PublishSubject<bool> notifyChange = PublishSubject();
 
   final mockMatches = [
     MatchHistory(true, '19:30 - 19/03/2022'),
@@ -29,8 +31,12 @@ class UserService{
 
   Future<void> changeUserAvatar(AvatarData data) async {
     final newUser = await _avatarService.changeAvatar(data);
-    if (newUser == null) return;
+    if (newUser == null) {
+      notifyChange.add(false);
+      return;
+    }
     updateUser(newUser);
+    notifyChange.add(true);
   }
 
   fetchInformation() {

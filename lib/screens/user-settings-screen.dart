@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/avatar-selector-widget.dart';
+import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/services/user-service.dart';
 
@@ -24,6 +27,27 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   bool _usernameChangeValid = false;
   bool _passwordChangeValid = false;
   bool _avatarChangeValid = false;
+
+  late final StreamSubscription<bool> _submitStatusSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _submitStatusSub = _userService.notifyChange.stream.listen((success) {
+      if (success)
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBarFactory.greenSnack("Modification successful"));
+      else
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBarFactory.redSnack("Modification unsuccessful"));
+    });
+  }
+
+  @override
+  void dispose() {
+    _submitStatusSub.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
