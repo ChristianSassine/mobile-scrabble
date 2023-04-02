@@ -62,6 +62,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    _userService.fetchInformation();
+
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
     final isUser = _userService.user?.profilePicture != null;

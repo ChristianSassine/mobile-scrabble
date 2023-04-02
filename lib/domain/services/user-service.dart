@@ -33,8 +33,9 @@ class UserService{
     updateUser(newUser);
   }
 
-  fetchHistories() {
+  fetchInformation() {
     // TODO: Fetch Histories
+    // TODO: Fetch Statistics
   }
 
   Future<List<ConnectionHistory>> getConnections() async {
