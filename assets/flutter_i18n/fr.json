@@ -123,6 +123,29 @@
     "chat": {
         "screen_name": "Salle de clavardage"
     },
+    "user_profile" : {
+        "title" : "Profile utilisateur",
+        "settings_button": "Paramètres",
+        "statistics": {
+            "label": "Statistiques",
+            "avg_time": "Temps moy. (min/match)",
+            "avg_score": "Score moy.",
+            "cnt_games": "Jeux joués",
+            "win_indicator": "Gagnées",
+            "loss_indicator": "Perdues"
+        },
+        "histories_label": "Historiques",
+        "matchs": {
+            "label": "Parties",
+            "defeat": "Défaite",
+            "victory": "Victoire"
+        },
+        "connections" : {
+            "label": "Connexions",
+            "connect": "Connexion",
+            "disconnect": "Déconnexion"
+        }
+    },
     "avatar": {
         "title": "Choisis ton avatar",
         "close": "Fermer",

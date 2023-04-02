@@ -122,6 +122,29 @@
     "chat": {
         "screen_name": "Chat room"
     },
+    "user_profile" : {
+        "title" : "User profile",
+        "settings_button": "Settings",
+        "statistics": {
+            "label": "Statistics",
+            "avg_time": "Avg. Time (min/match)",
+            "avg_score": "Avg. Score",
+            "cnt_games": "Played games",
+            "win_indicator": "Wins",
+            "loss_indicator": "Losses"
+        },
+        "histories_label": "Histories",
+        "matchs": {
+            "label": "Matchs",
+            "defeat": "Defeat",
+            "victory": "Victory"
+        },
+        "connections" : {
+            "label": "Connections",
+            "connect": "Connect",
+            "disconnect": "Disconnect"
+        }
+    },
     "avatar": {
         "title": "Choose your avatar",
         "close": "Close",
