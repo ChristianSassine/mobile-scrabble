@@ -1,8 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mobile/components/indicator-widget.dart';
+import 'package:mobile/domain/extensions/string-extensions.dart';
 import 'package:mobile/domain/models/user-profile-models.dart';
+import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/user-settings-screen.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -14,6 +17,7 @@ class UserProfileScreen extends StatefulWidget {
 
 class _UserProfileScreenState extends State<UserProfileScreen>
     with SingleTickerProviderStateMixin {
+  final _userService = GetIt.I.get<UserService>();
   late final TabController _tabController =
       TabController(length: 2, vsync: this);
 
@@ -72,6 +76,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
+    final isUser = _userService.user?.profilePicture != null;
 
     final mockData = PieChartData(sections: [
       PieChartSectionData(title: "${25}", value: 25, color: Colors.green),
@@ -90,11 +95,17 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               child: IntrinsicHeight(
                 child: Column(
                   children: [
-                    Text("JohnScrabble", style: theme.textTheme.titleLarge),
+                    Text(_userService.user!.username.capitalize(), style: theme.textTheme.titleLarge),
                     CircleAvatar(
                       radius: size.height * 0.05,
-                      child:
-                          Icon(Icons.person), // TODO : replace with real image
+                      backgroundImage: isUser
+                          ? NetworkImage(
+                              _userService.user!.profilePicture!.key!)
+                          : null,
+                      child: isUser
+                          ? null
+                          : const Icon(
+                              Icons.person), // TODO : replace with real image
                     ),
                     RichText(
                         text: TextSpan(children: [
@@ -107,9 +118,11 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                     ])),
                     OutlinedButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const UserSettingsScreen()));
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      const UserSettingsScreen()))
+                              .then((value) => setState(() {}));
                         },
                         child: Text("Settings")),
                     Divider(),
@@ -125,9 +138,30 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                   style: theme.textTheme.titleLarge,
                                 ),
                               ),
-                              Text("Temps : 4 m/partie"),
-                              Text("Parties jouées : 100"),
-                              Text("Score moyen par partie : 500"),
+                              RichText(
+                                  text: TextSpan(children: [
+                                TextSpan(text: "Temps (min/parties) : ", style: theme.textTheme.bodyMedium),
+                                TextSpan(
+                                    text: "4",
+                                    style: theme.textTheme.bodyLarge!
+                                        .copyWith(fontWeight: FontWeight.bold))
+                              ])),
+                              RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(text: "Parties jouées : ", style: theme.textTheme.bodyMedium),
+                                    TextSpan(
+                                        text: "100",
+                                        style: theme.textTheme.bodyLarge!
+                                            .copyWith(fontWeight: FontWeight.bold))
+                                  ])),
+                              RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(text: "Score moyen : ", style: theme.textTheme.bodyMedium),
+                                    TextSpan(
+                                        text: "500",
+                                        style: theme.textTheme.bodyLarge!
+                                            .copyWith(fontWeight: FontWeight.bold))
+                                  ])),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -136,14 +170,14 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                     padding: const EdgeInsets.all(8.0),
                                     child: Indicator(
                                         color: Colors.green,
-                                        text: "Win",
+                                        text: FlutterI18n.translate(context, "user_profile.statistics.win_indicator"),
                                         isSquare: false),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Indicator(
                                         color: Colors.red,
-                                        text: "Loss",
+                                        text: FlutterI18n.translate(context, "user_profile.statistics.loss_indicator"),
                                         isSquare: false),
                                   )
                                 ],
@@ -183,6 +217,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                     child: Column(
                                       children: [
                                         Container(
+                                          height: 30,
                                           child: TabBar(
                                             indicator: BoxDecoration(
                                               borderRadius:
@@ -196,14 +231,17 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                             controller: _tabController,
                                             tabs: [
                                               Tab(
-                                                child: Text(FlutterI18n.translate(context, "user_profile.matchs.label")),
+                                                child: Text(FlutterI18n.translate(
+                                                    context,
+                                                    "user_profile.matchs.label")),
                                               ),
                                               Tab(
-                                                child: Text(FlutterI18n.translate(context, "user_profile.connections.label")),
+                                                child: Text(FlutterI18n.translate(
+                                                    context,
+                                                    "user_profile.connections.label")),
                                               )
                                             ],
                                           ),
-                                          height: 30,
                                         ),
                                         Expanded(
                                           child: Container(
