@@ -19,19 +19,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     with SingleTickerProviderStateMixin {
   final _userService = GetIt.I.get<UserService>();
   late final TabController _tabController =
-      TabController(length: 2, vsync: this);
-
-  final mockMatches = [
-    MatchHistory(true, '19:30 - 19/03/2022'),
-    MatchHistory(false, '18:30 - 19/03/2022'),
-    MatchHistory(true, '17:30 - 19/03/2022 ')
-  ];
-
-  final mockConnections = [
-    ConnectionHistory(true, '19:30 - 19/03/2022'),
-    ConnectionHistory(false, '18:30 - 19/03/2022'),
-    ConnectionHistory(true, '17:30 - 19/03/2022 ')
-  ];
+  TabController(length: 2, vsync: this);
 
   Widget _buildMatchItem(MatchHistory matchHistory) {
     final matchState = FlutterI18n.translate(
@@ -43,7 +31,11 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       child: ListTile(
         title: Text(
           matchState,
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          style: Theme
+              .of(context)
+              .textTheme
+              .titleMedium!
+              .copyWith(
               color: matchHistory.isVictory ? Colors.green : Colors.red,
               fontWeight: FontWeight.bold),
         ),
@@ -62,7 +54,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       child: ListTile(
         title: Text(
           matchState,
-          style: Theme.of(context)
+          style: Theme
+              .of(context)
               .textTheme
               .titleMedium!
               .copyWith(fontWeight: FontWeight.bold),
@@ -74,7 +67,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery
+        .of(context)
+        .size;
     final theme = Theme.of(context);
     final isUser = _userService.user?.profilePicture != null;
 
@@ -95,33 +90,35 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               child: IntrinsicHeight(
                 child: Column(
                   children: [
-                    Text(_userService.user!.username.capitalize(), style: theme.textTheme.titleLarge),
+                    Text(_userService.user!.username.capitalize(),
+                        style: theme.textTheme.titleLarge),
                     CircleAvatar(
                       radius: size.height * 0.05,
                       backgroundImage: isUser
                           ? NetworkImage(
-                              _userService.user!.profilePicture!.key!)
+                          _userService.user!.profilePicture!.key!)
                           : null,
                       child: isUser
                           ? null
                           : const Icon(
-                              Icons.person), // TODO : replace with real image
+                          Icons.person), // TODO : replace with real image
                     ),
                     RichText(
                         text: TextSpan(children: [
-                      TextSpan(
-                          text: "Score : ", style: theme.textTheme.titleMedium),
-                      TextSpan(
-                          text: "49992",
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold))
-                    ])),
+                          TextSpan(
+                              text: "Score : ",
+                              style: theme.textTheme.titleMedium),
+                          TextSpan(
+                              text: "49992",
+                              style: theme.textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold))
+                        ])),
                     OutlinedButton(
                         onPressed: () {
                           Navigator.of(context)
                               .push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const UserSettingsScreen()))
+                              builder: (context) =>
+                              const UserSettingsScreen()))
                               .then((value) => setState(() {}));
                         },
                         child: Text("Settings")),
@@ -140,44 +137,55 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               ),
                               RichText(
                                   text: TextSpan(children: [
-                                TextSpan(text: "Temps (min/parties) : ", style: theme.textTheme.bodyMedium),
-                                TextSpan(
-                                    text: "4",
-                                    style: theme.textTheme.bodyLarge!
-                                        .copyWith(fontWeight: FontWeight.bold))
-                              ])),
+                                    TextSpan(
+                                        text: "Temps (min/parties) : ",
+                                        style: theme.textTheme.bodyMedium),
+                                    TextSpan(
+                                        text: "4",
+                                        style: theme.textTheme.bodyLarge!
+                                            .copyWith(
+                                            fontWeight: FontWeight.bold))
+                                  ])),
                               RichText(
                                   text: TextSpan(children: [
-                                    TextSpan(text: "Parties jouées : ", style: theme.textTheme.bodyMedium),
+                                    TextSpan(
+                                        text: "Parties jouées : ",
+                                        style: theme.textTheme.bodyMedium),
                                     TextSpan(
                                         text: "100",
                                         style: theme.textTheme.bodyLarge!
-                                            .copyWith(fontWeight: FontWeight.bold))
+                                            .copyWith(
+                                            fontWeight: FontWeight.bold))
                                   ])),
                               RichText(
                                   text: TextSpan(children: [
-                                    TextSpan(text: "Score moyen : ", style: theme.textTheme.bodyMedium),
+                                    TextSpan(
+                                        text: "Score moyen : ",
+                                        style: theme.textTheme.bodyMedium),
                                     TextSpan(
                                         text: "500",
                                         style: theme.textTheme.bodyLarge!
-                                            .copyWith(fontWeight: FontWeight.bold))
+                                            .copyWith(
+                                            fontWeight: FontWeight.bold))
                                   ])),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Indicator(
                                         color: Colors.green,
-                                        text: FlutterI18n.translate(context, "user_profile.statistics.win_indicator"),
+                                        text: FlutterI18n.translate(context,
+                                            "user_profile.statistics.win_indicator"),
                                         isSquare: false),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Indicator(
                                         color: Colors.red,
-                                        text: FlutterI18n.translate(context, "user_profile.statistics.loss_indicator"),
+                                        text: FlutterI18n.translate(context,
+                                            "user_profile.statistics.loss_indicator"),
                                         isSquare: false),
                                   )
                                 ],
@@ -221,7 +229,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                           child: TabBar(
                                             indicator: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(
+                                              BorderRadius.circular(
                                                 25.0,
                                               ),
                                               color: Colors.green,
@@ -231,14 +239,16 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                             controller: _tabController,
                                             tabs: [
                                               Tab(
-                                                child: Text(FlutterI18n.translate(
-                                                    context,
-                                                    "user_profile.matchs.label")),
+                                                child: Text(
+                                                    FlutterI18n.translate(
+                                                        context,
+                                                        "user_profile.matchs.label")),
                                               ),
                                               Tab(
-                                                child: Text(FlutterI18n.translate(
-                                                    context,
-                                                    "user_profile.connections.label")),
+                                                child: Text(
+                                                    FlutterI18n.translate(
+                                                        context,
+                                                        "user_profile.connections.label")),
                                               )
                                             ],
                                           ),
@@ -248,18 +258,57 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                             child: TabBarView(
                                               controller: _tabController,
                                               children: [
-                                                ListView(
-                                                    children: mockMatches
-                                                        .map((matchHistory) =>
-                                                            _buildMatchItem(
-                                                                matchHistory))
-                                                        .toList()),
-                                                ListView(
-                                                    children: mockConnections
-                                                        .map((connectionHistory) =>
-                                                            _buildConnectionItem(
-                                                                connectionHistory))
-                                                        .toList()),
+                                                FutureBuilder(
+                                                    future: _userService
+                                                        .getMatches(),
+                                                    builder:
+                                                        (context, snapshot) {
+                                                      if (snapshot
+                                                          .connectionState ==
+                                                          ConnectionState
+                                                              .done) {
+                                                        return ListView(
+                                                            children: (snapshot
+                                                                .data
+                                                            as List<
+                                                                MatchHistory>)
+                                                                .map((
+                                                                matchHistory) =>
+                                                                _buildMatchItem(
+                                                                    matchHistory))
+                                                                .toList());
+                                                      }
+                                                      return Container(
+                                                          width: 100,
+                                                          height: 100,
+                                                          child:
+                                                          CircularProgressIndicator());
+                                                    }),
+                                                FutureBuilder(
+                                                    future: _userService
+                                                        .getConnections(),
+                                                    builder:
+                                                        (context, snapshot) {
+                                                      if (snapshot
+                                                          .connectionState ==
+                                                          ConnectionState
+                                                              .done) {
+                                                        return ListView(
+                                                            children: (snapshot
+                                                                .data as List<
+                                                                ConnectionHistory>)
+                                                                .map((
+                                                                connectionHistory) =>
+                                                                _buildConnectionItem(
+                                                                    connectionHistory))
+                                                                .toList());
+                                                        }
+                                                            return Container(
+                                                            width: 100,
+                                                            height: 100,
+                                                            child:
+                                                            CircularProgressIndicator());
+                                                      }),
                                               ],
                                             ),
                                           ),
