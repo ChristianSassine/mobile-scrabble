@@ -13,7 +13,7 @@ class HttpHandlerService {
     baseUrl = serverAddress;
   }
 
-  Future<http.Response> modifyUsername(Object body) {
+  Future<http.Response> modifyUsernameRequest(Object body) {
     return client.patch(Uri.parse("${baseUrl}/profile/username"), body: body);
   }
 
