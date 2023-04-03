@@ -24,6 +24,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   final _passwordFormKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  bool _isUsernameInputReset = false;
+  bool _isPasswordInputReset = false;
   AvatarData? currentAvatar;
 
   bool _usernameChangeValid = false;
@@ -137,8 +139,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                 border: OutlineInputBorder(),
                                                 hintText: "New username"),
                                             validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
+                                              if ((value == null ||
+                                                  value.isEmpty) && !_isUsernameInputReset) {
                                                 return FlutterI18n.translate(
                                                     context,
                                                     "user_settings.username_error");
@@ -178,8 +180,10 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                   else {
                                                     ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
                                                   }
+                                                  _isUsernameInputReset = true;
                                                   _usernameController.clear();
                                                   _confirmUsernameController.clear();
+                                                  _isUsernameInputReset = false;
                                                 }
                                                 : null,
                                             child: Text("Submit Change")),
@@ -215,8 +219,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                 border: OutlineInputBorder(),
                                                 hintText: "New password"),
                                             validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
+                                              if ((value == null ||
+                                                  value.isEmpty) && _isPasswordInputReset) {
                                                 return FlutterI18n.translate(
                                                     context,
                                                     "user_settings.password_error");
@@ -250,7 +254,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                   final String response = await _userService.modifyPassword(newPassword);
 
                                                   if (response == 'Password changed succesfully') {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(response),);
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(FlutterI18n.translate(context, 'test')),);
                                                   }
                                                   else if (response == 'New password is the same as the old one') {
                                                     ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
@@ -258,8 +262,10 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                   else {
                                                     ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
                                                   }
+                                                  _isPasswordInputReset = false;
                                                   _passwordController.clear();
                                                   _confirmPasswordController.clear();
+                                                  _isPasswordInputReset = true;
 
                                                 }
                                                 : null,
