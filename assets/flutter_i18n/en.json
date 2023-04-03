@@ -147,13 +147,13 @@
         "modify_username" : {
             "success": "Username has been succesfully modified",
             "already_exists": "Impossible to modify username because it already exists",
-            "erreur": "An error has occured while changing the username",
+            "error": "An error has occured while changing the username",
             "button_text": "Submit changes"
         },
         "modify_password" : {
             "success": "Le mot de passe a été modifié avec succès",
             "already_exists": "Impossible to change password because it's the same as the old one",
-            "erreur": "An error has occured while changing the password",
+            "error": "An error has occured while changing the password",
             "button_text": "Submit changes"
         }
     },
