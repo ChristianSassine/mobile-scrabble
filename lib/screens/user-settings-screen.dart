@@ -209,6 +209,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextFormField(
+                                            obscureText: true,
                                             controller: _passwordController,
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
@@ -226,6 +227,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextFormField(
+                                            obscureText: true,
                                             controller: _confirmPasswordController,
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
