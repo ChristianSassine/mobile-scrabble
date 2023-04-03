@@ -23,6 +23,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   final _confirmUsernameController = TextEditingController();
   final _passwordFormKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   AvatarData? currentAvatar;
 
   bool _usernameChangeValid = false;
@@ -225,6 +226,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextFormField(
+                                            controller: _confirmPasswordController,
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
                                                 hintText:
@@ -241,7 +243,23 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         ),
                                         ElevatedButton(
                                             onPressed: _passwordChangeValid
-                                                ? () {}
+                                                ? () async {
+                                                  final newPassword = _passwordController.text;
+                                                  final String response = await _userService.modifyPassword(newPassword);
+
+                                                  if (response == 'Password changed succesfully') {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(response),);
+                                                  }
+                                                  else if (response == 'New password is the same as the old one') {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
+                                                  }
+                                                  else {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
+                                                  }
+                                                  _passwordController.clear();
+                                                  _confirmPasswordController.clear();
+
+                                                }
                                                 : null,
                                             child: Text("Submit Change")),
                                       ],
