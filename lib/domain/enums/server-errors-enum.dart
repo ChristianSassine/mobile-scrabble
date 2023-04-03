@@ -2,7 +2,13 @@ enum ServerError {
   RoomSameUser('roomSameUser'),
   RoomNotAvailable('roomNotAvailable'),
   RoomWrongPassword('roomWrongPassword'),
-  NULL('')
+  NULL(''),
+  PasswordChangeSucess('Password changed succesfully'),
+  PasswordSameError('New password is the same as the old one'),
+  PasswordChangeError('An error has occured while changing the password'),
+  UsernameChangeSucess('Username changed succesfully'),
+  UsernameExistsError('Username is already taken'),
+  UsernameChangeError('An error has occured while changing the username'),
   ;
 
   const ServerError(this.error);
