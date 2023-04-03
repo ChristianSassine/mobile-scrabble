@@ -7,6 +7,8 @@ import 'package:mobile/components/avatar-selector-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/services/user-service.dart';
+import 'package:mobile/domain/enums/server-errors-enum.dart';
+
 
 class UserSettingsScreen extends StatefulWidget {
   const UserSettingsScreen({Key? key}) : super(key: key);
@@ -170,23 +172,33 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                             onPressed: _usernameChangeValid
                                                 ? () async {
                                                   final newUsername = _usernameController.text;
-                                                  final String response = await _userService.modifyUsername(newUsername);
-                                                  if (response == 'Username changed succesfully') {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(response),);
+                                                  final ServerError response = await _userService.modifyUsername(newUsername);
+                                                  if (response == ServerError.UsernameChangeSucess) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(FlutterI18n.translate(
+                                                    context,
+                                                    "user_profile.modify_username.success"),),);
                                                   }
-                                                  else if (response == 'Username is already taken') {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
+                                                  else if (response == ServerError.UsernameExistsError) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(FlutterI18n.translate(
+                                                    context,
+                                                    "user_profile.modify_username.already_exists"),),);
                                                   }
                                                   else {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(FlutterI18n.translate(
+                                                    context,
+                                                    "user_profile.modify_username.error"),),);
                                                   }
                                                   _isUsernameInputReset = true;
                                                   _usernameController.clear();
                                                   _confirmUsernameController.clear();
                                                   _isUsernameInputReset = false;
+                                                  _usernameChangeValid = false;
+                                                  setState(() {
+                                                  });
                                                 }
                                                 : null,
-                                            child: Text("Submit Change")),
+                                            child: Text(FlutterI18n.translate(context, 
+                                                    "user_profile.modify_username.button_text"))),
                                       ],
                                     ),
                                   )),
@@ -220,7 +232,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                 hintText: "New password"),
                                             validator: (value) {
                                               if ((value == null ||
-                                                  value.isEmpty) && _isPasswordInputReset) {
+                                                  value.isEmpty) && !_isPasswordInputReset) {
                                                 return FlutterI18n.translate(
                                                     context,
                                                     "user_settings.password_error");
@@ -251,25 +263,32 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                             onPressed: _passwordChangeValid
                                                 ? () async {
                                                   final newPassword = _passwordController.text;
-                                                  final String response = await _userService.modifyPassword(newPassword);
+                                                  final ServerError response = await _userService.modifyPassword(newPassword);
 
-                                                  if (response == 'Password changed succesfully') {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(FlutterI18n.translate(context, 'test')),);
+                                                  if (response == ServerError.PasswordChangeSucess) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(FlutterI18n.translate(context, 
+                                                    "user_profile.modify_password.success")),);
                                                   }
-                                                  else if (response == 'New password is the same as the old one') {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
+                                                  else if (response == ServerError.PasswordSameError) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(FlutterI18n.translate(context, 
+                                                    "user_profile.modify_password.already_exists")),);
                                                   }
                                                   else {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(FlutterI18n.translate(context, 
+                                                    "user_profile.modify_password.error")),);
                                                   }
-                                                  _isPasswordInputReset = false;
+                                                  _isPasswordInputReset = true;
                                                   _passwordController.clear();
                                                   _confirmPasswordController.clear();
-                                                  _isPasswordInputReset = true;
+                                                  _isPasswordInputReset = false;
+                                                  _passwordChangeValid = false;
+                                                  setState(() {
+                                                  });
 
                                                 }
                                                 : null,
-                                            child: Text("Submit Change")),
+                                            child: Text(FlutterI18n.translate(context, 
+                                                    "user_profile.modify_password.button_text"))),
                                       ],
                                     ),
                                   )),

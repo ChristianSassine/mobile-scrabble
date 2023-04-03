@@ -9,6 +9,8 @@ import 'package:mobile/domain/models/user-profile-models.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:mobile/domain/enums/server-errors-enum.dart';
+
 
 // TODO : move user logic to this service
 class UserService{
@@ -65,30 +67,30 @@ class UserService{
 
   // Modify username and password
 
-  Future<String> modifyUsername(String newUsername) async {
+  Future<ServerError> modifyUsername(String newUsername) async {
     final response = await _httpService.modifyUsernameRequest({'newUsername': newUsername});
 
     if (response.statusCode == HttpStatus.ok) {
-      return 'Username changed succesfully';
+      return ServerError.UsernameChangeSucess;
     }
     else if (response.statusCode == HttpStatus.conflict) {
-      return 'Username is already taken';
+      return ServerError.UsernameExistsError;
     }
     else {
-      return 'An error has occured while changing the username';
+      return ServerError.UsernameChangeError;
     }
   }
 
-  Future<String> modifyPassword(String newPassword) async {
+  Future<ServerError> modifyPassword(String newPassword) async {
     final response = await _httpService.modifyPasswordRequest({'newPassword': newPassword});
     if (response.statusCode == HttpStatus.ok) {
-      return 'Password changed succesfully';
+      return ServerError.PasswordChangeSucess;
     }
     else if (response.statusCode == HttpStatus.conflict) {
-      return 'New password is the same as the old one';
+      return ServerError.PasswordSameError;
     }
     else {
-      return 'An error has occured while changing the password';
+      return ServerError;
     }
   }
 }
