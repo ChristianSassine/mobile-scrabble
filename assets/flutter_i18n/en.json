@@ -147,7 +147,9 @@
         "modify_username" : {
             "success": "Username has been succesfully modified",
             "already_exists": "Impossible to modify username because it already exists",
-            "erreur": "An error has occured while changing the username"
+            "erreur": "An error has occured while changing the username",
+            "button_text": "Submit changes"
+
         }
     },
     "avatar": {

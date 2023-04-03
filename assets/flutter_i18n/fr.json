@@ -148,7 +148,8 @@
         "modify_username" : {
             "success": "Le nom d'utilisateur a été modifié avec succès",
             "already_exists": "Impossible de changer le nom d'utilisateur puisqu'il existe déjà",
-            "erreur": "Une erreur est survenue lors de la modification du nom d'utilisateur"
+            "erreur": "Une erreur est survenue lors de la modification du nom d'utilisateur",
+            "button_text": "Soumettre les changements"
         }
     },
     "avatar": {
