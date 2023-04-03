@@ -13,7 +13,7 @@ class AvatarSelectorDialog extends StatefulWidget {
   final Function(File, String) selectAvatarFromList;
   final Function() selectAvatarFromCamera;
 
-  AvatarSelectorDialog({
+  const AvatarSelectorDialog({
     super.key,
     required this.selectAvatarFromList,
     required this.selectAvatarFromCamera,

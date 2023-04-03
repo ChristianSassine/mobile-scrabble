@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
@@ -19,7 +18,7 @@ class RecaptchaV2 extends StatefulWidget {
   final ValueChanged<String>? onVerifiedError;
   final ValueChanged<String>? onManualVerification;
 
-  RecaptchaV2({
+  RecaptchaV2({super.key,
     this.apiKey,
     this.apiSecret,
     required this.pluginURL,
@@ -94,16 +93,16 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
       ..addJavaScriptChannel(
         'Captcha',
         onMessageReceived: (JavaScriptMessage receiver) {
-          String _token = receiver.message;
-          debugPrint(_token);
-          if (_token.contains("verify")) {
-            _token = _token.substring(7);
+          String token = receiver.message;
+          debugPrint(token);
+          if (token.contains("verify")) {
+            token = token.substring(7);
           }
-          if (widget.autoVerify) verifyToken(_token);
-          widget.onManualVerification!(_token);
+          if (widget.autoVerify) verifyToken(token);
+          widget.onManualVerification!(token);
         },
       )
-      ..loadRequest(Uri.parse("${widget.pluginURL}"));
+      ..loadRequest(Uri.parse(widget.pluginURL));
 
     _controller = webController;
 

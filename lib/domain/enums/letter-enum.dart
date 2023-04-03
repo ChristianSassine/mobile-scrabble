@@ -38,4 +38,13 @@ enum Letter {
   String toString() {
     return character;
   }
+
+  static Letter? fromCharacter(String character) {
+    for (Letter letter in values) {
+      if (letter.character == character) {
+        return letter;
+      }
+    }
+    return null;
+  }
 }

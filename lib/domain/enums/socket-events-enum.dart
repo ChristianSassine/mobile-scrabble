@@ -32,9 +32,25 @@ enum RoomSocketEvent {
   KickedFromWaitingRoom('kickedFromGameRoom'),
   GameAboutToStart('gameAboutToStart'),
   OpponentLeave('opponentLeave'),
-  StartScrabbleGame('startScrabbleGame');
+  StartScrabbleGame('startScrabbleGame'),
+  PublicViewUpdate('updateClientView');
 
   const RoomSocketEvent(this.event);
+
+  final String event;
+}
+
+enum GameSocketEvent {
+  PlaceWordCommand('placeWord'),
+  Exchange('ExchangeLetters'),
+  Skip('skip'),
+  QuitGame('quitGame'),
+  ReserveCommand('reserveCommand'),
+  ClueCommand('clueCommand'),
+  NextTurn('nextTurn'),
+  GameEnded('endGame');
+
+  const GameSocketEvent(this.event);
 
   final String event;
 }

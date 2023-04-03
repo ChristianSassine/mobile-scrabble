@@ -8,7 +8,7 @@ class ThemeDropdown extends StatefulWidget {
   final MobileThemeMode mode;
   const ThemeDropdown({
     Key? key,
-    required MobileThemeMode this.mode,
+    required this.mode,
   }) : super(key: key);
 
   @override

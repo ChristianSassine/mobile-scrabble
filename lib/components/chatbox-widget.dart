@@ -46,7 +46,7 @@ class _ChatInputState extends State<ChatInput> {
           _submitMessage();
         },
         decoration: InputDecoration(
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             hintText: "Write your message here",
             suffixIcon: IconButton(
               onPressed: () {

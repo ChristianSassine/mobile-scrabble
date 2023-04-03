@@ -33,11 +33,11 @@ class LetterWidget extends StatelessWidget {
               )),
               Positioned(
                 bottom: widgetSize * 0.1,
-                right: widgetSize * 0.08,
+                left: widgetSize * 0.55,
                 child: Text(
                   points != 0 ? points.toString() : "",
                   style: TextStyle(
-                    fontSize: 0.3 * widgetSize,
+                    fontSize: 0.21 * widgetSize,
                   ),
                 ),
               ),
@@ -75,7 +75,7 @@ class DraggedLetter extends StatelessWidget {
 }
 
 class GhostLetter extends StatelessWidget {
-  GhostLetter({super.key, required this.value, required this.widgetSize});
+  const GhostLetter({super.key, required this.value, required this.widgetSize});
 
   final Letter value;
   final double widgetSize;

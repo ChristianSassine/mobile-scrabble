@@ -29,7 +29,7 @@ class HighScores extends StatelessWidget {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
                   FlutterI18n.translate(context, "menu_screen.high_scores.error"))); // TODO: Translate
-              return SizedBox();
+              return const SizedBox();
             }
             return IntrinsicHeight(
               child: IntrinsicWidth(

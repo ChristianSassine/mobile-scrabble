@@ -5,7 +5,7 @@ import 'package:mobile/domain/models/iuser-model.dart';
 enum GameMode {
   Null(""),
   Solo("solo"),
-  Multi("classique");
+  Multi("multi");
 
   const GameMode(this.value);
 
@@ -126,7 +126,7 @@ class GameRoom {
         players = json['players'].map<RoomPlayer>(RoomPlayer.fromJson).toList(),
         dictionary = json['dictionary'],
         timer = json['timer'],
-        gameMode = GameMode.fromString(json['mode'])!,
+        gameMode = GameMode.fromString(json['mode']),
         visibility = GameVisibility.fromString(json['visibility'])!,
         password = json['password'];
 }

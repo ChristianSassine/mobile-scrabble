@@ -6,7 +6,7 @@ import '../enums/letter-enum.dart';
 class Easel {
   Subject<int> notifyEaselChanged = PublishSubject();
 
-  final List<Letter> _letters = [];
+  List<Letter> _letters = [];
 
   final int maxSize;
 
@@ -54,5 +54,9 @@ class Easel {
 
   List<Letter> getLetterList() {
     return _letters;
+  }
+
+  void updateFromRack(List<Letter> rack) {
+    _letters = rack;
   }
 }
