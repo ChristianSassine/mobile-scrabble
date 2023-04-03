@@ -90,7 +90,7 @@ class UserService{
       return ServerError.PasswordSameError;
     }
     else {
-      return ServerError;
+      return ServerError.PasswordChangeError;
     }
   }
 }
