@@ -65,8 +65,8 @@ class UserService{
 
   // Modify username and password
 
-  Future<String> modifyUsername(String NewUsername) async {
-    final response = await _httpService.modifyUsernameRequest({'newUsername': NewUsername});
+  Future<String> modifyUsername(String newUsername) async {
+    final response = await _httpService.modifyUsernameRequest({'newUsername': newUsername});
 
     if (response.statusCode == HttpStatus.ok) {
       return 'Username changed succesfully';
@@ -76,6 +76,19 @@ class UserService{
     }
     else {
       return 'An error has occured while changing the username';
+    }
+  }
+
+  Future<String> modifyPassword(String newPassword) async {
+    final response = await _httpService.modifyPasswordRequest({'newPassword': newPassword});
+    if (response.statusCode == HttpStatus.ok) {
+      return 'Password changed succesfully';
+    }
+    else if (response.statusCode == HttpStatus.conflict) {
+      return 'New password is the same as the old one';
+    }
+    else {
+      return 'An error has occured while changing the password';
     }
   }
 }
