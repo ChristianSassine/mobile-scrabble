@@ -14,7 +14,8 @@ class HttpHandlerService {
   }
 
   Future<http.Response> modifyUsernameRequest(Object body) {
-    return client.patch(Uri.parse("${baseUrl}/profile/username"), body: body);
+    return client.patch(Uri.parse("${baseUrl}/profile/username"), body: body,
+    headers: headers);
   }
 
   // Auth requests
