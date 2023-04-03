@@ -18,6 +18,10 @@ class HttpHandlerService {
     headers: headers);
   }
 
+  Future<http.Response> modifyPasswordRequest(Object body) {
+    return client.patch(Uri.parse("${baseUrl}/profile/password"), body: body, headers: headers);
+  }
+
   // Auth requests
   Future<http.Response> signInRequest(Object body) {
     return client.post(Uri.parse("${baseUrl}/auth/login"), body: body);
