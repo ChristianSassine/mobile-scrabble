@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
@@ -28,14 +28,16 @@ Future<void> setup() async {
   await dotenv.load(fileName: envFile);
   var serverAddress = dotenv.env["SERVER_URL"];
 
-  getIt.registerLazySingleton<Socket>(() => io(
+  getIt.registerLazySingleton<SecureSocket>(() => io(
       serverAddress,
       OptionBuilder()
           .setTransports(["websocket"])
           .disableAutoConnect()
           .build()));
 
+
   Socket socket = getIt<Socket>();
+
   socket.onConnect((_) => debugPrint('Socket connection established'));
   socket.onDisconnect((data) => debugPrint('Socket connection lost'));
 
