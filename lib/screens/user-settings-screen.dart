@@ -164,7 +164,6 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         ElevatedButton(
                                             onPressed: _usernameChangeValid
                                                 ? () async {
-                                                  print('do we enter here');
                                                   final newUsername = _usernameController.text;
                                                   final String response = await _userService.modifyUsername(newUsername);
                                                   ScaffoldMessenger.of(context).showSnackBar(
