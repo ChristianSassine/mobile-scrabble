@@ -166,11 +166,15 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                 ? () async {
                                                   final newUsername = _usernameController.text;
                                                   final String response = await _userService.modifyUsername(newUsername);
-                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(response),
-                                                    ),
-                                                  );
+                                                  if (response == 'Username changed succesfully') {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(response),);
+                                                  }
+                                                  else if (response == 'Username is already taken') {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
+                                                  }
+                                                  else {
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
+                                                  }
                                                 }
                                                 : null,
                                             child: Text("Submit Change")),
