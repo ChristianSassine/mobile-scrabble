@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
@@ -60,5 +61,21 @@ class UserService{
     if (newUser == null) return;
     final urlResponse = await _httpService.getProfilePicture();
     user!.profilePicture!.key = jsonDecode(urlResponse.body)['url'];
+  }
+
+  // Modify username and password
+
+  Future<String> modifyUsername(String NewUsername) async {
+    final response = await _httpService.modifyUsernameRequest({'newUsername': NewUsername});
+
+    if (response.statusCode == HttpStatus.ok) {
+      return 'Username changed succesfully';
+    }
+    else if (response.statusCode == HttpStatus.conflict) {
+      return 'Username is already taken';
+    }
+    else {
+      return 'An error has occured while changing the username';
+    }
   }
 }
