@@ -20,6 +20,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
   final _usernameFormKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
+  final _confirmUsernameController = TextEditingController();
   final _passwordFormKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   AvatarData? currentAvatar;
@@ -147,6 +148,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextFormField(
+                                            controller: _confirmUsernameController,
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
                                                 hintText:
@@ -175,6 +177,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                   else {
                                                     ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(response),);
                                                   }
+                                                  _usernameController.clear();
+                                                  _confirmUsernameController.clear();
                                                 }
                                                 : null,
                                             child: Text("Submit Change")),
