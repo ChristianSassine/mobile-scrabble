@@ -20,8 +20,6 @@ class GameCreationScreen extends StatefulWidget {
   State<GameCreationScreen> createState() => _GameCreationScreenState();
 }
 
-const List<Widget> gameModes = <Widget>[Text('4 Joueurs')];
-
 class _GameCreationScreenState extends State<GameCreationScreen> {
   final _authService = GetIt.I.get<AuthService>();
   final _roomService = GetIt.I.get<RoomService>();
@@ -31,10 +29,16 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
 
   // Form objects
   final _formKey = GlobalKey<FormState>();
+  final _roomPasswordController = TextEditingController();
+
+  bool isPublic = true;
+  bool isProtected = false;
 
   GameDifficulty selectedDifficulty = GameDifficulty.Easy;
   int selectedTimer = 60;
   String? selectedDictionary;
+
+  bool _formValid = true;
 
   _GameCreationScreenState() {
     _dictionaryService.fetchDictionaries();
@@ -48,7 +52,8 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
           timer: selectedTimer,
           gameMode: GameMode.Multi,
           visibility: GameVisibility.Public,
-          botDifficulty: selectedDifficulty);
+          botDifficulty: selectedDifficulty,
+          password: isProtected ? _roomPasswordController.text : null);
       _roomService.createRoom(query);
       Navigator.push(context, MaterialPageRoute(builder: (context) => const WaitingRoomScreen()));
     }
@@ -59,7 +64,9 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
     super.initState();
     _newDictionariesSub = _dictionaryService.notifyNewDictionaries.stream.listen((_) {
       setState(() {
-        selectedDictionary = _dictionaryService.dictionaries.isNotEmpty ? _dictionaryService.dictionaries[0].title : null;
+        selectedDictionary = _dictionaryService.dictionaries.isNotEmpty
+            ? _dictionaryService.dictionaries[0].title
+            : null;
       });
     });
   }
@@ -91,73 +98,103 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                         key: _formKey,
                         child: Column(
                           children: [
-                            const Text("Paramètres de jeu", style: TextStyle(fontSize: 30)),
+                            Text(FlutterI18n.translate(context, "room_create.room_param_title"), style: TextStyle(fontSize: 30)),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 ToggleIconButton(
                                   off_icon: Icons.lock_outline,
                                   on_icon: Icons.lock_open_outlined,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isProtected = value;
+                                      _formValid = !isProtected || _roomPasswordController.text.isNotEmpty;
+                                    });
+                                  },
                                 ),
                                 ToggleIconButton(
                                   off_icon: Icons.visibility_off,
                                   on_icon: Icons.visibility,
+                                  onChanged: (value) {
+                                    isPublic = value;
+                                  },
                                 ),
                               ],
                             ),
                             SizedBox(
                               width: 200,
-                              child: DropdownMenu(
-                                title: "Difficulté *",
-                                items: {
-                                  "Débutant": GameDifficulty.Easy.value,
-                                  "Expert": GameDifficulty.Hard.value,
-                                  "Basé sur le score": GameDifficulty.ScoreBased.value,
-                                },
-                                onChanged: (value) {
-                                  selectedDifficulty = GameDifficulty.fromString(value!)!;
-                                },
-                                defaultValue: GameDifficulty.Easy.value,
+                              child: Column(
+                                children: [
+                                  Visibility(
+                                    visible: isProtected,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: 10),
+                                      child: TextFormField(
+                                        controller: _roomPasswordController,
+                                        validator: (value) =>
+                                        value == null || value.isEmpty
+                                            ? FlutterI18n.translate(context, "form.password_empty")
+                                            : null,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          hintText: FlutterI18n.translate(context, "form.password"),
+                                          suffixIcon: const Icon(Icons.key),
+                                        ),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _formValid = value.isNotEmpty;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  DropdownMenu(
+                                    title: "${FlutterI18n.translate(context, "room_create.difficulty_field_title")} *",
+                                    items: {
+                                      FlutterI18n.translate(context, "room_create.difficulty.easy"): GameDifficulty.Easy.value,
+                                      FlutterI18n.translate(context, "room_create.difficulty.hard"): GameDifficulty.Hard.value,
+                                      FlutterI18n.translate(context, "room_create.difficulty.score_based"): GameDifficulty.ScoreBased.value,
+                                    },
+                                    onChanged: (value) {
+                                      selectedDifficulty = GameDifficulty.fromString(value!)!;
+                                    },
+                                    defaultValue: GameDifficulty.Easy.value,
+                                  ),
+                                  DropdownMenu(
+                                    title: "${FlutterI18n.translate(context, "room_create.timer_field_title")} *",
+                                    items: const {
+                                      "0:30": "30",
+                                      "1:00": "60",
+                                      "1:30": "90",
+                                      "2:00": "120",
+                                      "2:30": "150",
+                                      "3:00": "180",
+                                      "3:30": "210",
+                                      "4:00": "240",
+                                      "4:30": "270",
+                                      "5:00": "300"
+                                    },
+                                    onChanged: (value) {
+                                      selectedTimer = int.parse(value!);
+                                    },
+                                    defaultValue: "60",
+                                  ),
+                                  DropdownMenu(
+                                    title: "${FlutterI18n.translate(context, "room_create.dictionary_field_title")} *",
+                                    items: {
+                                      for (var item in _dictionaryService.dictionaries)
+                                        item.title: item.title
+                                    },
+                                    onChanged: (value) {
+                                      selectedDictionary = value;
+                                    },
+                                    defaultValue: _dictionaryService.dictionaries.isNotEmpty
+                                        ? _dictionaryService.dictionaries[0].title
+                                        : null,
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                              width: 200,
-                              child: DropdownMenu(
-                                title: "Minuterie *",
-                                items: const {
-                                  "0:30": "30",
-                                  "1:00": "60",
-                                  "1:30": "90",
-                                  "2:00": "120",
-                                  "2:30": "150",
-                                  "3:00": "180",
-                                  "3:30": "210",
-                                  "4:00": "240",
-                                  "4:30": "270",
-                                  "5:00": "300"
-                                },
-                                onChanged: (value) {
-                                  selectedTimer = int.parse(value!);
-                                },
-                                defaultValue: "60",
-                              ),
-                            ),
-                            SizedBox(
-                              width: 200,
-                              child: DropdownMenu(
-                                title: "Dictionaire *",
-                                items: {
-                                  for (var item in _dictionaryService.dictionaries)
-                                    item.title: item.title
-                                },
-                                onChanged: (value) {
-                                  selectedDictionary = value;
-                                },
-                                defaultValue: _dictionaryService.dictionaries.isNotEmpty
-                                    ? _dictionaryService.dictionaries[0].title
-                                    : null,
-                              ),
-                            )
                           ],
                         ),
                         //TODO: Add fields for gamemode selection,
@@ -165,8 +202,11 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: _createGame,
-                      child: Text(FlutterI18n.translate(context, "form.create_game"), style: TextStyle(fontSize: 18),),
+                      onPressed: _formValid ? _createGame : null,
+                      child: Text(
+                        FlutterI18n.translate(context, "form.create_game"),
+                        style: TextStyle(fontSize: 18),
+                      ),
                     )
                   ],
                 ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class ToggleIconButton extends StatefulWidget {
   final IconData on_icon, off_icon;
+  final void Function(bool)? onChanged;
 
-  const ToggleIconButton({super.key, required this.on_icon, required this.off_icon});
+  const ToggleIconButton({super.key, required this.on_icon, required this.off_icon, this.onChanged});
 
   @override
   _ToggleIconButtonState createState() => _ToggleIconButtonState();
@@ -19,6 +20,7 @@ class _ToggleIconButtonState extends State<ToggleIconButton> {
       onPressed: () {
         setState(() {
           _isOn = !_isOn;
+          if(widget.onChanged != null) widget.onChanged!(_isOn);
         });
       },
     );

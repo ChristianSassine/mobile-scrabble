@@ -46,6 +46,17 @@
         "start_game": "Start the game",
         "game": "Game"
     },
+    "room_create": {
+        "room_param_title": "Game parameters",
+        "difficulty_field_title": "Difficulty",
+        "timer_field_title": "Timer",
+        "dictionary_field_title": "Dictionary",
+        "difficulty": {
+            "easy": "Easy",
+            "hard": "Difficulty",
+            "score_based": "Score based"
+        }
+    },
     "rooms_lobby": {
         "table": {
             "users": "Users",
