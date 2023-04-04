@@ -78,6 +78,10 @@ class HttpHandlerService {
     return client.get(Uri.parse("${baseUrl}/highScore/classique"));
   }
 
+  Future<http.Response> fetchDictionaries(){
+    return client.get(Uri.parse("$baseUrl/dictionary/info"));
+  }
+
   // Common utilities
   void updateCookie(Cookie cookie) {
     headers['cookie'] = "${cookie.name}=${cookie.value}";

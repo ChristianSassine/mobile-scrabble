@@ -4,11 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_i18n/flutter_i18n_delegate.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
+import 'package:mobile/domain/services/dictionary-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/language-service.dart';
@@ -48,6 +48,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<RoomService>(() => RoomService());
   getIt.registerLazySingleton<AvatarService>(() => AvatarService());
   getIt.registerLazySingleton<GameService>(() => GameService());
+  getIt.registerLazySingleton<DictionaryService>(() => DictionaryService());
 
   getIt.registerSingleton<GlobalKey<NavigatorState>>(GlobalKey<NavigatorState>());
 }

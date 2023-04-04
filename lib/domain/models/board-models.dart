@@ -3,8 +3,6 @@ import 'dart:core';
 import 'package:mobile/domain/enums/letter-enum.dart';
 import 'package:rxdart/rxdart.dart';
 
-// TODO: To be adapted to the server board implementation.
-// TEMPORARY IMPLEMENTATION FOR UI
 class Board {
   Subject<bool> notifyBoardChanged = PublishSubject();
 

@@ -25,27 +25,31 @@ class AuthService {
   Subject<String> notifyError = PublishSubject();
 
   Future<void> connectUser(String username, String password) async {
-    var response = await _httpService
-        .signInRequest({"username": username, "password": password});
+    try {
+      var response = await _httpService
+          .signInRequest({"username": username, "password": password});
 
-    if (response.statusCode == HttpStatus.ok) {
-      // JWT token
-      String? rawCookie = response.headers['set-cookie'];
-      _cookie = Cookie.fromSetCookieValue(rawCookie!);
-      _httpService.updateCookie(_cookie!);
+      if (response.statusCode == HttpStatus.ok) {
+        // JWT token
+        String? rawCookie = response.headers['set-cookie'];
+        _cookie = Cookie.fromSetCookieValue(rawCookie!);
+        _httpService.updateCookie(_cookie!);
 
-      user = IUser.fromJson(jsonDecode(response.body)['userData']);
+        user = IUser.fromJson(jsonDecode(response.body)['userData']);
 
-      final urlResponse =  await _httpService.getProfilePicture();
-      user!.profilePicture!.key = jsonDecode(urlResponse.body)['url'];
+        final urlResponse = await _httpService.getProfilePicture();
+        user!.profilePicture!.key = jsonDecode(urlResponse.body)['url'];
 
-      _socket.io.options['extraHeaders'] = {'cookie': _cookie};
-      _socket
-        ..disconnect()
-        ..connect();
+        _socket.io.options['extraHeaders'] = {'cookie': _cookie};
+        _socket
+          ..disconnect()
+          ..connect();
 
-      notifyLogin.add(true);
-      return;
+        notifyLogin.add(true);
+        return;
+      }
+    }catch(_){
+      // Server not responding...
     }
     notifyError.add("Failed Login");
   }
