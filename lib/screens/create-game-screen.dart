@@ -31,12 +31,12 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _roomPasswordController = TextEditingController();
 
-  bool isPublic = true;
-  bool isProtected = false;
+  bool _isPublic = true;
+  bool _isProtected = false;
 
-  GameDifficulty selectedDifficulty = GameDifficulty.Easy;
-  int selectedTimer = 60;
-  String? selectedDictionary;
+  GameDifficulty _selectedDifficulty = GameDifficulty.Easy;
+  int _selectedTimer = 60;
+  String? _selectedDictionary;
 
   bool _formValid = true;
 
@@ -48,12 +48,14 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
     if (_formKey.currentState!.validate()) {
       GameCreationQuery query = GameCreationQuery(
           user: _authService.user!,
-          dictionary: selectedDictionary!,
-          timer: selectedTimer,
+          dictionary: _selectedDictionary!,
+          timer: _selectedTimer,
           gameMode: GameMode.Multi,
-          visibility: GameVisibility.Public,
-          botDifficulty: selectedDifficulty,
-          password: isProtected ? _roomPasswordController.text : null);
+          visibility: _isPublic
+              ? (_isProtected ? GameVisibility.Locked : GameVisibility.Public)
+              : GameVisibility.Private,
+          botDifficulty: _selectedDifficulty,
+          password: _isProtected ? _roomPasswordController.text : null);
       _roomService.createRoom(query);
       Navigator.push(context, MaterialPageRoute(builder: (context) => const WaitingRoomScreen()));
     }
@@ -64,7 +66,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
     super.initState();
     _newDictionariesSub = _dictionaryService.notifyNewDictionaries.stream.listen((_) {
       setState(() {
-        selectedDictionary = _dictionaryService.dictionaries.isNotEmpty
+        _selectedDictionary = _dictionaryService.dictionaries.isNotEmpty
             ? _dictionaryService.dictionaries[0].title
             : null;
       });
@@ -98,7 +100,8 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                         key: _formKey,
                         child: Column(
                           children: [
-                            Text(FlutterI18n.translate(context, "room_create.room_param_title"), style: TextStyle(fontSize: 30)),
+                            Text(FlutterI18n.translate(context, "room_create.room_param_title"),
+                                style: TextStyle(fontSize: 30)),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -107,8 +110,9 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                   on_icon: Icons.lock_open_outlined,
                                   onChanged: (value) {
                                     setState(() {
-                                      isProtected = value;
-                                      _formValid = !isProtected || _roomPasswordController.text.isNotEmpty;
+                                      _isProtected = value;
+                                      _formValid =
+                                          !_isProtected || _roomPasswordController.text.isNotEmpty;
                                     });
                                   },
                                 ),
@@ -116,7 +120,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                   off_icon: Icons.visibility_off,
                                   on_icon: Icons.visibility,
                                   onChanged: (value) {
-                                    isPublic = value;
+                                    _isPublic = value;
                                   },
                                 ),
                               ],
@@ -126,13 +130,12 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                               child: Column(
                                 children: [
                                   Visibility(
-                                    visible: isProtected,
+                                    visible: _isProtected,
                                     child: Padding(
                                       padding: const EdgeInsets.only(bottom: 10),
                                       child: TextFormField(
                                         controller: _roomPasswordController,
-                                        validator: (value) =>
-                                        value == null || value.isEmpty
+                                        validator: (value) => value == null || value.isEmpty
                                             ? FlutterI18n.translate(context, "form.password_empty")
                                             : null,
                                         decoration: InputDecoration(
@@ -149,19 +152,25 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                     ),
                                   ),
                                   DropdownMenu(
-                                    title: "${FlutterI18n.translate(context, "room_create.difficulty_field_title")} *",
+                                    title:
+                                        "${FlutterI18n.translate(context, "room_create.difficulty_field_title")} *",
                                     items: {
-                                      FlutterI18n.translate(context, "room_create.difficulty.easy"): GameDifficulty.Easy.value,
-                                      FlutterI18n.translate(context, "room_create.difficulty.hard"): GameDifficulty.Hard.value,
-                                      FlutterI18n.translate(context, "room_create.difficulty.score_based"): GameDifficulty.ScoreBased.value,
+                                      FlutterI18n.translate(context, "room_create.difficulty.easy"):
+                                          GameDifficulty.Easy.value,
+                                      FlutterI18n.translate(context, "room_create.difficulty.hard"):
+                                          GameDifficulty.Hard.value,
+                                      FlutterI18n.translate(
+                                              context, "room_create.difficulty.score_based"):
+                                          GameDifficulty.ScoreBased.value,
                                     },
                                     onChanged: (value) {
-                                      selectedDifficulty = GameDifficulty.fromString(value!)!;
+                                      _selectedDifficulty = GameDifficulty.fromString(value!)!;
                                     },
                                     defaultValue: GameDifficulty.Easy.value,
                                   ),
                                   DropdownMenu(
-                                    title: "${FlutterI18n.translate(context, "room_create.timer_field_title")} *",
+                                    title:
+                                        "${FlutterI18n.translate(context, "room_create.timer_field_title")} *",
                                     items: const {
                                       "0:30": "30",
                                       "1:00": "60",
@@ -175,18 +184,19 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                       "5:00": "300"
                                     },
                                     onChanged: (value) {
-                                      selectedTimer = int.parse(value!);
+                                      _selectedTimer = int.parse(value!);
                                     },
                                     defaultValue: "60",
                                   ),
                                   DropdownMenu(
-                                    title: "${FlutterI18n.translate(context, "room_create.dictionary_field_title")} *",
+                                    title:
+                                        "${FlutterI18n.translate(context, "room_create.dictionary_field_title")} *",
                                     items: {
                                       for (var item in _dictionaryService.dictionaries)
                                         item.title: item.title
                                     },
                                     onChanged: (value) {
-                                      selectedDictionary = value;
+                                      _selectedDictionary = value;
                                     },
                                     defaultValue: _dictionaryService.dictionaries.isNotEmpty
                                         ? _dictionaryService.dictionaries[0].title

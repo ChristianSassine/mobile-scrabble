@@ -53,7 +53,7 @@
         "dictionary_field_title": "Dictionary",
         "difficulty": {
             "easy": "Easy",
-            "hard": "Difficulty",
+            "hard": "Hard",
             "score_based": "Score based"
         }
     },
