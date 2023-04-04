@@ -43,3 +43,5 @@ flutter:
         - development.env
         - production.env
         - assets/flutter_i18n/
+        - assets/certs/server.key
+        - assets/certs/server.pem

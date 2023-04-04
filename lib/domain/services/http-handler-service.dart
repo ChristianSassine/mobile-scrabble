@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
 import 'package:http_parser/http_parser.dart';
 
 class HttpHandlerService {
@@ -9,17 +11,24 @@ class HttpHandlerService {
   Map<String, String> headers = {};
 
   HttpHandlerService(String serverAddress) {
-    client = http.Client();
+    init();
     baseUrl = serverAddress;
   }
 
-  Future<http.Response> modifyUsernameRequest(Object body) {
-    return client.patch(Uri.parse("${baseUrl}/profile/username"), body: body,
-    headers: headers);
-  }
+  void init() async {
+    var context = SecurityContext(withTrustedRoots: false);
 
-  Future<http.Response> modifyPasswordRequest(Object body) {
-    return client.patch(Uri.parse("${baseUrl}/profile/password"), body: body, headers: headers);
+    final List<int> certificateChainBytes =
+        (await rootBundle.load('assets/certs/server.pem')).buffer.asInt8List();
+    context.useCertificateChainBytes(certificateChainBytes);
+
+    final List<int> keyChainBytes =
+        (await rootBundle.load('assets/certs/server.key')).buffer.asInt8List();
+    context.usePrivateKeyBytes(keyChainBytes);
+
+    HttpClient httpclient = HttpClient(context: context);
+    client = IOClient(
+        httpclient..badCertificateCallback = ((cert, host, port) => true));
   }
 
   // Auth requests
@@ -63,16 +72,14 @@ class HttpHandlerService {
 
   // TODO: Test when implementing user profile (changing avatar feature)
   Future<http.Response> updateImageAvatar(String avatarName) {
-    print("updateImageAvatar Request sent");
     return client.patch(Uri.parse("$baseUrl/image/profile-picture"),
-        body: {"fileName": avatarName}, headers: headers);
+        body: {"filename": avatarName});
   }
 
   // TODO: Test when implementing user profile (changing avatar feature)
-  Future<http.Response> changeImageAvatar(File newAvatarFile) async {
+  changeImageAvatar(File newAvatarFile) async {
     final request = http.MultipartRequest(
         "PUT", Uri.parse("${baseUrl}/image/profile-picture"));
-    request.headers["cookie"] = headers["cookie"]!;
     request.headers['Content-Type'] = 'multipart/form-data';
 
     final imageFile = await http.MultipartFile.fromPath(
