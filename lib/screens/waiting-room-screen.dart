@@ -7,8 +7,6 @@ import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 
-import 'game-screen.dart';
-
 class WaitingRoomScreen extends StatefulWidget {
   const WaitingRoomScreen({Key? key}) : super(key: key);
 
@@ -57,7 +55,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
     super.dispose();
     newMemberSub.cancel();
 
-    if (!GetIt.I.get<GameService>().inGame) {
+    if (GetIt.I.get<GameService>().game == null) {
       _roomService.exitRoom();
     }
   }
@@ -75,8 +73,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
             // Text(_roomService.currentRoom., style: const TextStyle(fontSize: 50)),
             const SizedBox(height: 100),
             Text(FlutterI18n.translate(context, "waiting_room.players"),
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
+                style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
             SizedBox(
               width: 500,
               height: 300,

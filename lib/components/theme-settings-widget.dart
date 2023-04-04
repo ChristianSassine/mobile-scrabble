@@ -40,19 +40,19 @@ class _ThemesSettingsState extends State<ThemesSettings> {
         Row(
           children: [
             Text("${FlutterI18n.translate(context, "setting.main_mode")} : "),
-            ThemeDropdown(mode: MobileThemeMode.Main,),
+            const ThemeDropdown(mode: MobileThemeMode.Main,),
           ],
         ),
         Row(
           children: [
             Text("${FlutterI18n.translate(context, "setting.light_mode")} : "),
-            ThemeDropdown(mode: MobileThemeMode.Light),
+            const ThemeDropdown(mode: MobileThemeMode.Light),
           ],
         ),
         Row(
           children: [
             Text("${FlutterI18n.translate(context, "setting.dark_mode")} : "),
-            ThemeDropdown(mode: MobileThemeMode.Dark),
+            const ThemeDropdown(mode: MobileThemeMode.Dark),
           ],
         ),
       ],

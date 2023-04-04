@@ -13,7 +13,7 @@ class Board {
   Board(this.size)
       : _boardMatrix = List.generate(
             size, (i) => List.filled(size, null, growable: false)),
-        layout = BoardLayout(15) {}
+        layout = BoardLayout(15);
 
   bool isSlotEmpty(int x, int y) {
     return isSlotValid(x, y) && _boardMatrix[x][y] == null;
@@ -60,6 +60,17 @@ class Board {
 
   List<List<Letter?>> getBoardMatrix() {
     return _boardMatrix;
+  }
+
+  void updateFromString(List<String> gameboard) {
+    for(int x = 1; x <= size; ++x){
+      for(int y = 1; y <= size; ++y){
+        String character = gameboard[x + y * size];
+        _boardMatrix[x - 1][y - 1] = character != '' ? Letter.fromCharacter(character) : null;
+      }
+    }
+
+    notifyBoardChanged.add(true);
   }
 
 // Board.fromJson(json)
