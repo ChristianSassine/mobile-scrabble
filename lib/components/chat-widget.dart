@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:mobile/components/chatroom-widget.dart';
 
 class ChatWidget extends StatefulWidget {
@@ -114,7 +115,7 @@ class _ChatWidgetState extends State<ChatWidget>
                 child: ListTile(
                   title: Text("Room Name"),
                   trailing: OutlinedButton(
-                    child: Text('JOIN'),
+                    child: badges.Badge(child: Text('JOIN')),
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ChatRoomWidget()));
@@ -127,21 +128,21 @@ class _ChatWidgetState extends State<ChatWidget>
           Column(
             children: [
               Container(
-                child: new Padding(
+                child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: new Card(
-                    child: new ListTile(
-                      leading: new Icon(Icons.search),
-                      title: new TextField(
+                  child: Card(
+                    child: ListTile(
+                      leading: Icon(Icons.search),
+                      title: TextField(
                         controller: _searchBarController,
-                        decoration: new InputDecoration(
+                        decoration: InputDecoration(
                             hintText: 'Search', border: InputBorder.none),
                         onChanged: (search) {
                           _onSearchRooms(search);
                         },
                       ),
-                      trailing: new IconButton(
-                        icon: new Icon(Icons.cancel),
+                      trailing: IconButton(
+                        icon: Icon(Icons.cancel),
                         onPressed: () {
                           _searchBarController.clear();
                           _onSearchRooms("");

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/chat-models.dart';
@@ -14,12 +15,23 @@ class ChatRoomWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading:
+          IconButton(
+            icon: const badges.Badge(
+              badgeContent: Text('1'),
+              child: Icon(Icons.arrow_back),
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
           actions: [ElevatedButton(onPressed: () {}, child: Text('LEAVE'))],
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[Chatbox(), ChatInput()],
+            children: const <Widget>[Chatbox(), Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
+              child: ChatInput(),
+            )],
           ),
         ));
   }
@@ -88,9 +100,11 @@ class Chatbox extends StatefulWidget {
 class _ChatboxState extends State<Chatbox> {
   final _chatService = GetIt.I.get<ChatService>();
   final _authService = GetIt.I.get<AuthService>();
-  List<ChatMessage> messages = [];
-  final ScrollController _scrollController = ScrollController();
+
   late final StreamSubscription chatSub;
+  List<ChatMessage> messages = [];
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
