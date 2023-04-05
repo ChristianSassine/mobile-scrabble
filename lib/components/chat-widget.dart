@@ -21,7 +21,7 @@ class _ChatWidgetState extends State<ChatWidget>
     if (widget.inChat){
       Future(() {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => ChatRoomWidget()))
+            .push(MaterialPageRoute(builder: (context) => const ChatRoomWidget()))
             .then((value) => setState(() {}));
       });
     }
