@@ -1,6 +1,21 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:mobile/components/chatroom-widget.dart';
+
+class SideChatWidget extends StatelessWidget {
+  const SideChatWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      onGenerateRoute: (settings){
+        return CupertinoPageRoute(builder: (BuildContext context) => ChatWidget(inChat: false,));
+      },
+    );
+  }
+}
+
 
 class ChatWidget extends StatefulWidget {
   const ChatWidget({this.inChat = false, Key? key}) : super(key: key);

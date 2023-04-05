@@ -122,12 +122,8 @@ class _MenuScreenState extends State<MenuScreen> {
         size: size,
         notifyParent: () => setState(() {}),
       ),
-      endDrawer: Drawer(
-        child: SafeArea(child: Navigator(
-          onGenerateRoute: (settings){
-            return CupertinoPageRoute(builder: (BuildContext context) => ChatWidget(inChat: false,));
-          },
-        )),
+      endDrawer: const Drawer(
+        child: SafeArea(child: SideChatWidget()),
       ),
       body: Stack(children: [
         Positioned(
