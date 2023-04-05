@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
@@ -25,7 +23,7 @@ Future<void> setup() async {
   String envFile = kDebugMode ? 'development.env' : 'production.env';
 
   // kDebugMode = APK, so hardcoding it for now
-  envFile = 'production.env';
+  // envFile = 'production.env';
 
   await dotenv.load(fileName: envFile);
   var serverAddress = dotenv.env["SERVER_URL"];
@@ -37,13 +35,13 @@ Future<void> setup() async {
           .disableAutoConnect()
           .build()));
 
-
   Socket socket = getIt<Socket>();
 
   socket.onConnect((_) => debugPrint('Socket connection established'));
   socket.onDisconnect((data) => debugPrint('Socket connection lost'));
 
-  getIt.registerLazySingleton<HttpHandlerService>(() => HttpHandlerService("https://$serverAddress:3443"));
+  getIt.registerLazySingleton<HttpHandlerService>(
+      () => HttpHandlerService("https://$serverAddress:3443"));
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<ThemeService>(() => ThemeService());
@@ -53,7 +51,8 @@ Future<void> setup() async {
   getIt.registerLazySingleton<GameService>(() => GameService());
   getIt.registerLazySingleton<UserService>(() => UserService());
 
-  getIt.registerSingleton<GlobalKey<NavigatorState>>(GlobalKey<NavigatorState>());
+  getIt.registerSingleton<GlobalKey<NavigatorState>>(
+      GlobalKey<NavigatorState>());
 }
 
 Future<void> main() async {
@@ -102,9 +101,11 @@ class _PolyScrabbleState extends State<PolyScrabble> {
       home: const LoginScreen(title: 'PolyScrabble 101 - Prototype'),
       localizationsDelegates: [
         FlutterI18nDelegate(
-          translationLoader: FileTranslationLoader(forcedLocale: _languageService.currentLocale),
+          translationLoader: FileTranslationLoader(
+              forcedLocale: _languageService.currentLocale),
           missingTranslationHandler: (key, locale) {
-            debugPrint("--- Missing Key: $key, languageCode: ${locale!.languageCode}");
+            debugPrint(
+                "--- Missing Key: $key, languageCode: ${locale!.languageCode}");
           },
         )
       ],

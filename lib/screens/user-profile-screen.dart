@@ -115,7 +115,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                       const UserSettingsScreen()))
                               .then((value) => setState(() {}));
                         },
-                        child: Text(FlutterI18n.translate(context, "user_profile.settings_button"))),
+                        child: Text(FlutterI18n.translate(
+                            context, "user_profile.settings_button"))),
                     Divider(),
                     IntrinsicHeight(
                       child: Row(
@@ -125,14 +126,16 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  FlutterI18n.translate(context, "user_profile.statistics.label"),
+                                  FlutterI18n.translate(
+                                      context, "user_profile.statistics.label"),
                                   style: theme.textTheme.titleLarge,
                                 ),
                               ),
                               RichText(
                                   text: TextSpan(children: [
                                 TextSpan(
-                                    text: "${FlutterI18n.translate(context, "user_profile.statistics.avg_time")} : ",
+                                    text:
+                                        "${FlutterI18n.translate(context, "user_profile.statistics.avg_time")} : ",
                                     style: theme.textTheme.bodyMedium),
                                 TextSpan(
                                     text: "4",
@@ -142,7 +145,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               RichText(
                                   text: TextSpan(children: [
                                 TextSpan(
-                                    text: "${FlutterI18n.translate(context, "user_profile.statistics.avg_score")} : ",
+                                    text:
+                                        "${FlutterI18n.translate(context, "user_profile.statistics.avg_score")} : ",
                                     style: theme.textTheme.bodyMedium),
                                 TextSpan(
                                     text: "500",
@@ -151,14 +155,15 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               ])),
                               RichText(
                                   text: TextSpan(children: [
-                                    TextSpan(
-                                        text: "${FlutterI18n.translate(context, "user_profile.statistics.cnt_games")} : ",
-                                        style: theme.textTheme.bodyMedium),
-                                    TextSpan(
-                                        text: "100",
-                                        style: theme.textTheme.bodyLarge!
-                                            .copyWith(fontWeight: FontWeight.bold))
-                                  ])),
+                                TextSpan(
+                                    text:
+                                        "${FlutterI18n.translate(context, "user_profile.statistics.cnt_games")} : ",
+                                    style: theme.textTheme.bodyMedium),
+                                TextSpan(
+                                    text: "100",
+                                    style: theme.textTheme.bodyLarge!
+                                        .copyWith(fontWeight: FontWeight.bold))
+                              ])),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -198,7 +203,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Histories",
+                                  FlutterI18n.translate(
+                                      context, "user_profile.histories_label"),
                                   style: theme.textTheme.titleLarge,
                                 ),
                               ),

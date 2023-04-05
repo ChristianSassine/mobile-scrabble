@@ -73,7 +73,7 @@ class HttpHandlerService {
   // TODO: Test when implementing user profile (changing avatar feature)
   Future<http.Response> updateImageAvatar(String avatarName) {
     return client.patch(Uri.parse("$baseUrl/image/profile-picture"),
-        body: {"filename": avatarName});
+        body: {"fileName": avatarName}, headers: headers);
   }
 
   // TODO: Test when implementing user profile (changing avatar feature)
