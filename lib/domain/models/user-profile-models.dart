@@ -2,7 +2,7 @@ enum HistoryAction {
   Connection('connection'),
   Logout('logout'),
   Game('game'),
-  NULL('');
+  Null('');
 
   const HistoryAction(this.value);
   final value;
@@ -11,7 +11,7 @@ enum HistoryAction {
     for (HistoryAction history in values) {
       if (history.value == historyEvent) return history;
     }
-    return HistoryAction.NULL;
+    return HistoryAction.Null;
   }
 }
 
@@ -49,6 +49,5 @@ class HistoryEvent {
   HistoryEvent.fromJson(json)
       : event = HistoryAction.fromString(json['event']),
         date = json['date'],
-        gameWon = json['gameWon']
-  ;
+        gameWon = json['gameWon'];
 }

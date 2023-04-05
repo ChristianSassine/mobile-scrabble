@@ -42,8 +42,7 @@ class AvatarService {
     final response = avatarData.type == ImageType.UrlImage
         ? await httpService.updateImageAvatar(data.name!)
         : await httpService.changeImageAvatar(data.file!);
-    if (response.statusCode == HttpStatus.ok){
-      print(response.body);
+    if (response.statusCode == HttpStatus.ok) {
       user = IUser.fromJson(jsonDecode(response.body)["userData"]);
     }
     return user;
