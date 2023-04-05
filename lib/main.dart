@@ -24,7 +24,7 @@ Future<void> setup() async {
   String envFile = kDebugMode ? 'development.env' : 'production.env';
 
   // kDebugMode = APK, so hardcoding it for now
-  envFile = 'production.env';
+  // envFile = 'production.env';
 
   await dotenv.load(fileName: envFile);
   var serverAddress = dotenv.env["SERVER_URL"];

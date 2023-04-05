@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/chat-widget.dart';
 import 'package:mobile/components/high-scores-widget.dart';
 import 'package:mobile/components/language-dropdown-widget.dart';
 import 'package:mobile/components/settings-widget.dart';
@@ -121,8 +122,8 @@ class _MenuScreenState extends State<MenuScreen> {
         size: size,
         notifyParent: () => setState(() {}),
       ),
-      drawer: const Drawer(
-        child: SafeArea(child: Placeholder()),
+      endDrawer: const Drawer(
+        child: SafeArea(child: ChatWidget()),
       ),
       body: Stack(children: [
         Positioned(
@@ -134,10 +135,10 @@ class _MenuScreenState extends State<MenuScreen> {
                 topLeft: Radius.circular(100),
                 bottomLeft: Radius.circular(100),
               ),
-              color: theme.backgroundColor,
+              color: theme.colorScheme.background,
             ),
             child: IconButton(
-                onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+                onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
                 icon: const Icon(CupertinoIcons.chat_bubble)),
           ),
         ),
