@@ -122,8 +122,12 @@ class _MenuScreenState extends State<MenuScreen> {
         size: size,
         notifyParent: () => setState(() {}),
       ),
-      endDrawer: const Drawer(
-        child: SafeArea(child: ChatWidget()),
+      endDrawer: Drawer(
+        child: SafeArea(child: Navigator(
+          onGenerateRoute: (settings){
+            return MaterialPageRoute(builder: (BuildContext context) => ChatWidget());
+          },
+        )),
       ),
       body: Stack(children: [
         Positioned(

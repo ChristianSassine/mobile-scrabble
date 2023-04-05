@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/components/chatroom-widget.dart';
 
 class ChatWidget extends StatefulWidget {
   const ChatWidget({Key? key}) : super(key: key);
@@ -62,90 +63,89 @@ class _ChatWidgetState extends State<ChatWidget>
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Remove after finishing
-    return SafeArea(
-      child: Container(
-        child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              // Navigation buttons (Header)
-              height: 30,
-              child: TabBar(
-                // TODO : Customize colors
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    25.0,
-                  ),
-                  color: Colors.green,
+    return Container(
+      child: Column(children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            // Navigation buttons (Header)
+            height: 30,
+            child: TabBar(
+              // TODO : Customize colors
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  25.0,
                 ),
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black,
-                controller: _tabController,
-                tabs: [
-                  Tab(
-                    child: Text("Joined Rooms"),
-                  ),
-                  Tab(
-                    child: Text("Available Rooms"),
-                  )
-                ],
+                color: Colors.green,
               ),
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.black,
+              controller: _tabController,
+              tabs: [
+                Tab(
+                  child: Text("Joined Rooms"),
+                ),
+                Tab(
+                  child: Text("Available Rooms"),
+                )
+              ],
             ),
           ),
-          Expanded(
-              child: Container(
-            // Content of each tab (bodies)
-            child: TabBarView(controller: _tabController, children: [
-              ListView(
-                children: [
-                  Card(
-                    child: ListTile(
-                      title: Text("Room Name"),
-                      trailing: OutlinedButton(
-                        child: Text('JOIN'),
-                        onPressed: () {},
-                      ),
+        ),
+        Expanded(
+            child: Container(
+          // Content of each tab (bodies)
+          child: TabBarView(controller: _tabController, children: [
+            ListView(
+              children: [
+                Card(
+                  child: ListTile(
+                    title: Text("Room Name"),
+                    trailing: OutlinedButton(
+                      child: Text('JOIN'),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatRoomWidget()));
+                      },
                     ),
-                  )
-                ],
-              ),
-              Column(
-                children: [
-                  Container(
-                    child: new Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: new Card(
-                        child: new ListTile(
-                          leading: new Icon(Icons.search),
-                          title: new TextField(
-                            controller: _searchBarController,
-                            decoration: new InputDecoration(
-                                hintText: 'Search', border: InputBorder.none),
-                            onChanged: (search) {
-                              _onSearchRooms(search);
-                            },
-                          ),
-                          trailing: new IconButton(
-                            icon: new Icon(Icons.cancel),
-                            onPressed: () {
-                              _searchBarController.clear();
-                              _onSearchRooms("");
-                            },
-                          ),
+                  ),
+                )
+              ],
+            ),
+            Column(
+              children: [
+                Container(
+                  child: new Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: new Card(
+                      child: new ListTile(
+                        leading: new Icon(Icons.search),
+                        title: new TextField(
+                          controller: _searchBarController,
+                          decoration: new InputDecoration(
+                              hintText: 'Search', border: InputBorder.none),
+                          onChanged: (search) {
+                            _onSearchRooms(search);
+                          },
+                        ),
+                        trailing: new IconButton(
+                          icon: new Icon(Icons.cancel),
+                          onPressed: () {
+                            _searchBarController.clear();
+                            _onSearchRooms("");
+                          },
                         ),
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: _buildAvailableRooms()
-                  ),
-                ],
-              )
-            ]),
-          )),
-        ]),
-      ),
+                ),
+                Expanded(
+                  child: _buildAvailableRooms()
+                ),
+              ],
+            )
+          ]),
+        )),
+      ]),
     );
   }
 }
