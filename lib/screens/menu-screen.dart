@@ -125,7 +125,7 @@ class _MenuScreenState extends State<MenuScreen> {
       endDrawer: Drawer(
         child: SafeArea(child: Navigator(
           onGenerateRoute: (settings){
-            return MaterialPageRoute(builder: (BuildContext context) => ChatWidget());
+            return CupertinoPageRoute(builder: (BuildContext context) => ChatWidget(inChat: false,));
           },
         )),
       ),
