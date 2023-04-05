@@ -5,10 +5,9 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/avatar-selector-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
+import 'package:mobile/domain/enums/server-errors-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/services/user-service.dart';
-import 'package:mobile/domain/enums/server-errors-enum.dart';
-
 
 class UserSettingsScreen extends StatefulWidget {
   const UserSettingsScreen({Key? key}) : super(key: key);
@@ -41,11 +40,13 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
     super.initState();
     _submitStatusSub = _userService.notifyChange.stream.listen((success) {
       if (success)
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBarFactory.greenSnack("Modification successful"));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(
+            FlutterI18n.translate(
+                context, 'user_settings.modify_avatar.success')));
       else
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBarFactory.redSnack("Modification unsuccessful"));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
+            FlutterI18n.translate(
+                context, 'user_settings.modify_avatar.error')));
     });
   }
 
@@ -62,7 +63,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("User settings"),
+        title: Text(FlutterI18n.translate(
+            context, "user_settings.labels.user_settings")),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -77,7 +79,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "Change Avatar",
+                          FlutterI18n.translate(
+                              context, "user_settings.labels.change_avatar"),
                           style: theme.textTheme.titleLarge,
                         ),
                       ),
@@ -104,7 +107,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                   _userService.changeUserAvatar(currentAvatar!);
                                 }
                               : null,
-                          child: Text("Submit Change")),
+                          child: Text(FlutterI18n.translate(
+                              context, "user_settings.submit_button"))),
                       Divider(
                         color: theme.primaryColorDark,
                       ),
@@ -129,7 +133,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Text(
-                                            "Change Username",
+                                            FlutterI18n.translate(context,
+                                                "user_settings.labels.change_username"),
                                             style: theme.textTheme.titleLarge,
                                           ),
                                         ),
@@ -139,10 +144,13 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                             controller: _usernameController,
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
-                                                hintText: "New username"),
+                                                hintText: FlutterI18n.translate(
+                                                    context,
+                                                    "user_settings.modify_username.hint")),
                                             validator: (value) {
                                               if ((value == null ||
-                                                  value.isEmpty) && !_isUsernameInputReset) {
+                                                      value.isEmpty) &&
+                                                  !_isUsernameInputReset) {
                                                 return FlutterI18n.translate(
                                                     context,
                                                     "user_settings.username_error");
@@ -153,17 +161,19 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextFormField(
-                                            controller: _confirmUsernameController,
+                                            controller:
+                                                _confirmUsernameController,
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
-                                                hintText:
-                                                    "Confirm new username"),
+                                                hintText: FlutterI18n.translate(
+                                                    context,
+                                                    "user_settings.modify_username.confirm_username")),
                                             validator: (value) {
                                               if (value !=
                                                   _usernameController.text) {
                                                 return FlutterI18n.translate(
                                                     context,
-                                                    "user_settings.username_confirmation_error");
+                                                    "user_settings.modify_username.error");
                                               }
                                             },
                                           ),
@@ -171,34 +181,68 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         ElevatedButton(
                                             onPressed: _usernameChangeValid
                                                 ? () async {
-                                                  final newUsername = _usernameController.text;
-                                                  final ServerError response = await _userService.modifyUsername(newUsername);
-                                                  if (response == ServerError.UsernameChangeSucess) {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(FlutterI18n.translate(
-                                                    context,
-                                                    "user_profile.modify_username.success"),),);
+                                                    final newUsername =
+                                                        _usernameController
+                                                            .text;
+                                                    final ServerError response =
+                                                        await _userService
+                                                            .modifyUsername(
+                                                                newUsername);
+                                                    if (response ==
+                                                        ServerError
+                                                            .UsernameChangeSucess) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBarFactory
+                                                            .greenSnack(
+                                                          FlutterI18n.translate(
+                                                              context,
+                                                              "user_settings.modify_username.success"),
+                                                        ),
+                                                      );
+                                                    } else if (response ==
+                                                        ServerError
+                                                            .UsernameExistsError) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBarFactory
+                                                            .redSnack(
+                                                          FlutterI18n.translate(
+                                                              context,
+                                                              "user_settings.modify_username.already_exists"),
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBarFactory
+                                                            .greenSnack(
+                                                          FlutterI18n.translate(
+                                                              context,
+                                                              "user_settings.modify_username.error"),
+                                                        ),
+                                                      );
+                                                    }
+                                                    setState(() {
+                                                      _isUsernameInputReset =
+                                                          true;
+                                                      _usernameController
+                                                          .clear();
+                                                      _confirmUsernameController
+                                                          .clear();
+                                                      _isUsernameInputReset =
+                                                          false;
+                                                      _usernameChangeValid =
+                                                          false;
+                                                    });
                                                   }
-                                                  else if (response == ServerError.UsernameExistsError) {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(FlutterI18n.translate(
-                                                    context,
-                                                    "user_profile.modify_username.already_exists"),),);
-                                                  }
-                                                  else {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(FlutterI18n.translate(
-                                                    context,
-                                                    "user_profile.modify_username.error"),),);
-                                                  }
-                                                  _isUsernameInputReset = true;
-                                                  _usernameController.clear();
-                                                  _confirmUsernameController.clear();
-                                                  _isUsernameInputReset = false;
-                                                  _usernameChangeValid = false;
-                                                  setState(() {
-                                                  });
-                                                }
                                                 : null,
-                                            child: Text(FlutterI18n.translate(context, 
-                                                    "user_profile.modify_username.button_text"))),
+                                            child: Text(FlutterI18n.translate(
+                                                context,
+                                                "user_settings.submit_button"))),
                                       ],
                                     ),
                                   )),
@@ -218,7 +262,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Text(
-                                            "Change Password",
+                                            FlutterI18n.translate(context,
+                                                "user_settings.labels.change_password"),
                                             style: theme.textTheme.titleLarge,
                                           ),
                                         ),
@@ -229,10 +274,13 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                             controller: _passwordController,
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
-                                                hintText: "New password"),
+                                                hintText: FlutterI18n.translate(
+                                                    context,
+                                                    "user_settings.modify_password.hint")),
                                             validator: (value) {
                                               if ((value == null ||
-                                                  value.isEmpty) && !_isPasswordInputReset) {
+                                                      value.isEmpty) &&
+                                                  !_isPasswordInputReset) {
                                                 return FlutterI18n.translate(
                                                     context,
                                                     "user_settings.password_error");
@@ -244,11 +292,13 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextFormField(
                                             obscureText: true,
-                                            controller: _confirmPasswordController,
+                                            controller:
+                                                _confirmPasswordController,
                                             decoration: InputDecoration(
                                                 border: OutlineInputBorder(),
-                                                hintText:
-                                                    "Confirm new password"),
+                                                hintText: FlutterI18n.translate(
+                                                    context,
+                                                    "user_settings.modify_password.confirm_password")),
                                             validator: (value) {
                                               if (value !=
                                                   _passwordController.text) {
@@ -262,33 +312,63 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         ElevatedButton(
                                             onPressed: _passwordChangeValid
                                                 ? () async {
-                                                  final newPassword = _passwordController.text;
-                                                  final ServerError response = await _userService.modifyPassword(newPassword);
+                                                    final newPassword =
+                                                        _passwordController
+                                                            .text;
+                                                    final ServerError response =
+                                                        await _userService
+                                                            .modifyPassword(
+                                                                newPassword);
 
-                                                  if (response == ServerError.PasswordChangeSucess) {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(FlutterI18n.translate(context, 
-                                                    "user_profile.modify_password.success")),);
+                                                    if (response ==
+                                                        ServerError
+                                                            .PasswordChangeSucess) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBarFactory.greenSnack(
+                                                            FlutterI18n.translate(
+                                                                context,
+                                                                "user_settings.modify_password.success")),
+                                                      );
+                                                    } else if (response ==
+                                                        ServerError
+                                                            .PasswordSameError) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBarFactory.redSnack(
+                                                            FlutterI18n.translate(
+                                                                context,
+                                                                "user_settings.modify_password.already_exists")),
+                                                      );
+                                                    } else {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBarFactory.redSnack(
+                                                            FlutterI18n.translate(
+                                                                context,
+                                                                "user_settings.modify_password.error")),
+                                                      );
+                                                    }
+                                                    setState(() {
+                                                      _isPasswordInputReset =
+                                                          true;
+                                                      _passwordController
+                                                          .clear();
+                                                      _confirmPasswordController
+                                                          .clear();
+                                                      _isPasswordInputReset =
+                                                          false;
+                                                      _passwordChangeValid =
+                                                          false;
+                                                    });
                                                   }
-                                                  else if (response == ServerError.PasswordSameError) {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(FlutterI18n.translate(context, 
-                                                    "user_profile.modify_password.already_exists")),);
-                                                  }
-                                                  else {
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(FlutterI18n.translate(context, 
-                                                    "user_profile.modify_password.error")),);
-                                                  }
-                                                  _isPasswordInputReset = true;
-                                                  _passwordController.clear();
-                                                  _confirmPasswordController.clear();
-                                                  _isPasswordInputReset = false;
-                                                  _passwordChangeValid = false;
-                                                  setState(() {
-                                                  });
-
-                                                }
                                                 : null,
-                                            child: Text(FlutterI18n.translate(context, 
-                                                    "user_profile.modify_password.button_text"))),
+                                            child: Text(FlutterI18n.translate(
+                                                context,
+                                                "user_settings.submit_button"))),
                                       ],
                                     ),
                                   )),

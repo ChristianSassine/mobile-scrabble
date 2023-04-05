@@ -80,6 +80,7 @@ class HttpHandlerService {
   changeImageAvatar(File newAvatarFile) async {
     final request = http.MultipartRequest(
         "PUT", Uri.parse("${baseUrl}/image/profile-picture"));
+    request.headers["cookie"] = headers["cookie"]!;
     request.headers['Content-Type'] = 'multipart/form-data';
 
     final imageFile = await http.MultipartFile.fromPath(
@@ -90,6 +91,17 @@ class HttpHandlerService {
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
     return response;
+  }
+
+  // Modifying user requests
+  Future<http.Response> modifyUsernameRequest(Object body) {
+    return client.patch(Uri.parse("${baseUrl}/profile/username"),
+        body: body, headers: headers);
+  }
+
+  Future<http.Response> modifyPasswordRequest(Object body) {
+    return client.patch(Uri.parse("${baseUrl}/profile/password"),
+        body: body, headers: headers);
   }
 
   // High Scores requests
