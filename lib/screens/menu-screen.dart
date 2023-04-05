@@ -127,11 +127,12 @@ class _MenuScreenState extends State<MenuScreen> {
       body: Stack(children: [
         Positioned(
           top: size.height * 0.1,
+          right: 0,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(100),
-                bottomRight: Radius.circular(100),
+                topLeft: Radius.circular(100),
+                bottomLeft: Radius.circular(100),
               ),
               color: theme.backgroundColor,
             ),
