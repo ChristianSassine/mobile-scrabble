@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:http/http.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/models/iuser-model.dart';
@@ -29,7 +27,8 @@ class AuthService {
 
   Future<void> connectUser(String username, String password) async {
     try {
-      var response = await _httpService.signInRequest({"username": username, "password": password});
+      var response = await _httpService
+          .signInRequest({"username": username, "password": password});
 
       if (response.statusCode == HttpStatus.ok) {
         // JWT token
@@ -37,8 +36,8 @@ class AuthService {
         _cookie = Cookie.fromSetCookieValue(rawCookie!);
         _httpService.updateCookie(_cookie!);
 
-      IUser user = IUser.fromJson(jsonDecode(response.body)['userData']);
-      await _userService.updateUser(user);
+        IUser user = IUser.fromJson(jsonDecode(response.body)['userData']);
+        await _userService.updateUser(user);
 
         _socket.io.options['extraHeaders'] = {'cookie': _cookie};
         _socket
@@ -48,13 +47,14 @@ class AuthService {
         notifyLogin.add(true);
         return;
       }
-    } catch (e) {
-      // If server not active
+    } catch (_) {
+      // Server not responding...
     }
     notifyError.add("Failed Login");
   }
 
-  Future<void> createUser(String username, String email, String password, AvatarData data) async {
+  Future<void> createUser(
+      String username, String email, String password, AvatarData data) async {
     final avatarData = await _avatarService.formatAvatarData(data);
     final profileImageInfo = _avatarService.generateImageInfo(avatarData);
 

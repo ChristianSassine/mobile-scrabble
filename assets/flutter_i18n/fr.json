@@ -47,6 +47,17 @@
         "start_game": "Démarrer la partie",
         "game": "Partie"
     },
+    "room_create": {
+        "room_param_title": "Paramètre de jeu",
+        "difficulty_field_title": "Difficulté",
+        "timer_field_title": "Minuterie",
+        "dictionary_field_title": "Dictionaire",
+        "difficulty": {
+            "easy": "Facile",
+            "hard": "Difficile",
+            "score_based": "Basé sur le score"
+        }
+    },
     "rooms_lobby": {
         "table": {
             "users": "Joueurs",

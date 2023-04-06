@@ -55,7 +55,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ),
         RecaptchaV2(
-          pluginURL: "${_httpService.baseUrl}/auth/captcha",
+          pluginURL: "${_httpService.httpUrl}/auth/captcha",
           controller: recaptchaV2Controller,
           onManualVerification: (token) {
             if (token != Null) {

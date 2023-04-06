@@ -8,9 +8,10 @@ import 'package:http_parser/http_parser.dart';
 class HttpHandlerService {
   late final http.Client client;
   late final String baseUrl;
+  late final String httpUrl;
   Map<String, String> headers = {};
 
-  HttpHandlerService(String serverAddress) {
+  HttpHandlerService(String serverAddress, {this.httpUrl = ''}) {
     init();
     baseUrl = serverAddress;
   }
@@ -107,6 +108,10 @@ class HttpHandlerService {
   // High Scores requests
   Future<http.Response> fetchHighScoresRequest() {
     return client.get(Uri.parse("${baseUrl}/highScore/classique"));
+  }
+
+  Future<http.Response> fetchDictionaries(){
+    return client.get(Uri.parse("$baseUrl/dictionary/info"));
   }
 
   // Common utilities

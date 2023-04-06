@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/toggle-icon-button.dart';
+import 'package:mobile/components/dropdown-menu.dart' as menu;
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/dictionary-service.dart';
+import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/waiting-room-screen.dart';
-
-import '../domain/services/room-service.dart';
 
 class GameCreationScreen extends StatefulWidget {
   const GameCreationScreen({super.key, required this.title});
@@ -16,54 +20,65 @@ class GameCreationScreen extends StatefulWidget {
   State<GameCreationScreen> createState() => _GameCreationScreenState();
 }
 
-const List<Widget> gameModes = <Widget>[Text('4 Joueurs')];
-
 class _GameCreationScreenState extends State<GameCreationScreen> {
   final _userService = GetIt.I.get<UserService>();
   final _roomService = GetIt.I.get<RoomService>();
+  final _dictionaryService = GetIt.I.get<DictionaryService>();
+
+  late final StreamSubscription _newDictionariesSub;
 
   // Form objects
   final _formKey = GlobalKey<FormState>();
-  final List<bool> _selectedVisibility = <bool>[true, false];
-  final TextEditingController _roomNameFieldController =
-      TextEditingController();
+  final _roomPasswordController = TextEditingController();
 
-  List<Widget> _getGameVisibilities() {
-    return <Widget>[
-      Text(FlutterI18n.translate(context, "form.private")),
-      Text(FlutterI18n.translate(context, "form.public"))
-    ];
-  }
+  bool _isPublic = true;
+  bool _isProtected = false;
 
-  void _chooseVisibility(index) {
-    setState(() {
-      // The button that is tapped is set to true, and the others to false.
-      for (int i = 0; i < _selectedVisibility.length; i++) {
-        _selectedVisibility[i] = i == index;
-      }
-    });
-  }
+  GameDifficulty _selectedDifficulty = GameDifficulty.Easy;
+  int _selectedTimer = 60;
+  String? _selectedDictionary;
 
-  String? _validateRoomName(roomName) {
-    if (roomName == null || roomName.isEmpty || roomName.trim() == '') {
-      return FlutterI18n.translate(context, "form.missing_room_name");
-    }
-    return null;
+  bool _formValid = true;
+
+  _GameCreationScreenState() {
+    _dictionaryService.fetchDictionaries();
   }
 
   void _createGame() {
     if (_formKey.currentState!.validate()) {
       GameCreationQuery query = GameCreationQuery(
           user: _userService.user!,
-          dictionary: "Mon dictionnaire",
-          timer: 60,
+          dictionary: _selectedDictionary!,
+          timer: _selectedTimer,
           gameMode: GameMode.Multi,
-          visibility: GameVisibility.Public,
-          botDifficulty: GameDifficulty.Easy);
+          visibility: _isPublic
+              ? (_isProtected ? GameVisibility.Locked : GameVisibility.Public)
+              : GameVisibility.Private,
+          botDifficulty: _selectedDifficulty,
+          password: _isProtected ? _roomPasswordController.text : null);
       _roomService.createRoom(query);
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const WaitingRoomScreen()));
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _newDictionariesSub =
+        _dictionaryService.notifyNewDictionaries.stream.listen((_) {
+      setState(() {
+        _selectedDictionary = _dictionaryService.dictionaries.isNotEmpty
+            ? _dictionaryService.dictionaries[0].title
+            : null;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _newDictionariesSub.cancel();
   }
 
   @override
@@ -87,33 +102,120 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                         key: _formKey,
                         child: Column(
                           children: [
-                            TextFormField(
-                              validator: _validateRoomName,
-                              controller: _roomNameFieldController,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: FlutterI18n.translate(
-                                    context, "form.username_field"),
-                              ),
-                              onFieldSubmitted: (_) => _createGame(),
+                            Text(
+                                FlutterI18n.translate(
+                                    context, "room_create.room_param_title"),
+                                style: TextStyle(fontSize: 30)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ToggleIconButton(
+                                  off_icon: Icons.lock_outline,
+                                  on_icon: Icons.lock_open_outlined,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _isProtected = value;
+                                      _formValid = !_isProtected ||
+                                          _roomPasswordController
+                                              .text.isNotEmpty;
+                                    });
+                                  },
+                                ),
+                                ToggleIconButton(
+                                  off_icon: Icons.visibility_off,
+                                  on_icon: Icons.visibility,
+                                  onChanged: (value) {
+                                    _isPublic = value;
+                                  },
+                                ),
+                              ],
                             ),
-                            Text(FlutterI18n.translate(
-                                context, "form.game_visibility")),
-                            const SizedBox(height: 5),
-                            ToggleButtons(
-                              onPressed: _chooseVisibility,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(8)),
-                              selectedBorderColor: Colors.green[700],
-                              selectedColor: Colors.white,
-                              fillColor: Colors.green[200],
-                              color: Colors.green[400],
-                              constraints: const BoxConstraints(
-                                minHeight: 40.0,
-                                minWidth: 80.0,
+                            SizedBox(
+                              width: 200,
+                              child: Column(
+                                children: [
+                                  Visibility(
+                                    visible: _isProtected,
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      child: TextFormField(
+                                        controller: _roomPasswordController,
+                                        validator: (value) => value == null ||
+                                                value.isEmpty
+                                            ? FlutterI18n.translate(
+                                                context, "form.password_empty")
+                                            : null,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          hintText: FlutterI18n.translate(
+                                              context, "form.password"),
+                                          suffixIcon: const Icon(Icons.key),
+                                        ),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _formValid = value.isNotEmpty;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  menu.DropdownMenu(
+                                    title:
+                                    "${FlutterI18n.translate(context, "room_create.difficulty_field_title")} *",
+                                    items: {
+                                      FlutterI18n.translate(context, "room_create.difficulty.easy"):
+                                      GameDifficulty.Easy.value,
+                                      FlutterI18n.translate(context, "room_create.difficulty.hard"):
+                                      GameDifficulty.Hard.value,
+                                      FlutterI18n.translate(
+                                          context, "room_create.difficulty.score_based"):
+                                      GameDifficulty.ScoreBased.value,
+                                    },
+                                    onChanged: (value) {
+                                      _selectedDifficulty = GameDifficulty.fromString(value!)!;
+                                    },
+                                    defaultValue: GameDifficulty.Easy.value,
+                                  ),
+                                  menu.DropdownMenu(
+                                    title:
+                                        "${FlutterI18n.translate(context, "room_create.timer_field_title")} *",
+                                    items: const {
+                                      "0:30": "30",
+                                      "1:00": "60",
+                                      "1:30": "90",
+                                      "2:00": "120",
+                                      "2:30": "150",
+                                      "3:00": "180",
+                                      "3:30": "210",
+                                      "4:00": "240",
+                                      "4:30": "270",
+                                      "5:00": "300"
+                                    },
+                                    onChanged: (value) {
+                                      _selectedTimer = int.parse(value!);
+                                    },
+                                    defaultValue: "60",
+                                  ),
+                                  menu.DropdownMenu(
+                                    title:
+                                        "${FlutterI18n.translate(context, "room_create.dictionary_field_title")} *",
+                                    items: {
+                                      for (var item
+                                          in _dictionaryService.dictionaries)
+                                        item.title: item.title
+                                    },
+                                    onChanged: (value) {
+                                      _selectedDictionary = value;
+                                    },
+                                    defaultValue: _dictionaryService
+                                            .dictionaries.isNotEmpty
+                                        ? _dictionaryService
+                                            .dictionaries[0].title
+                                        : null,
+                                  ),
+                                ],
                               ),
-                              isSelected: _selectedVisibility,
-                              children: _getGameVisibilities(),
                             ),
                           ],
                         ),
@@ -122,9 +224,11 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: _createGame,
+                      onPressed: _formValid ? _createGame : null,
                       child: Text(
-                          FlutterI18n.translate(context, "form.create_game")),
+                        FlutterI18n.translate(context, "form.create_game"),
+                        style: TextStyle(fontSize: 18),
+                      ),
                     )
                   ],
                 ),

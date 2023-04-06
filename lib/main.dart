@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
+import 'package:mobile/domain/services/dictionary-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/language-service.dart';
@@ -40,8 +41,9 @@ Future<void> setup() async {
   socket.onConnect((_) => debugPrint('Socket connection established'));
   socket.onDisconnect((data) => debugPrint('Socket connection lost'));
 
-  getIt.registerLazySingleton<HttpHandlerService>(
-      () => HttpHandlerService("https://$serverAddress:3443"));
+  getIt.registerLazySingleton<HttpHandlerService>(() => HttpHandlerService(
+      "https://$serverAddress:3443",
+      httpUrl: "http://$serverAddress:3000"));
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<ThemeService>(() => ThemeService());
@@ -50,7 +52,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<AvatarService>(() => AvatarService());
   getIt.registerLazySingleton<GameService>(() => GameService());
   getIt.registerLazySingleton<UserService>(() => UserService());
-
+  getIt.registerLazySingleton<DictionaryService>(() => DictionaryService());
   getIt.registerSingleton<GlobalKey<NavigatorState>>(
       GlobalKey<NavigatorState>());
 }
