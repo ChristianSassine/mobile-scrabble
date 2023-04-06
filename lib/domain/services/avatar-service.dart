@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/models/iuser-model.dart';
-import 'package:mobile/domain/models/userimageinfo-model.dart';
+import 'package:mobile/domain/models/user-image-info-model.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:path/path.dart';
 

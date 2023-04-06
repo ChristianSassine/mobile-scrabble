@@ -71,14 +71,12 @@ class HttpHandlerService {
     return response;
   }
 
-  // TODO: Test when implementing user profile (changing avatar feature)
   Future<http.Response> updateImageAvatar(String avatarName) {
     return client.patch(Uri.parse("$baseUrl/image/profile-picture"),
         body: {"fileName": avatarName}, headers: headers);
   }
 
-  // TODO: Test when implementing user profile (changing avatar feature)
-  changeImageAvatar(File newAvatarFile) async {
+  Future<http.Response> changeImageAvatar(File newAvatarFile) async {
     final request = http.MultipartRequest(
         "PUT", Uri.parse("${baseUrl}/image/profile-picture"));
     request.headers["cookie"] = headers["cookie"]!;
@@ -94,20 +92,25 @@ class HttpHandlerService {
     return response;
   }
 
+  // Profile data requests
+  Future<http.Response> fetchHistoriesRequest() {
+    return client.get(Uri.parse("$baseUrl/profile/history-events"), headers: headers);
+  }
+
   // Modifying user requests
   Future<http.Response> modifyUsernameRequest(Object body) {
-    return client.patch(Uri.parse("${baseUrl}/profile/username"),
+    return client.patch(Uri.parse("$baseUrl/profile/username"),
         body: body, headers: headers);
   }
 
   Future<http.Response> modifyPasswordRequest(Object body) {
-    return client.patch(Uri.parse("${baseUrl}/profile/password"),
+    return client.patch(Uri.parse("$baseUrl/profile/password"),
         body: body, headers: headers);
   }
 
   // High Scores requests
   Future<http.Response> fetchHighScoresRequest() {
-    return client.get(Uri.parse("${baseUrl}/highScore/classique"));
+    return client.get(Uri.parse("$baseUrl/highScore/classique"));
   }
 
   Future<http.Response> fetchDictionaries(){

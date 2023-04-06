@@ -62,7 +62,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    _userService.fetchInformation();
+    _userService.fetchHistories();
 
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
@@ -96,7 +96,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                       child: isUser
                           ? null
                           : const Icon(
-                              Icons.person), // TODO : replace with real image
+                              Icons.person),
                     ),
                     RichText(
                         text: TextSpan(children: [

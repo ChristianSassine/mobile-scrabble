@@ -22,17 +22,24 @@ class MatchHistory {
 
   MatchHistory(this.isVictory, this.timestamp);
 
+  MatchHistory.fromEvent(HistoryEvent event)
+      : isVictory = event.gameWon!,
+        timestamp = event.date;
+
   MatchHistory.fromJson(json)
       : isVictory = json['isVictory'],
         timestamp = json['timestamp'];
 }
 
-// TODO: change if model it isn't the correct interface
 class ConnectionHistory {
   final bool isConnect;
   final String timestamp;
 
   ConnectionHistory(this.isConnect, this.timestamp);
+
+  ConnectionHistory.fromEvent(HistoryEvent event)
+      : isConnect = event.event == HistoryAction.Connection,
+        timestamp = event.date;
 
   ConnectionHistory.fromJson(json)
       : isConnect = json['isConnect'],

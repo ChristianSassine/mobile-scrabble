@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/domain/models/userimageinfo-model.dart';
+import 'package:mobile/domain/models/user-image-info-model.dart';
 
 class IUser {
   final String? email;
