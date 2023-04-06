@@ -206,7 +206,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                   !_isUsernameInputReset) {
                                                 return FlutterI18n.translate(
                                                     context,
-                                                    "user_settings.username_error");
+                                                    "user_settings.modify_username.input_error_empty");
                                               }
                                             },
                                           ),
@@ -226,7 +226,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                   _usernameController.text) {
                                                 return FlutterI18n.translate(
                                                     context,
-                                                    "user_settings.modify_username.error");
+                                                    "user_settings.modify_username.input_error_match");
                                               }
                                             },
                                           ),
@@ -296,7 +296,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                   !_isPasswordInputReset) {
                                                 return FlutterI18n.translate(
                                                     context,
-                                                    "user_settings.password_error");
+                                                    "user_settings.modify_password.input_error_empty");
                                               }
                                             },
                                           ),
@@ -317,7 +317,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                                   _passwordController.text) {
                                                 return FlutterI18n.translate(
                                                     context,
-                                                    "user_settings.password_confirmation_error");
+                                                    "user_settings.modify_password.input_error_match");
                                               }
                                             },
                                           ),

@@ -14,7 +14,7 @@
         "score": "Leaderboard",
         "change_language": "Change language",
         "settings": {
-            "user": "User settings",
+            "user": "User profile",
             "theme": "Themes settings",
             "disconnect": "Log out"
         },
@@ -168,14 +168,18 @@
             "error": "An error has occured while changing the username",
             "confirm_username": "Confirm username",
             "modify": "Change username",
-            "hint": "New username"
+            "hint": "New username",
+            "input_error_empty": "Enter a username",
+            "input_error_match": "Usernames do not match"
         },
         "modify_password": {
             "success": "Password has been succesfully modified",
             "already_exists": "Unable to change password because it's the same as the old one",
             "error": "An error has occured while changing the password",
             "hint": "New password",
-            "confirm_password": "Confirm password"
+            "confirm_password": "Confirm password",
+            "input_error_empty": "Enter a password",
+            "input_error_match": "Passwords do not match"
         },
         "labels": {
             "user_settings": "User settings",
