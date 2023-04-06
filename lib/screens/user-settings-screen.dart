@@ -39,14 +39,15 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   void initState() {
     super.initState();
     _submitStatusSub = _userService.notifyChange.stream.listen((success) {
-      if (success)
+      if (success) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(
             FlutterI18n.translate(
                 context, 'user_settings.modify_avatar.success')));
-      else
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
             FlutterI18n.translate(
                 context, 'user_settings.modify_avatar.error')));
+      }
     });
   }
 
@@ -54,6 +55,58 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   void dispose() {
     _submitStatusSub.cancel();
     super.dispose();
+  }
+
+  void _modifyPassword(String newPassword) async {
+    final ServerError response = await _userService.modifyPassword(newPassword);
+
+    if (response == ServerError.PasswordChangeSucess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBarFactory.greenSnack(
+          FlutterI18n.translate(
+              context, "user_settings.modify_password.success"),
+        ),
+      );
+    } else if (response == ServerError.PasswordSameError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBarFactory.redSnack(
+          FlutterI18n.translate(
+              context, "user_settings.modify_password.already_exists"),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBarFactory.redSnack(
+          FlutterI18n.translate(context, "user_settings.modify_password.error"),
+        ),
+      );
+    }
+  }
+
+  void _modifyUsername(String newUsername) async {
+    final ServerError response = await _userService.modifyUsername(newUsername);
+
+    if (response == ServerError.UsernameChangeSucess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBarFactory.greenSnack(
+          FlutterI18n.translate(
+              context, "user_settings.modify_username.success"),
+        ),
+      );
+    } else if (response == ServerError.UsernameExistsError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBarFactory.redSnack(
+          FlutterI18n.translate(
+              context, "user_settings.modify_username.already_exists"),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBarFactory.greenSnack(
+          FlutterI18n.translate(context, "user_settings.modify_username.error"),
+        ),
+      );
+    }
   }
 
   @override
@@ -180,52 +233,12 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         ),
                                         ElevatedButton(
                                             onPressed: _usernameChangeValid
-                                                ? () async {
+                                                ? () {
                                                     final newUsername =
                                                         _usernameController
                                                             .text;
-                                                    final ServerError response =
-                                                        await _userService
-                                                            .modifyUsername(
-                                                                newUsername);
-                                                    if (response ==
-                                                        ServerError
-                                                            .UsernameChangeSucess) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBarFactory
-                                                            .greenSnack(
-                                                          FlutterI18n.translate(
-                                                              context,
-                                                              "user_settings.modify_username.success"),
-                                                        ),
-                                                      );
-                                                    } else if (response ==
-                                                        ServerError
-                                                            .UsernameExistsError) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBarFactory
-                                                            .redSnack(
-                                                          FlutterI18n.translate(
-                                                              context,
-                                                              "user_settings.modify_username.already_exists"),
-                                                        ),
-                                                      );
-                                                    } else {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBarFactory
-                                                            .greenSnack(
-                                                          FlutterI18n.translate(
-                                                              context,
-                                                              "user_settings.modify_username.error"),
-                                                        ),
-                                                      );
-                                                    }
+                                                    _modifyUsername(
+                                                        newUsername);
                                                     setState(() {
                                                       _isUsernameInputReset =
                                                           true;
@@ -311,47 +324,12 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                                         ),
                                         ElevatedButton(
                                             onPressed: _passwordChangeValid
-                                                ? () async {
+                                                ? () {
                                                     final newPassword =
                                                         _passwordController
                                                             .text;
-                                                    final ServerError response =
-                                                        await _userService
-                                                            .modifyPassword(
-                                                                newPassword);
-
-                                                    if (response ==
-                                                        ServerError
-                                                            .PasswordChangeSucess) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBarFactory.greenSnack(
-                                                            FlutterI18n.translate(
-                                                                context,
-                                                                "user_settings.modify_password.success")),
-                                                      );
-                                                    } else if (response ==
-                                                        ServerError
-                                                            .PasswordSameError) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBarFactory.redSnack(
-                                                            FlutterI18n.translate(
-                                                                context,
-                                                                "user_settings.modify_password.already_exists")),
-                                                      );
-                                                    } else {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBarFactory.redSnack(
-                                                            FlutterI18n.translate(
-                                                                context,
-                                                                "user_settings.modify_password.error")),
-                                                      );
-                                                    }
+                                                    _modifyPassword(
+                                                        newPassword);
                                                     setState(() {
                                                       _isPasswordInputReset =
                                                           true;
