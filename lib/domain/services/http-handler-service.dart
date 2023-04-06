@@ -97,6 +97,10 @@ class HttpHandlerService {
     return client.get(Uri.parse("$baseUrl/profile/history-events"), headers: headers);
   }
 
+  Future<http.Response> fetchStatsRequest() {
+    return client.get(Uri.parse("$baseUrl/profile/stats"), headers: headers);
+  }
+
   // Modifying user requests
   Future<http.Response> modifyUsernameRequest(Object body) {
     return client.patch(Uri.parse("$baseUrl/profile/username"),

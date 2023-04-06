@@ -5,6 +5,7 @@ enum HistoryAction {
   Null('');
 
   const HistoryAction(this.value);
+
   final value;
 
   static HistoryAction fromString(String historyEvent) {
@@ -15,7 +16,6 @@ enum HistoryAction {
   }
 }
 
-// TODO: change if model it isn't the correct interface
 class MatchHistory {
   final bool isVictory;
   final String timestamp;
@@ -57,4 +57,28 @@ class HistoryEvent {
       : event = HistoryAction.fromString(json['event']),
         date = json['date'],
         gameWon = json['gameWon'];
+}
+
+class UserStats {
+  final int loss;
+  final int win;
+  final int gameCount;
+  final int totalGameScore;
+  final double averageGameScore;
+  final String averageGameTime;
+
+  UserStats(this.gameCount, this.loss, this.win, this.totalGameScore,
+      this.averageGameScore, this.averageGameTime);
+
+  UserStats.fromJson(json)
+      : loss = json['loss'],
+        win = json['win'],
+        gameCount = json['gameCount'],
+        totalGameScore = json['totalGameScore'],
+        averageGameScore = json['averageGameScore'] is int
+            ? json['averageGameScore'].toDouble()
+            : json['averageGameScore'],
+        averageGameTime = (json['averageGameTime'] as String).isNotEmpty
+            ? json['averageGameTime']
+            : "0 min";
 }

@@ -63,15 +63,11 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   @override
   Widget build(BuildContext context) {
     _userService.fetchHistories();
+    _userService.fetchStats();
 
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
     final isUser = _userService.user?.profilePicture != null;
-
-    final mockData = PieChartData(sections: [
-      PieChartSectionData(title: "${25}", value: 25, color: Colors.green),
-      PieChartSectionData(title: "${75}", value: 75, color: Colors.red),
-    ]);
 
     return Scaffold(
       appBar: AppBar(
@@ -93,20 +89,27 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                           ? NetworkImage(
                               _userService.user!.profilePicture!.key!)
                           : null,
-                      child: isUser
-                          ? null
-                          : const Icon(
-                              Icons.person),
+                      child: isUser ? null : const Icon(Icons.person),
                     ),
-                    RichText(
-                        text: TextSpan(children: [
-                      TextSpan(
-                          text: "Score : ", style: theme.textTheme.titleMedium),
-                      TextSpan(
-                          text: "49992",
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold))
-                    ])),
+                    FutureBuilder(
+                      future: _userService.getStats(),
+                      builder: (context, snapshot) {
+                        final hasData = snapshot.connectionState ==
+                            ConnectionState.done &&
+                            snapshot.hasData;
+                        final stats = snapshot.data;
+                        return RichText(
+                            text: TextSpan(children: [
+                              TextSpan(
+                                  text: "Score : ",
+                                  style: theme.textTheme.titleMedium),
+                              TextSpan(
+                                  text: hasData ? "${stats!.totalGameScore}" : "...",
+                                  style: theme.textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold))
+                            ]));
+                      }
+                    ),
                     OutlinedButton(
                         onPressed: () {
                           Navigator.of(context)
@@ -117,7 +120,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                         },
                         child: Text(FlutterI18n.translate(
                             context, "user_profile.settings_button"))),
-                    Divider(),
+                    const Divider(),
                     IntrinsicHeight(
                       child: Row(
                         children: [
@@ -131,39 +134,63 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                   style: theme.textTheme.titleLarge,
                                 ),
                               ),
-                              RichText(
-                                  text: TextSpan(children: [
-                                TextSpan(
-                                    text:
-                                        "${FlutterI18n.translate(context, "user_profile.statistics.avg_time")} : ",
-                                    style: theme.textTheme.bodyMedium),
-                                TextSpan(
-                                    text: "4",
-                                    style: theme.textTheme.bodyLarge!
-                                        .copyWith(fontWeight: FontWeight.bold))
-                              ])),
-                              RichText(
-                                  text: TextSpan(children: [
-                                TextSpan(
-                                    text:
-                                        "${FlutterI18n.translate(context, "user_profile.statistics.avg_score")} : ",
-                                    style: theme.textTheme.bodyMedium),
-                                TextSpan(
-                                    text: "500",
-                                    style: theme.textTheme.bodyLarge!
-                                        .copyWith(fontWeight: FontWeight.bold))
-                              ])),
-                              RichText(
-                                  text: TextSpan(children: [
-                                TextSpan(
-                                    text:
-                                        "${FlutterI18n.translate(context, "user_profile.statistics.cnt_games")} : ",
-                                    style: theme.textTheme.bodyMedium),
-                                TextSpan(
-                                    text: "100",
-                                    style: theme.textTheme.bodyLarge!
-                                        .copyWith(fontWeight: FontWeight.bold))
-                              ])),
+                              FutureBuilder(
+                                  future: _userService.getStats(),
+                                  builder: (context, snapshot) {
+                                    final dataReady =
+                                        snapshot.connectionState ==
+                                                ConnectionState.done &&
+                                            snapshot.hasData;
+                                    final stats = snapshot.data;
+
+                                    return Column(children: [
+                                      RichText(
+                                          text: TextSpan(children: [
+                                        TextSpan(
+                                            text:
+                                                "${FlutterI18n.translate(context, "user_profile.statistics.avg_time")} : ",
+                                            style: theme.textTheme.bodyMedium),
+                                        TextSpan(
+                                            text: dataReady
+                                                ? stats!.averageGameTime
+                                                : "...",
+                                            style: theme.textTheme.bodyLarge!
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.bold))
+                                      ])),
+                                      RichText(
+                                          text: TextSpan(children: [
+                                        TextSpan(
+                                            text:
+                                                "${FlutterI18n.translate(context, "user_profile.statistics.avg_score")} : ",
+                                            style: theme.textTheme.bodyMedium),
+                                        TextSpan(
+                                            text: dataReady
+                                                ? "${stats!.averageGameScore}"
+                                                : "...",
+                                            style: theme.textTheme.bodyLarge!
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.bold))
+                                      ])),
+                                      RichText(
+                                          text: TextSpan(children: [
+                                        TextSpan(
+                                            text:
+                                                "${FlutterI18n.translate(context, "user_profile.statistics.cnt_games")} : ",
+                                            style: theme.textTheme.bodyMedium),
+                                        TextSpan(
+                                            text: dataReady
+                                                ? "${stats!.gameCount}"
+                                                : "...",
+                                            style: theme.textTheme.bodyLarge!
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.bold))
+                                      ]))
+                                    ]);
+                                  }),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -189,9 +216,38 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Container(
+                                  child: SizedBox(
                                     width: size.width * 0.35,
-                                    child: PieChart(mockData),
+                                    child: FutureBuilder(
+                                        future: _userService.getStats(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.done) {
+                                            final data = snapshot.data!;
+                                            final pieData = data.win == 0 &&
+                                                    data.loss == 0
+                                                ? PieChartData(sections: [
+                                                    PieChartSectionData(
+                                                        title: "",
+                                                        value: 1,
+                                                        color: Colors.grey),
+                                                  ])
+                                                : PieChartData(sections: [
+                                                    PieChartSectionData(
+                                                        title: "${data.win}",
+                                                        value:
+                                                            data.win.toDouble(),
+                                                        color: Colors.green),
+                                                    PieChartSectionData(
+                                                        title: "${data.loss}",
+                                                        value: data.loss
+                                                            .toDouble(),
+                                                        color: Colors.red),
+                                                  ]);
+                                            return PieChart(pieData);
+                                          }
+                                          return CircularProgressIndicator();
+                                        }),
                                   ),
                                 ),
                               ),
@@ -249,58 +305,52 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                           ),
                                         ),
                                         Expanded(
-                                          child: Container(
-                                            child: TabBarView(
-                                              controller: _tabController,
-                                              children: [
-                                                FutureBuilder(
-                                                    future: _userService
-                                                        .getMatches(),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .done) {
-                                                        return ListView(
-                                                            children: snapshot
-                                                                .data!
-                                                                .map((matchHistory) =>
-                                                                    _buildMatchItem(
-                                                                        matchHistory))
-                                                                .toList());
-                                                      }
-                                                      return Container(
-                                                          width: 100,
-                                                          height: 100,
-                                                          child:
-                                                              CircularProgressIndicator());
-                                                    }),
-                                                FutureBuilder(
-                                                    future: _userService
-                                                        .getConnections(),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .done) {
-                                                        return ListView(
-                                                            children: snapshot
-                                                                .data!
-                                                                .map((connectionHistory) =>
-                                                                    _buildConnectionItem(
-                                                                        connectionHistory))
-                                                                .toList());
-                                                      }
-                                                      return Container(
-                                                          width: 100,
-                                                          height: 100,
-                                                          child:
-                                                              CircularProgressIndicator());
-                                                    }),
-                                              ],
-                                            ),
+                                          child: TabBarView(
+                                            controller: _tabController,
+                                            children: [
+                                              FutureBuilder(
+                                                  future:
+                                                      _userService.getMatches(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState.done) {
+                                                      return ListView(
+                                                          children: snapshot
+                                                              .data!
+                                                              .map((matchHistory) =>
+                                                                  _buildMatchItem(
+                                                                      matchHistory))
+                                                              .toList());
+                                                    }
+                                                    return Container(
+                                                        width: 100,
+                                                        height: 100,
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }),
+                                              FutureBuilder(
+                                                  future: _userService
+                                                      .getConnections(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState.done) {
+                                                      return ListView(
+                                                          children: snapshot
+                                                              .data!
+                                                              .map((connectionHistory) =>
+                                                                  _buildConnectionItem(
+                                                                      connectionHistory))
+                                                              .toList());
+                                                    }
+                                                    return Container(
+                                                        width: 100,
+                                                        height: 100,
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }),
+                                            ],
                                           ),
                                         ),
                                       ],

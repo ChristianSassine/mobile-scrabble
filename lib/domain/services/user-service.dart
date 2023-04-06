@@ -12,13 +12,15 @@ import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:mobile/domain/enums/server-errors-enum.dart';
 
-// TODO : move user logic to this service
 class UserService {
   IUser? user;
   final _avatarService = GetIt.I.get<AvatarService>();
   final _httpService = GetIt.I.get<HttpHandlerService>();
   final PublishSubject<bool> notifyChange = PublishSubject();
+
+  // Data collections
   Future<Response>? histories;
+  Future<Response>? stats;
 
   Future<void> changeUserAvatar(AvatarData data) async {
     final newUser = await _avatarService.changeAvatar(data);
@@ -31,7 +33,36 @@ class UserService {
   }
 
   void fetchHistories() {
+    debugPrint("Fetching histories...");
     histories = _httpService.fetchHistoriesRequest();
+  }
+
+  void fetchStats() {
+    debugPrint("Fetching stats...");
+    stats = _httpService.fetchStatsRequest();
+  }
+
+  Future<UserStats> getStats() async {
+    if (stats == null) {
+      fetchStats();
+    }
+    final response = await stats;
+    if (response!.statusCode == HttpStatus.ok) {
+      final userStats = UserStats.fromJson(jsonDecode(response.body));
+      return userStats;
+    }
+    throw ("failed to fetch stats");
+  }
+
+  Future<int> getScore() async {
+    if (stats == null) {
+      fetchStats();
+    }
+    final response = await stats;
+    if (response!.statusCode == HttpStatus.ok) {
+      return UserStats.fromJson(jsonDecode(response.body)).totalGameScore;
+    }
+    throw ("failed to fetch stats");
   }
 
   Future<List<ConnectionHistory>> getConnections() async {
@@ -46,10 +77,12 @@ class UserService {
           .toList()
           .where((element) =>
               element.event == HistoryAction.Connection ||
-              element.event == HistoryAction.Logout).map((e) => ConnectionHistory.fromEvent(e)).toList();
+              element.event == HistoryAction.Logout)
+          .map((e) => ConnectionHistory.fromEvent(e))
+          .toList();
       return connections.reversed.toList();
     }
-    throw ("failed to fetch");
+    throw ("failed to fetch histories");
   }
 
   Future<List<MatchHistory>> getMatches() async {
@@ -62,10 +95,12 @@ class UserService {
       final matches = eventsList
           .map((event) => HistoryEvent.fromJson(event))
           .toList()
-          .where((element) => element.event == HistoryAction.Game).map((event) => MatchHistory.fromEvent(event)).toList();
+          .where((element) => element.event == HistoryAction.Game)
+          .map((event) => MatchHistory.fromEvent(event))
+          .toList();
       return matches.reversed.toList();
     }
-    throw ("failed to fetch");
+    throw ("failed to fetch histories");
   }
 
   Future<void> updateUser(IUser? newUser) async {
