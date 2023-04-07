@@ -11,7 +11,6 @@ import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/dictionary-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
-import 'package:mobile/domain/services/language-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/theme-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
@@ -46,8 +45,7 @@ Future<void> setup() async {
       httpUrl: "http://$serverAddress:3000"));
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
-  getIt.registerLazySingleton<ThemeService>(() => ThemeService());
-  getIt.registerLazySingleton<LanguageService>(() => LanguageService());
+  getIt.registerLazySingleton<SettingsService>(() => SettingsService());
   getIt.registerLazySingleton<RoomService>(() => RoomService());
   getIt.registerLazySingleton<AvatarService>(() => AvatarService());
   getIt.registerLazySingleton<GameService>(() => GameService());
@@ -70,15 +68,14 @@ class PolyScrabble extends StatefulWidget {
 }
 
 class _PolyScrabbleState extends State<PolyScrabble> {
-  final _themeService = GetIt.I.get<ThemeService>();
-  final _languageService = GetIt.I.get<LanguageService>();
+  final _settingsService = GetIt.I.get<SettingsService>();
   late final StreamSubscription themeSub;
 
   @override
   void initState() {
     super.initState();
 
-    themeSub = _themeService.notifyThemeChange.stream.listen((event) {
+    themeSub = _settingsService.notifyThemeChange.stream.listen((event) {
       setState(() {});
     });
   }
@@ -94,17 +91,17 @@ class _PolyScrabbleState extends State<PolyScrabble> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PolyScrabble 110',
-      theme: _themeService.getTheme(),
+      theme: _settingsService.getTheme(),
       // Static mode, will be light theme in dynamic
-      darkTheme: _themeService.getDarkMode(),
+      darkTheme: _settingsService.getDarkMode(),
       // Dark mode will be used only in dynamic mode
-      themeMode: _themeService.isDynamic ? ThemeMode.system : ThemeMode.light,
+      themeMode: _settingsService.isDynamic ? ThemeMode.system : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       home: const LoginScreen(title: 'PolyScrabble 101 - Prototype'),
       localizationsDelegates: [
         FlutterI18nDelegate(
           translationLoader: FileTranslationLoader(
-              forcedLocale: _languageService.currentLocale),
+              forcedLocale: _settingsService.currentLocale),
           missingTranslationHandler: (key, locale) {
             debugPrint(
                 "--- Missing Key: $key, languageCode: ${locale!.languageCode}");

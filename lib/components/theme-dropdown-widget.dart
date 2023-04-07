@@ -16,15 +16,22 @@ class ThemeDropdown extends StatefulWidget {
 }
 
 class _ThemeDropdownState extends State<ThemeDropdown> {
-  MobileThemeMode? mode;
-  final themeService = GetIt.I.get<ThemeService>();
+  late MobileThemeMode mode;
+  final _settingsService = GetIt.I.get<SettingsService>();
 
-  MobileTheme? dropdownValue;
+  late MobileTheme? dropdownValue;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    mode = widget.mode;
+    dropdownValue = _settingsService.getCurrentTheme(mode);
+  }
 
   @override
   Widget build(BuildContext context) {
-    mode ??= widget.mode;
-    dropdownValue ??= themeService.getCurrentTheme(mode!);
+
 
     return DropdownButton<MobileTheme>(
       value: dropdownValue,
@@ -44,7 +51,7 @@ class _ThemeDropdownState extends State<ThemeDropdown> {
         setState(() {
           dropdownValue = value;
         });
-        themeService.switchMainTheme(mode!, value!);
+        _settingsService.switchMainTheme(mode, value!);
       },
     );
   }

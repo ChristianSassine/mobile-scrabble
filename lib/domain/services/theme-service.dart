@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:mobile/domain/enums/themes.dart';
 import 'package:rxdart/rxdart.dart';
 
-class ThemeService {
+class SettingsService {
   Subject<bool> notifyThemeChange = PublishSubject();
   MobileTheme mainTheme = MobileTheme.Light;
   MobileTheme lightMode = MobileTheme.Light;
   MobileTheme darkMode = MobileTheme.Dark;
   bool isDynamic = false;
 
-  switchMode(bool dynamic) {
+  // Language Settings
+  Locale currentLocale = const Locale("fr");
+
+  switchLocale(context, newLocale) {
+    currentLocale = newLocale;
+    FlutterI18n.refresh(context, newLocale);
+  }
+
+  // Themes Settings
+  switchThemeMode(bool dynamic) {
     isDynamic = dynamic;
     notifyThemeChange.add(true);
   }

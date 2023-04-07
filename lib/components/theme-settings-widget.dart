@@ -16,7 +16,7 @@ class ThemesSettings extends StatefulWidget {
 
 class _ThemesSettingsState extends State<ThemesSettings> {
   bool isDynamic = false;
-  final _themeService = GetIt.I.get<ThemeService>();
+  final _settingsService = GetIt.I.get<SettingsService>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class _ThemesSettingsState extends State<ThemesSettings> {
                 onChanged: (bool value) {
                   setState(() {
                     isDynamic = value;
-                    _themeService.switchMode(value);
+                    _settingsService.switchThemeMode(value);
                   });
                 }),
             Text(FlutterI18n.translate(context, "setting.dynamic")),
