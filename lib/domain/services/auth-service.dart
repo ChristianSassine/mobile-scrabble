@@ -4,9 +4,10 @@ import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
-import 'package:mobile/domain/models/iuser-model.dart';
+import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
+import 'package:mobile/domain/services/settings-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -18,6 +19,7 @@ class AuthService {
   final _httpService = GetIt.I.get<HttpHandlerService>();
   final _userService = GetIt.I.get<UserService>();
   final _avatarService = GetIt.I.get<AvatarService>();
+  final _settingsService = GetIt.I.get<SettingsService>();
   final _socket = GetIt.I.get<Socket>();
 
   Subject<bool> notifyLogin = PublishSubject();
@@ -36,8 +38,12 @@ class AuthService {
         _cookie = Cookie.fromSetCookieValue(rawCookie!);
         _httpService.updateCookie(_cookie!);
 
-        IUser user = IUser.fromJson(jsonDecode(response.body)['userData']);
+        final data = jsonDecode(response.body)['userData'];
+        IUser user = IUser.fromJson(data);
         await _userService.updateUser(user);
+        final SettingsInfo settingsInfo =
+            SettingsInfo.fromJson(data);
+        _settingsService.loadConfig(settingsInfo);
 
         _socket.io.options['extraHeaders'] = {'cookie': _cookie};
         _socket

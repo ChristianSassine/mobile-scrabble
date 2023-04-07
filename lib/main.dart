@@ -69,20 +69,21 @@ class PolyScrabble extends StatefulWidget {
 
 class _PolyScrabbleState extends State<PolyScrabble> {
   final _settingsService = GetIt.I.get<SettingsService>();
-  late final StreamSubscription themeSub;
+  late final StreamSubscription _settingsChangeSub;
 
   @override
   void initState() {
     super.initState();
 
-    themeSub = _settingsService.notifySettingsChange.stream.listen((event) {
+    _settingsChangeSub =
+        _settingsService.notifySettingsChange.stream.listen((event) {
       setState(() {});
     });
   }
 
   @override
   void dispose() {
-    themeSub.cancel();
+    _settingsChangeSub.cancel();
     super.dispose();
   }
 
@@ -95,7 +96,8 @@ class _PolyScrabbleState extends State<PolyScrabble> {
       // Static mode, will be light theme in dynamic
       darkTheme: _settingsService.getDarkMode(),
       // Dark mode will be used only in dynamic mode
-      themeMode: _settingsService.isDynamic ? ThemeMode.system : ThemeMode.light,
+      themeMode:
+          _settingsService.isDynamic ? ThemeMode.system : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       home: const LoginScreen(title: 'PolyScrabble 101 - Prototype'),
       localizationsDelegates: [

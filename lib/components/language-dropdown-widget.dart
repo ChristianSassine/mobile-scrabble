@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/services/settings-service.dart';
 
@@ -25,14 +24,12 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
 
   void _changeLanguage(Locale locale) {
     _settingsService.switchLocale(context, locale);
-    setState(() {
-      dropdownValue = locale.languageCode;
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    dropdownValue ??= FlutterI18n.currentLocale(context)!.languageCode;
+    dropdownValue = _settingsService.currentLocale.languageCode;
 
     return DropdownButton<String>(
       value: dropdownValue,

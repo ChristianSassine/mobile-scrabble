@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/themes.dart';
+import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -12,23 +10,27 @@ class SettingsService {
 
   Subject<bool> notifySettingsChange = PublishSubject();
 
-  void loadConfig() {
-    // TODO : Implement
+  void loadConfig(SettingsInfo info) {
+    mainTheme = info.themeInfo.mainTheme;
+    lightMode = info.themeInfo.lightTheme;
+    darkMode = info.themeInfo.darkTheme;
+    isDynamic = info.themeInfo.isDynamic;
+    currentLocale = Locale(info.language);
+    notifySettingsChange.add(true);
   }
 
   // Language Settings
   Locale currentLocale = const Locale("fr");
 
-  switchLocale(context, newLocale) {
+  void switchLocale(context, Locale newLocale) {
     currentLocale = newLocale;
-    FlutterI18n.refresh(context, newLocale);
-    final curLanguage = FlutterI18n.currentLocale(context)!.languageCode;
-    debugPrint(curLanguage);
-    _saveLanguage(curLanguage);
+    final language = currentLocale.languageCode;
+    debugPrint(language);
+    _saveLanguage(language);
     notifySettingsChange.add(true);
   }
 
-  _saveLanguage(String language){
+  void _saveLanguage(String language) {
     _httpService.modifyLanguageRequest(language);
   }
 
@@ -38,23 +40,23 @@ class SettingsService {
   MobileTheme darkMode = MobileTheme.Dark;
   bool isDynamic = false;
 
-  _saveThemes(){
+  void _saveThemes() {
     final themeConfig = {
-      "mainTheme" : mainTheme.value,
-      "lightTheme" : lightMode.value,
-      "darkTheme" : darkMode.value,
-      "isDynamic" : isDynamic
+      "mainTheme": mainTheme.value,
+      "lightTheme": lightMode.value,
+      "darkTheme": darkMode.value,
+      "isDynamic": isDynamic
     };
     _httpService.modifyThemeRequest(themeConfig);
   }
 
-  switchThemeMode(bool dynamic) {
+  void switchThemeMode(bool dynamic) {
     isDynamic = dynamic;
     notifySettingsChange.add(true);
     _saveThemes();
   }
 
-  switchMainTheme(MobileThemeMode mode, MobileTheme value) {
+  void switchMainTheme(MobileThemeMode mode, MobileTheme value) {
     switch (mode) {
       case MobileThemeMode.Light:
         lightMode = value;
@@ -69,7 +71,7 @@ class SettingsService {
     _saveThemes();
   }
 
-  getCurrentTheme(MobileThemeMode mode) {
+  MobileTheme getCurrentTheme(MobileThemeMode mode) {
     switch (mode) {
       case MobileThemeMode.Light:
         return lightMode;
