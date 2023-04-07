@@ -20,6 +20,8 @@ class _ThemesSettingsState extends State<ThemesSettings> {
 
   @override
   Widget build(BuildContext context) {
+    isDynamic = _settingsService.isDynamic;
+
     return Column(
       children: [
         Text("${FlutterI18n.translate(context, "setting.theme")} "),
@@ -30,7 +32,6 @@ class _ThemesSettingsState extends State<ThemesSettings> {
                 value: isDynamic,
                 onChanged: (bool value) {
                   setState(() {
-                    isDynamic = value;
                     _settingsService.switchThemeMode(value);
                   });
                 }),
