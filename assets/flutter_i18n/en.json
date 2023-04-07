@@ -191,6 +191,7 @@
     },
     "avatar": {
         "title": "Choose your avatar",
+        "or_label": "OR",
         "close": "Close",
         "error": "Error while loading the default avatar. Please try again.",
         "take_image": "Take an image"
