@@ -101,10 +101,10 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                         return RichText(
                             text: TextSpan(children: [
                               TextSpan(
-                                  text: "Score : ",
+                                  text: "${FlutterI18n.translate(context, "user_profile.ranking")} : ",
                                   style: theme.textTheme.titleMedium),
                               TextSpan(
-                                  text: hasData ? "${stats!.totalGameScore}" : "...",
+                                  text: hasData ? "${stats!.ranking}" : "...",
                                   style: theme.textTheme.titleMedium
                                       ?.copyWith(fontWeight: FontWeight.bold))
                             ]));

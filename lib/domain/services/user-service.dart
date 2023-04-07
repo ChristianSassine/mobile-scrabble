@@ -54,17 +54,6 @@ class UserService {
     throw ("failed to fetch stats");
   }
 
-  Future<int> getScore() async {
-    if (stats == null) {
-      fetchStats();
-    }
-    final response = await stats;
-    if (response!.statusCode == HttpStatus.ok) {
-      return UserStats.fromJson(jsonDecode(response.body)).totalGameScore;
-    }
-    throw ("failed to fetch stats");
-  }
-
   Future<List<ConnectionHistory>> getConnections() async {
     if (histories == null) {
       fetchHistories();

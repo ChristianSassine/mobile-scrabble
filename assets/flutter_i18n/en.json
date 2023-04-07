@@ -136,6 +136,7 @@
     "user_profile": {
         "title": "User profile",
         "settings_button": "Settings",
+        "ranking": "Ranking points",
         "statistics": {
             "label": "Statistics",
             "avg_time": "Avg. Time (min/match)",
