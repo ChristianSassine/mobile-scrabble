@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/chat-models.dart';
-import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
+import 'package:mobile/domain/services/user-service.dart';
 
 class ChatRoomWidget extends StatelessWidget {
   const ChatRoomWidget({super.key});
@@ -15,8 +15,7 @@ class ChatRoomWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leading:
-          IconButton(
+          leading: IconButton(
             icon: const badges.Badge(
               badgeContent: Text('1'),
               child: Icon(Icons.arrow_back),
@@ -28,10 +27,13 @@ class ChatRoomWidget extends StatelessWidget {
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[Chatbox(), Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.0),
-              child: ChatInput(),
-            )],
+            children: const <Widget>[
+              Chatbox(),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5.0),
+                child: ChatInput(),
+              )
+            ],
           ),
         ));
   }
@@ -99,8 +101,7 @@ class Chatbox extends StatefulWidget {
 
 class _ChatboxState extends State<Chatbox> {
   final _chatService = GetIt.I.get<ChatService>();
-  final _authService = GetIt.I.get<AuthService>();
-
+  final _userService = GetIt.I.get<UserService>();
   late final StreamSubscription chatSub;
   List<ChatMessage> messages = [];
 
@@ -126,7 +127,7 @@ class _ChatboxState extends State<Chatbox> {
   Widget _buildMessage(ChatMessage message) {
     if (message.type == MessageType.CLIENT.value) {
       return Card(
-        color: _authService.user!.username == message.username
+        color: _userService.user!.username == message.username
             ? Colors.white
             : Colors.lightGreen,
         child: ListTile(
@@ -157,8 +158,6 @@ class _ChatboxState extends State<Chatbox> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Expanded(
       child: Card(
         shape: RoundedRectangleBorder(

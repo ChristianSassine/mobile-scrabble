@@ -5,6 +5,7 @@ import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
+import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/game-screen.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -13,7 +14,7 @@ import 'package:mobile/domain/models/room-model.dart';
 class RoomService {
   // FOR TESTING
   final Socket _socket = GetIt.I.get<Socket>();
-  final AuthService _authService = GetIt.I.get<AuthService>();
+  final UserService _userService = GetIt.I.get<UserService>();
 
   List<GameRoom> roomList = [];
   GameRoom? currentRoom;
@@ -88,8 +89,7 @@ class RoomService {
   }
 
   void requestJoinRoom(String roomId, [String? password]) {
-
-    final player = RoomPlayer(_authService.user!, roomId, password: password);
+    final player = RoomPlayer(_userService.user!, roomId, password: password);
     _socket.emit(RoomSocketEvent.JoinWaitingRoom.event, player);
   }
 
@@ -117,7 +117,7 @@ class RoomService {
 
   void exitRoom() {
     UserRoomQuery exitQuery =
-        UserRoomQuery(user: _authService.user!, roomId: currentRoom!.id);
+        UserRoomQuery(user: _userService.user!, roomId: currentRoom!.id);
     _socket.emit(RoomSocketEvent.ExitWaitingRoom.event, exitQuery);
   }
 

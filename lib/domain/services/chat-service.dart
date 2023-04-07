@@ -1,20 +1,21 @@
 import 'dart:collection';
 
 import 'package:get_it/get_it.dart';
-import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/user-service.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import '../models/chat-models.dart';
 
 class ChatService {
   Socket socket = GetIt.I.get<Socket>();
-  AuthService authService = GetIt.I.get<AuthService>();
+  final UserService _userService = GetIt.I.get<UserService>();
   ChatBox chatBox = ChatBox(); // Might need to use something else
 
   String? currentRoom; // Might change type
   final availableRooms = [];
   final joinedRooms = [];
-  final _notifiedRooms = HashSet(); // Contains roomID of currently notified rooms
+  final _notifiedRooms =
+      HashSet(); // Contains roomID of currently notified rooms
 
   ChatService() {
     initSocketListeners();

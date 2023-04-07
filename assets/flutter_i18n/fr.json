@@ -15,12 +15,12 @@
         "score": "Meilleurs scores",
         "change_language": "Changer la langue",
         "settings": {
-            "user": "Paramètres utilisateur",
+            "user": "Profil d'utilisateur",
             "theme": "Paramètres de thème",
             "disconnect": "Déconnexion"
         },
         "high_scores": {
-            "error" : "Erreur lors de la récupération des meilleurs scores",
+            "error": "Erreur lors de la récupération des meilleurs scores",
             "title": "Meilleurs Scores",
             "label_score": "Scores",
             "label_player": "Joueurs"
@@ -47,6 +47,17 @@
         "start_game": "Démarrer la partie",
         "game": "Partie"
     },
+    "room_create": {
+        "room_param_title": "Paramètre de jeu",
+        "difficulty_field_title": "Difficulté",
+        "timer_field_title": "Minuterie",
+        "dictionary_field_title": "Dictionaire",
+        "difficulty": {
+            "easy": "Facile",
+            "hard": "Difficile",
+            "score_based": "Basé sur le score"
+        }
+    },
     "rooms_lobby": {
         "table": {
             "users": "Joueurs",
@@ -55,7 +66,7 @@
             "timer": "Minuterie",
             "dictionary": "Dictionnaire"
         },
-        "id_label" : "Rejoindre une salle avec un ID",
+        "id_label": "Rejoindre une salle avec un ID",
         "password": {
             "title": "Mot de passe de la salle",
             "label": "Mot de passe"
@@ -63,7 +74,7 @@
         "errors": {
             "not_available": "La salle n'est pas disponible",
             "wrong_password": "Le mot de passe pour la salle est erronée",
-            "same_user" : "L'adversaire a le même nom"
+            "same_user": "L'adversaire a le même nom"
         }
     },
     "end_game": {
@@ -123,8 +134,65 @@
     "chat": {
         "screen_name": "Salle de clavardage"
     },
+    "user_profile": {
+        "title": "Profile utilisateur",
+        "settings_button": "Paramètres",
+        "ranking": "Points de classement",
+        "statistics": {
+            "label": "Statistiques",
+            "avg_time": "Temps moy. (min/match)",
+            "avg_score": "Score moy.",
+            "cnt_games": "Jeux joués",
+            "win_indicator": "Gagnées",
+            "loss_indicator": "Perdues"
+        },
+        "histories_label": "Historiques",
+        "matchs": {
+            "label": "Parties",
+            "defeat": "Défaite",
+            "victory": "Victoire"
+        },
+        "connections": {
+            "label": "Connexions",
+            "connect": "Connexion",
+            "disconnect": "Déconnexion"
+        }
+    },
+    "user_settings": {
+        "submit_button": "Soumettre",
+        "modify_avatar": {
+            "success": "Succès de la modification de l'avatar",
+            "error": "Echec de la modification de l'avatar"
+        },
+        "modify_username": {
+            "success": "Le nom d'utilisateur a été modifié avec succès",
+            "already_exists": "Impossible de changer le nom d'utilisateur puisqu'il existe déjà",
+            "error": "Une erreur est survenue lors de la modification du nom d'utilisateur",
+            "confirm_username": "Confirmez le nom d'utilisateur",
+            "modify": "Modifier le nom d'utilisateur",
+            "hint": "Nouveau nom d'utilisateur",
+            "input_error_empty": "Veuillez rentrer un nom d'utilisateur",
+            "input_error_match": "Noms d'utilisateur non identiques"
+        },
+        "modify_password": {
+            "success": "Le mot de passe a été modifié avec succès",
+            "already_exists": "Impossible de changer le mot de passe puisque c'est le même qu'auparavant",
+            "error": "Une erreur est survenue lors de la modification du mot de passe",
+            "hint": "Nouveau mot de passe",
+            "confirm_password": "Confirmez le mot de passe",
+            "input_error_empty": "Veuillez rentrer un mot de passe",
+            "input_error_match": "Mots de passes non identiques"
+        },
+        "labels": {
+            "user_settings": "Paramètres utilisateur",
+            "change_avatar": "Changer l'avatar",
+            "change_username": "Changer le nom d'utilisateur",
+            "change_password": "Changer le mot de passe"
+        }
+    },
     "avatar": {
         "title": "Choisis ton avatar",
+        "or_label": "OU",
         "close": "Fermer",
         "error": "Erreur lors du chargement des images. Veuillez réessayer.",
         "take_image": "Prendre une photo"

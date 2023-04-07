@@ -7,8 +7,8 @@ import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
-import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
+import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/end-game-screen.dart';
 import 'package:rxdart/rxdart.dart';
 import '../enums/letter-enum.dart';
@@ -23,7 +23,7 @@ class LetterPlacement {
 
 class GameService {
   final _socket = GetIt.I.get<Socket>();
-  final _authService = GetIt.I.get<AuthService>();
+  final _userService = GetIt.I.get<UserService>();
 
   Subject<bool> notifyGameInfoChange = PublishSubject();
 
@@ -41,7 +41,7 @@ class GameService {
 
   void startGame(GameInfo initialGameInfo) async {
     _gameRoom = GetIt.I.get<RoomService>().currentRoom!;
-    game = Game(_gameRoom!, _authService.user!);
+    game = Game(_gameRoom!, _userService.user!);
 
     _publicViewUpdate(initialGameInfo);
 

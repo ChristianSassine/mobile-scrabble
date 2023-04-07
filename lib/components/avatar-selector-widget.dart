@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
-import 'package:mobile/domain/models/profile-image-info-model.dart';
+import 'package:mobile/domain/models/user-image-info-model.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 
 class AvatarSelectorDialog extends StatefulWidget {
@@ -57,6 +57,8 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return AlertDialog(
         actions: [
           TextButton(
@@ -88,29 +90,32 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                       if (snapshot.hasData) {
                         List<Widget> widgets = [];
                         for (int i = 0; i < snapshot.data.length; i++) {
-                          widgets.add(Expanded(
-                              child: GestureDetector(
+                          widgets.add(GestureDetector(
                             onTap: () => selectAvatar(
-                                snapshot.data![snapshot.data.keys.elementAt(i)]
-                                    [0],
-                                snapshot.data.keys.elementAt(i)),
+                            snapshot.data![snapshot.data.keys.elementAt(i)]
+                                [0],
+                            snapshot.data.keys.elementAt(i)),
                             child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 3,
-                                        color: _selectedImageName ==
-                                                snapshot.data.keys.elementAt(i)
-                                            ? Colors.green
-                                            : Colors.transparent)),
-                                child: Image.network(
-                                  snapshot.data![
-                                      snapshot.data.keys.elementAt(i)][0],
-                                  width: 50,
-                                  height: 50,
-                                )),
-                          )));
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 3,
+                                    color: _selectedImageName ==
+                                            snapshot.data.keys.elementAt(i)
+                                        ? Colors.green
+                                        : Colors.transparent)),
+                            child: Image.network(
+                              snapshot.data![
+                                  snapshot.data.keys.elementAt(i)][0],
+                              width: 75,
+                              height: 75,
+                            )),
+                          ));
                         }
-                        return Row(children: widgets);
+                        return Center(
+                          child: Container(
+                            width: size.width * 0.40,
+                              child: Wrap(children: widgets)),
+                        );
                       }
                     }
                     return const CircularProgressIndicator();
@@ -119,10 +124,10 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 10.0),
                 ),
-                Row(children: const <Widget>[
-                  Expanded(child: Divider()),
-                  Text("OU"),
-                  Expanded(child: Divider()),
+                Row(children: <Widget>[
+                  const Expanded(child: Divider()),
+                  Text(FlutterI18n.translate(context, "avatar.or_label")),
+                  const Expanded(child: Divider()),
                 ]),
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 10.0),
@@ -142,7 +147,7 @@ class AvatarSelector extends StatefulWidget {
       : super(key: key);
 
   final ValueChanged<AvatarData?> onImageChange;
-  final ProfileImageInfo? currentInfo;
+  final UserImageInfo? currentInfo;
 
   @override
   _AvatarSelectorState createState() => _AvatarSelectorState();
@@ -156,7 +161,8 @@ class _AvatarSelectorState extends State<AvatarSelector> {
   @override
   void initState() {
     super.initState();
-    if (widget.currentInfo != null) { // TODO: TO TEST
+    if (widget.currentInfo != null) {
+      // TODO: TO TEST
       _selectedImageFile = File(widget.currentInfo!.key!);
       if (widget.currentInfo!.isDefaultPicture) {
         _imageName = widget.currentInfo!.name;
