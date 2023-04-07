@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart' show rootBundle;
@@ -119,6 +120,17 @@ class HttpHandlerService {
 
   Future<http.Response> fetchDictionaries(){
     return client.get(Uri.parse("$baseUrl/dictionary/info"));
+  }
+
+  // App Settings requests
+  Future<http.Response> modifyThemeRequest(Object body) {
+    return client.patch(Uri.parse("$baseUrl/profile/theme"),
+        body: {"theme" : jsonEncode(body) }, headers: headers);
+  }
+
+  Future<http.Response> modifyLanguageRequest(Object body) {
+    return client.patch(Uri.parse("$baseUrl/profile/language"),
+        body:{"language" : body}, headers: headers);
   }
 
   // Common utilities
