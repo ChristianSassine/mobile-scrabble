@@ -162,9 +162,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
                               : null,
                           child: Text(FlutterI18n.translate(
                               context, "user_settings.submit_button"))),
-                      Divider(
-                        color: theme.primaryColorDark,
-                      ),
+                      Divider(),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: IntrinsicHeight(
