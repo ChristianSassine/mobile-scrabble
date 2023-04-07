@@ -81,6 +81,8 @@ class AuthService {
       notifyRegister.add(true);
 
       await connectUser(username, password);
+      await _settingsService.saveConfig();
+
       return;
     }
     notifyError.add("Failed Login");

@@ -19,35 +19,45 @@ class SettingsService {
     notifySettingsChange.add(true);
   }
 
+  Future<void> saveConfig() async {
+    await _saveThemes();
+    await _saveLanguage();
+  }
+
   // Language Settings
+
+  // Default config
   Locale currentLocale = const Locale("fr");
 
   void switchLocale(context, Locale newLocale) {
     currentLocale = newLocale;
     final language = currentLocale.languageCode;
     debugPrint(language);
-    _saveLanguage(language);
+    _saveLanguage();
     notifySettingsChange.add(true);
   }
 
-  void _saveLanguage(String language) {
-    _httpService.modifyLanguageRequest(language);
+  Future<void> _saveLanguage() async {
+    final language = currentLocale.languageCode;
+    await _httpService.modifyLanguageRequest(language);
   }
 
   // Themes Settings
+
+  // Default config
   MobileTheme mainTheme = MobileTheme.Light;
   MobileTheme lightMode = MobileTheme.Light;
   MobileTheme darkMode = MobileTheme.Dark;
   bool isDynamic = false;
 
-  void _saveThemes() {
+  Future<void> _saveThemes() async {
     final themeConfig = {
       "mainTheme": mainTheme.value,
       "lightTheme": lightMode.value,
       "darkTheme": darkMode.value,
       "isDynamic": isDynamic
     };
-    _httpService.modifyThemeRequest(themeConfig);
+    await _httpService.modifyThemeRequest(themeConfig);
   }
 
   void switchThemeMode(bool dynamic) {
