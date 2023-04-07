@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mobile/domain/services/theme-service.dart';
+import 'package:mobile/domain/services/settings-service.dart';
 
 class LanguageDropdown extends StatefulWidget {
-  final Function() notifyParent;
-
   const LanguageDropdown({
-    Key? key, required this.notifyParent
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -30,7 +28,6 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
     setState(() {
       dropdownValue = locale.languageCode;
     });
-    widget.notifyParent(); //Refresh the parent widget
   }
 
   @override

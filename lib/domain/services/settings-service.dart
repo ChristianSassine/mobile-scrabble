@@ -4,7 +4,7 @@ import 'package:mobile/domain/enums/themes.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SettingsService {
-  Subject<bool> notifyThemeChange = PublishSubject();
+  Subject<bool> notifySettingsChange = PublishSubject();
   MobileTheme mainTheme = MobileTheme.Light;
   MobileTheme lightMode = MobileTheme.Light;
   MobileTheme darkMode = MobileTheme.Dark;
@@ -16,12 +16,15 @@ class SettingsService {
   switchLocale(context, newLocale) {
     currentLocale = newLocale;
     FlutterI18n.refresh(context, newLocale);
+    debugPrint(
+        FlutterI18n.currentLocale(context)!.languageCode);
+    notifySettingsChange.add(true);
   }
 
   // Themes Settings
   switchThemeMode(bool dynamic) {
     isDynamic = dynamic;
-    notifyThemeChange.add(true);
+    notifySettingsChange.add(true);
   }
 
   switchMainTheme(MobileThemeMode mode, MobileTheme value) {
@@ -35,7 +38,7 @@ class SettingsService {
       default:
         mainTheme = value;
     }
-    notifyThemeChange.add(true);
+    notifySettingsChange.add(true);
   }
 
   getCurrentTheme(MobileThemeMode mode) {

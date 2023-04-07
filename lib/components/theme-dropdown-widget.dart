@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/themes.dart';
-import 'package:mobile/domain/services/theme-service.dart';
+import 'package:mobile/domain/services/settings-service.dart';
 
 class ThemeDropdown extends StatefulWidget {
   final MobileThemeMode mode;

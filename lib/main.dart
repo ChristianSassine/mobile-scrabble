@@ -12,7 +12,7 @@ import 'package:mobile/domain/services/dictionary-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
-import 'package:mobile/domain/services/theme-service.dart';
+import 'package:mobile/domain/services/settings-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/login-screen.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -75,7 +75,7 @@ class _PolyScrabbleState extends State<PolyScrabble> {
   void initState() {
     super.initState();
 
-    themeSub = _settingsService.notifyThemeChange.stream.listen((event) {
+    themeSub = _settingsService.notifySettingsChange.stream.listen((event) {
       setState(() {});
     });
   }
