@@ -96,8 +96,13 @@ class UserService {
     debugPrint("Updating user...");
     user = newUser;
     if (newUser == null) return;
-    final urlResponse = await _httpService.getProfilePicture();
-    user!.profilePicture!.key = jsonDecode(urlResponse.body)['url'];
+    final response = await _httpService.getProfilePicture();
+    if (response.statusCode == HttpStatus.ok) {
+      user!.profilePicture!.key = jsonDecode(response.body)['url'];
+      return;
+    }
+    debugPrint("Failed to fetch user profile avatar");
+    throw("error fetching user profile picture");
   }
 
   // Modify username and password
