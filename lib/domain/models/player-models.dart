@@ -8,6 +8,5 @@ class Player {
       : name = json['name'],
         score = json['score'];
 
-  Map toJson() =>
-      {"name": name, "score": score};
+  Map toJson() => {"name": name, "score": score};
 }

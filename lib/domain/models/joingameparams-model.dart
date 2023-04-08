@@ -1,4 +1,4 @@
-import 'package:mobile/domain/models/iuser-model.dart';
+import 'package:mobile/domain/models/user-auth-models.dart';
 
 class JoinGameParams {
   String roomId;
