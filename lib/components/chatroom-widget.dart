@@ -8,6 +8,7 @@ import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 
+// TODO: Translate and adapt whole widget
 class ChatRoomWidget extends StatelessWidget {
   const ChatRoomWidget({super.key});
 
@@ -68,7 +69,7 @@ class _ChatInputState extends State<ChatInput> {
         onEditingComplete: () {},
         validator: (value) {
           if (value == null || value.isEmpty || value.trim() == '') {
-            return 'Entrez quelque chose avant de soumettre';
+            return 'Entrez quelque chose avant de soumettre'; // TODO: Translate
           }
           return null;
         },
@@ -110,9 +111,9 @@ class _ChatboxState extends State<Chatbox> {
   @override
   void initState() {
     super.initState();
-    chatSub = _chatService.chatBox.subject.stream.listen((value) {
+    chatSub = _chatService.notifyUpdateMessages.stream.listen((value) {
       setState(() {
-        messages = _chatService.chatBox.messages;
+        messages = _chatService.messages;
       });
       SchedulerBinding.instance.addPostFrameCallback((_) {
         _scrollController.animateTo(

@@ -3,7 +3,7 @@ import 'package:rxdart/rxdart.dart';
 class ChatRoom {
   final String name;
   final String? creatorId;
-  final bool? isDeletable;
+  final bool isDeletable;
 
   ChatRoom.fromJson(json)
       : name = json['name'],

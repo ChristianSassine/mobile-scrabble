@@ -9,15 +9,17 @@ import '../models/chat-models.dart';
 
 class ChatService {
   Socket socket = GetIt.I.get<Socket>();
-  ChatBox chatBox = ChatBox(); // Might need to use something else
 
   ChatRoom? currentRoom; // Might change type
+  List<ChatMessage> messages = [];
   List<ChatRoom> _chatRooms = [];
   final HashSet<String> _joinedRooms = HashSet();
   final HashSet<String> _notifiedRooms = HashSet(); // Contains name of currently notified rooms
 
   // Observables
   final PublishSubject<bool> notifyUpdatedChatrooms = PublishSubject();
+  final PublishSubject<List<ChatMessage>> notifyUpdateMessages = PublishSubject();
+  final PublishSubject<String> notifyNotificationsUpdate = PublishSubject();
 
   ChatService() {
     _joinedRooms.add('main'); // TODO : might do this differently
@@ -37,6 +39,12 @@ class ChatService {
     socket.on(ChatRoomSocketEvents.GetAllChatRooms.event, (data) {
       final chatrooms = (data as List).map((e) => ChatRoom.fromJson(e)).toList();
       _updateChatRooms(chatrooms);
+    });
+
+    socket.on(ChatRoomSocketEvents.SendMessage.event, (data) {
+      final message = ChatMessage.fromJson(data['message']);
+      final roomName = data['room'];
+      _treatReceivedMessage(roomName, message);
     });
   }
 
@@ -58,21 +66,26 @@ class ChatService {
     return _notifiedRooms.contains(roomId);
   }
 
-  void startReading(){
+  void startReadingRoom(ChatRoom room) {
     // TODO: Implement
+    currentRoom = room;
   }
 
-  void stopReading(){
+  void stopReadingRoom() {
     // TODO: Implement
-
+    currentRoom = null;
   }
 
   void joinChatRoom() {
     // TODO: Implement
   }
 
+  void leaveChatRoom() {
+    // TODO: Implement
+  }
+
   void submitMessage(String msg) {
-    // TODO : Implement
+    socket.emit(ChatRoomSocketEvents.SendMessage.event, msg);
   }
 
   // void requestFetchMessages() {
@@ -80,14 +93,22 @@ class ChatService {
   // }
 
   void _emptyMessages() {
-    chatBox.messages = [];
+    messages = [];
   }
 
-  void _receivedMessage(ChatMessage incommingMessage) {
+  void _loadMessages() {
+
+  }
+
+  void _treatReceivedMessage(String roomName, ChatMessage message) {
     // TODO: Implement and take into account notifications
-    // if (incommingMessage.username != authService.user!.username) {
-    //   chatBox.addMessage(incommingMessage);
-    // }
+    if (roomName == currentRoom?.name){
+      messages.add(message);
+      notifyUpdateMessages.add(messages);
+      return;
+    }
+    if (_joinedRooms.contains(roomName)) _notifiedRooms.add(roomName);
+    notifyNotificationsUpdate.add(roomName);
   }
 
   void _userJoined(String username) {
