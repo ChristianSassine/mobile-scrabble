@@ -6,7 +6,16 @@ enum ChatRoomSocketEvents {
   LeaveChatRoom('leaveChatRoom'),
   JoinChatRoomSession('joinChatRoomSession'),
   LeaveChatRoomSession('leaveChatRoomSession'),
-  GetAllChatRooms('getAllChatRooms');
+  GetAllChatRooms('getAllChatRooms'),
+  CreateChatRoomError('createChatRoomError'),
+  DeleteChatRoomNotFoundError('deleteChatRoomNotFoundError'),
+  DeleteChatNotCreatorError('deleteChatNotCreatorError'),
+  JoinChatRoomNotFoundError('joinChatRoomNotFoundError'),
+  LeaveChatRoomNotFoundError('leaveChatRoomNotFoundError'),
+  JoinChatRoomSessionNotFoundError('joinChatRoomSessionNotFoundError'),
+  LeaveChatRoomSessionNotFoundError('leaveChatRoomSessionNotFoundError'),
+  SendMessageError('sendMessageError')
+  ;
 
   const ChatRoomSocketEvents(this.event);
 
