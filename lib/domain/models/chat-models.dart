@@ -12,25 +12,22 @@ class ChatRoom {
 }
 
 class ChatMessage {
-  final String username;
-  final String type;
+  final String userId;
   final String message;
-  final String timeStamp;
+  final String date;
 
-  ChatMessage(this.username, this.type, this.message, this.timeStamp);
+  ChatMessage(this.userId, this.message, this.date);
 
   ChatMessage.fromJson(json)
-      : username = json['username'],
-        type = json['type'],
+      : userId = json['userId'],
         message = json['message'],
-        timeStamp = json['timeStamp'];
+        date = json['date'];
 
 
   Map toJson() => {
-        "username": username,
-        "type": type,
+        "userId": userId,
         "message": message,
-        "timeStamp": timeStamp
+        "date": date
       };
 }
 

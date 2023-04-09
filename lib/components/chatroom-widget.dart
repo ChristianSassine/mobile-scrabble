@@ -126,33 +126,33 @@ class _ChatboxState extends State<Chatbox> {
   }
 
   Widget _buildMessage(ChatMessage message) {
-    if (message.type == MessageType.CLIENT.value) {
-      return Card(
-        color: _userService.user!.username == message.username
-            ? Colors.white
-            : Colors.lightGreen,
-        child: ListTile(
-          leading: Text("${message.username}: ",
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          title: Text(message.message),
-          trailing: Text("| ${message.timeStamp}"),
-        ),
-      );
-    }
-    if (message.type == MessageType.CLIENT.value) {
-      return Card(
-        child: ListTile(
-          leading: Text("${message.username}: "),
-          title: Text(message.message),
-          trailing: Text("| ${message.timeStamp}"),
-        ),
-      );
-    }
+    // if (message.type == MessageType.CLIENT.value) {
+    //   return Card(
+    //     color: _userService.user!.username == message.username
+    //         ? Colors.white
+    //         : Colors.lightGreen,
+    //     child: ListTile(
+    //       leading: Text("${message.username}: ",
+    //           style: const TextStyle(fontWeight: FontWeight.bold)),
+    //       title: Text(message.message),
+    //       trailing: Text("| ${message.timeStamp}"),
+    //     ),
+    //   );
+    // }
+    // if (message.type == MessageType.CLIENT.value) {
+    //   return Card(
+    //     child: ListTile(
+    //       leading: Text("${message.username}: "),
+    //       title: Text(message.message),
+    //       trailing: Text("| ${message.timeStamp}"),
+    //     ),
+    //   );
+    // }
     return Card(
       child: ListTile(
-        leading: Text(message.username),
-        title: Center(child: Text(message.message)),
-        trailing: Text(message.timeStamp),
+        leading: Text("test"),
+        subtitle: Center(child: Text(message.message)),
+        trailing: Text(message.date),
       ),
     );
   }

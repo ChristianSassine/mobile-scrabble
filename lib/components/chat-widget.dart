@@ -171,6 +171,7 @@ class _ChatWidgetState extends State<ChatWidget>
                   trailing: OutlinedButton(
                     child: badges.Badge(child: Text('JOIN')),
                     onPressed: () {
+                      _chatService.startRoomSession(room);
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ChatRoomWidget()));
                     },

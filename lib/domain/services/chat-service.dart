@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:rxdart/rxdart.dart';
@@ -22,11 +23,12 @@ class ChatService {
   final PublishSubject<String> notifyNotificationsUpdate = PublishSubject();
 
   ChatService() {
-    _joinedRooms.add('main'); // TODO : might do this differently
     initSocketListeners();
   }
 
   void init() {
+    _joinedRooms.add('main'); // TODO : might do this differently
+    requestJoinChatRoom('main'); // TODO : same here
     socket.emit(ChatRoomSocketEvents.GetAllChatRooms.event);
   }
 
@@ -42,10 +44,20 @@ class ChatService {
     });
 
     socket.on(ChatRoomSocketEvents.SendMessage.event, (data) {
-      final message = ChatMessage.fromJson(data['message']);
+      final message = ChatMessage.fromJson(data['newMessage']);
       final roomName = data['room'];
       _treatReceivedMessage(roomName, message);
     });
+
+    socket.on(ChatRoomSocketEvents.JoinChatRoom.event, (data) {
+      final room = ChatRoom.fromJson(data);
+      _joinChatRoom(room.name);
+    });
+
+    // TODO: Wait for implementation
+    // socket.on(ChatRoomSocketEvents.GetRoomMessages.event, (data) {
+    //   messages = (data as List).map((message) => ChatMessage.fromJson(message)).toList();
+    // });
   }
 
   void _updateChatRooms(List<ChatRoom> chatrooms) {
@@ -66,18 +78,25 @@ class ChatService {
     return _notifiedRooms.contains(roomId);
   }
 
-  void startReadingRoom(ChatRoom room) {
+  void startRoomSession(ChatRoom room) {
     // TODO: Implement
     currentRoom = room;
+    _loadMessages();
   }
 
-  void stopReadingRoom() {
+  void stopRoomSession() {
     // TODO: Implement
     currentRoom = null;
   }
 
-  void joinChatRoom() {
+  void requestJoinChatRoom(String roomName) {
     // TODO: Implement
+    socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, roomName);
+  }
+
+  void _joinChatRoom(String roomName){
+    _joinedRooms.add(roomName);
+    notifyUpdatedChatrooms.add(true);
   }
 
   void leaveChatRoom() {
@@ -85,7 +104,7 @@ class ChatService {
   }
 
   void submitMessage(String msg) {
-    socket.emit(ChatRoomSocketEvents.SendMessage.event, msg);
+    socket.emit(ChatRoomSocketEvents.SendMessage.event, [currentRoom?.name, msg]);
   }
 
   // void requestFetchMessages() {
@@ -102,6 +121,7 @@ class ChatService {
 
   void _treatReceivedMessage(String roomName, ChatMessage message) {
     // TODO: Implement and take into account notifications
+    debugPrint("received message from ${message.userId} :  ${message.message}");
     if (roomName == currentRoom?.name){
       messages.add(message);
       notifyUpdateMessages.add(messages);
