@@ -137,6 +137,7 @@
     "user_profile": {
         "title": "Profile utilisateur",
         "settings_button": "Paramètres",
+        "ranking": "Points de classement",
         "statistics": {
             "label": "Statistiques",
             "avg_time": "Temps moy. (min/match)",
@@ -191,6 +192,7 @@
     },
     "avatar": {
         "title": "Choisis ton avatar",
+        "or_label": "OU",
         "close": "Fermer",
         "error": "Erreur lors du chargement des images. Veuillez réessayer.",
         "take_image": "Prendre une photo"

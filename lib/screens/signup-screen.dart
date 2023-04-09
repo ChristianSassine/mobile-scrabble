@@ -104,12 +104,6 @@ class _SignUpFormState extends State<SignUpForm> {
     registerSub = _authService.notifyRegister.stream.listen((event) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(
           FlutterI18n.translate(context, "auth.signup.success")));
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => MenuScreen(
-                  title: FlutterI18n.translate(
-                      context, "menu_screen.screen_name"))),
-          (route) => false);
     });
 
     errorSub = _authService.notifyError.stream.listen((event) {

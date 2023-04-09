@@ -62,19 +62,21 @@ class HistoryEvent {
 class UserStats {
   final int loss;
   final int win;
+  final int ranking;
   final int gameCount;
   final int totalGameScore;
   final double averageGameScore;
   final String averageGameTime;
 
   UserStats(this.gameCount, this.loss, this.win, this.totalGameScore,
-      this.averageGameScore, this.averageGameTime);
+      this.averageGameScore, this.averageGameTime, this.ranking);
 
   UserStats.fromJson(json)
       : loss = json['loss'],
         win = json['win'],
         gameCount = json['gameCount'],
         totalGameScore = json['totalGameScore'],
+        ranking = json['ranking'],
         averageGameScore = json['averageGameScore'] is int
             ? json['averageGameScore'].toDouble()
             : json['averageGameScore'],

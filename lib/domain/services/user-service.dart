@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
-import 'package:mobile/domain/models/iuser-model.dart';
+import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/user-profile-models.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
@@ -54,17 +54,6 @@ class UserService {
     throw ("failed to fetch stats");
   }
 
-  Future<int> getScore() async {
-    if (stats == null) {
-      fetchStats();
-    }
-    final response = await stats;
-    if (response!.statusCode == HttpStatus.ok) {
-      return UserStats.fromJson(jsonDecode(response.body)).totalGameScore;
-    }
-    throw ("failed to fetch stats");
-  }
-
   Future<List<ConnectionHistory>> getConnections() async {
     if (histories == null) {
       fetchHistories();
@@ -107,8 +96,13 @@ class UserService {
     debugPrint("Updating user...");
     user = newUser;
     if (newUser == null) return;
-    final urlResponse = await _httpService.getProfilePicture();
-    user!.profilePicture!.key = jsonDecode(urlResponse.body)['url'];
+    final response = await _httpService.getProfilePicture();
+    if (response.statusCode == HttpStatus.ok) {
+      user!.profilePicture!.key = jsonDecode(response.body)['url'];
+      return;
+    }
+    debugPrint("Failed to fetch user profile avatar");
+    throw("error fetching user profile picture");
   }
 
   // Modify username and password

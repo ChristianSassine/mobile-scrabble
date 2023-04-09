@@ -92,24 +92,24 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                       child: isUser ? null : const Icon(Icons.person),
                     ),
                     FutureBuilder(
-                      future: _userService.getStats(),
-                      builder: (context, snapshot) {
-                        final hasData = snapshot.connectionState ==
-                            ConnectionState.done &&
-                            snapshot.hasData;
-                        final stats = snapshot.data;
-                        return RichText(
-                            text: TextSpan(children: [
-                              TextSpan(
-                                  text: "Score : ",
-                                  style: theme.textTheme.titleMedium),
-                              TextSpan(
-                                  text: hasData ? "${stats!.totalGameScore}" : "...",
-                                  style: theme.textTheme.titleMedium
-                                      ?.copyWith(fontWeight: FontWeight.bold))
-                            ]));
-                      }
-                    ),
+                        future: _userService.getStats(),
+                        builder: (context, snapshot) {
+                          final hasData = snapshot.connectionState ==
+                                  ConnectionState.done &&
+                              snapshot.hasData;
+                          final stats = snapshot.data;
+                          return RichText(
+                              text: TextSpan(children: [
+                            TextSpan(
+                                text:
+                                    "${FlutterI18n.translate(context, "user_profile.ranking")} : ",
+                                style: theme.textTheme.titleMedium),
+                            TextSpan(
+                                text: hasData ? "${stats!.ranking}" : "...",
+                                style: theme.textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold))
+                          ]));
+                        }),
                     OutlinedButton(
                         onPressed: () {
                           Navigator.of(context)

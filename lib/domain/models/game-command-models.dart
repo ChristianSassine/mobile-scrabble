@@ -1,5 +1,5 @@
 import 'package:mobile/domain/enums/letter-enum.dart';
-import 'package:mobile/domain/models/iuser-model.dart';
+import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
 
 class Coordinate {

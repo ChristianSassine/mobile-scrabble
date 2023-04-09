@@ -124,10 +124,10 @@ class _AvatarSelectorDialogState extends State<AvatarSelectorDialog> {
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 10.0),
                 ),
-                Row(children: const <Widget>[
-                  Expanded(child: Divider()),
-                  Text("OU"),
-                  Expanded(child: Divider()),
+                Row(children: <Widget>[
+                  const Expanded(child: Divider()),
+                  Text(FlutterI18n.translate(context, "avatar.or_label")),
+                  const Expanded(child: Divider()),
                 ]),
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 10.0),

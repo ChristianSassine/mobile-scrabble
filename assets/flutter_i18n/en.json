@@ -136,6 +136,7 @@
     "user_profile": {
         "title": "User profile",
         "settings_button": "Settings",
+        "ranking": "Ranking points",
         "statistics": {
             "label": "Statistics",
             "avg_time": "Avg. Time (min/match)",
@@ -190,6 +191,7 @@
     },
     "avatar": {
         "title": "Choose your avatar",
+        "or_label": "OR",
         "close": "Close",
         "error": "Error while loading the default avatar. Please try again.",
         "take_image": "Take an image"

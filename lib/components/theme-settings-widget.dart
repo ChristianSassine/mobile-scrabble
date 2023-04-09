@@ -3,7 +3,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/theme-dropdown-widget.dart';
 import 'package:mobile/domain/enums/themes.dart';
-import 'package:mobile/domain/services/theme-service.dart';
+import 'package:mobile/domain/services/settings-service.dart';
 
 class ThemesSettings extends StatefulWidget {
   const ThemesSettings({
@@ -16,10 +16,12 @@ class ThemesSettings extends StatefulWidget {
 
 class _ThemesSettingsState extends State<ThemesSettings> {
   bool isDynamic = false;
-  final _themeService = GetIt.I.get<ThemeService>();
+  final _settingsService = GetIt.I.get<SettingsService>();
 
   @override
   Widget build(BuildContext context) {
+    isDynamic = _settingsService.isDynamic;
+
     return Column(
       children: [
         Text("${FlutterI18n.translate(context, "setting.theme")} "),
@@ -30,8 +32,7 @@ class _ThemesSettingsState extends State<ThemesSettings> {
                 value: isDynamic,
                 onChanged: (bool value) {
                   setState(() {
-                    isDynamic = value;
-                    _themeService.switchMode(value);
+                    _settingsService.switchThemeMode(value);
                   });
                 }),
             Text(FlutterI18n.translate(context, "setting.dynamic")),
