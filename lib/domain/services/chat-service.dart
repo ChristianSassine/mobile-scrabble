@@ -2,45 +2,69 @@ import 'dart:collection';
 
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
-import 'package:mobile/domain/services/user-service.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import '../models/chat-models.dart';
 
 class ChatService {
   Socket socket = GetIt.I.get<Socket>();
-  final UserService _userService = GetIt.I.get<UserService>();
   ChatBox chatBox = ChatBox(); // Might need to use something else
 
-  String? currentRoom; // Might change type
-  final availableRooms = [];
-  var joinedRooms = [];
-  final _notifiedRooms =
-      HashSet(); // Contains name of currently notified rooms
+  ChatRoom? currentRoom; // Might change type
+  List<ChatRoom> _chatRooms = [];
+  final HashSet<String> _joinedRooms = HashSet();
+  final HashSet<String> _notifiedRooms = HashSet(); // Contains name of currently notified rooms
+
+  // Observables
+  final PublishSubject<bool> notifyUpdatedChatrooms = PublishSubject();
 
   ChatService() {
+    _joinedRooms.add('main'); // TODO : might do this differently
     initSocketListeners();
   }
 
-  void initSocketListeners() {
-    // TODO: Implement
-    socket.on(ChatRoomSocketEvents.GetAllChatRooms.event, (data) => _getChatRooms(data));
+  void init() {
+    socket.emit(ChatRoomSocketEvents.GetAllChatRooms.event);
   }
 
-  _getChatRooms(data) { // TODO: replace with chatroom arrray
-    (data as List).where((element) => joinedRooms.contains(element)).toList();
+  // Getters
+  get availableRooms => _chatRooms.where((e) => !_joinedRooms.contains(e.name)).toList();
+  get joinedRooms => _chatRooms.where((e) => _joinedRooms.contains(e.name)).toList();
 
+  void initSocketListeners() {
+    // TODO: Implement
+    socket.on(ChatRoomSocketEvents.GetAllChatRooms.event, (data) {
+      final chatrooms = (data as List).map((e) => ChatRoom.fromJson(e)).toList();
+      _updateChatRooms(chatrooms);
+    });
+  }
+
+  void _updateChatRooms(List<ChatRoom> chatrooms) {
+    _chatRooms = chatrooms;
+    notifyUpdatedChatrooms.add(true);
+  }
+
+  _sanitizeRooms(rooms) {
+    // TODO: might be removed
     // Remove from joined rooms if it doesn't exist anymore (Edge case)
     final tempHashSet = _notifiedRooms;
-    for (var element in (data as List)){
-      tempHashSet.remove(element);
+    for (var element in rooms) {
+      tempHashSet.remove(element.name);
     }
-
-    joinedRooms = data;
   }
 
   bool roomUnread(String roomId) {
     return _notifiedRooms.contains(roomId);
+  }
+
+  void startReading(){
+    // TODO: Implement
+  }
+
+  void stopReading(){
+    // TODO: Implement
+
   }
 
   void joinChatRoom() {

@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:get_it/get_it.dart';
 import 'package:mobile/components/chatroom-widget.dart';
+import 'package:mobile/domain/models/chat-models.dart';
+import 'package:mobile/domain/services/chat-service.dart';
 
 class SideChatWidget extends StatefulWidget {
   const SideChatWidget({Key? key}) : super(key: key);
@@ -38,13 +43,33 @@ class ChatWidget extends StatefulWidget {
 
 class _ChatWidgetState extends State<ChatWidget>
     with SingleTickerProviderStateMixin {
+  final _chatService = GetIt.I.get<ChatService>();
+
   late final TabController _tabController =
       TabController(length: 2, vsync: this);
   final _searchBarController = TextEditingController();
 
+  // Rooms
+  List<ChatRoom> _availableRooms = [];
+  List<ChatRoom> _joinedRooms = [];
+  List<ChatRoom> _searchedAvailableRooms = [];
+
+  // Listeners
+  late final StreamSubscription _updateRoomsSub;
+
   @override
   void initState() {
     super.initState();
+    _availableRooms = _chatService.availableRooms;
+    _joinedRooms = _chatService.joinedRooms;
+
+    _updateRoomsSub = _chatService.notifyUpdatedChatrooms.stream.listen((event) {
+      setState(() {
+        _availableRooms = _chatService.availableRooms;
+        _joinedRooms = _chatService.joinedRooms;
+      });
+    });
+
     if (widget.inChat){
       Future(() {
         Navigator.of(context)
@@ -54,8 +79,11 @@ class _ChatWidgetState extends State<ChatWidget>
     }
   }
 
-  final _availableRooms = ["a", "b", "c", "ROOM 1"];
-  final _searchedAvailableRooms = [];
+  @override
+  dispose() {
+    _updateRoomsSub.cancel();
+    super.dispose();
+  }
 
   _onSearchRooms(String search) {
     _searchedAvailableRooms.clear();
@@ -64,7 +92,7 @@ class _ChatWidgetState extends State<ChatWidget>
       return;
     }
     for (var room in _availableRooms) {
-      if (room.contains(search)) _searchedAvailableRooms.add(room);
+      if (room.name.contains(search)) _searchedAvailableRooms.add(room);
     }
     setState(() {});
   }
@@ -77,7 +105,7 @@ class _ChatWidgetState extends State<ChatWidget>
           itemBuilder: (context, i) {
             return Card(
               child: ListTile(
-                title: Text(_searchedAvailableRooms[i]),
+                title: Text(_searchedAvailableRooms[i].name),
                 trailing: OutlinedButton(
                   child: Text('JOIN'),
                   onPressed: () {},
@@ -91,7 +119,7 @@ class _ChatWidgetState extends State<ChatWidget>
         itemBuilder: (context, i) {
           return Card(
             child: ListTile(
-              title: Text(_availableRooms[i]),
+              title: Text(_availableRooms[i].name),
               trailing: OutlinedButton(
                 child: Text('JOIN'),
                 onPressed: () {},
@@ -136,10 +164,10 @@ class _ChatWidgetState extends State<ChatWidget>
         // Content of each tab (bodies)
         child: TabBarView(controller: _tabController, children: [
           ListView(
-            children: [
+            children: _joinedRooms.map((room) =>
               Card(
                 child: ListTile(
-                  title: Text("Room Name"),
+                  title: Text(room.name),
                   trailing: OutlinedButton(
                     child: badges.Badge(child: Text('JOIN')),
                     onPressed: () {
@@ -149,7 +177,7 @@ class _ChatWidgetState extends State<ChatWidget>
                   ),
                 ),
               )
-            ],
+            ).toList()
           ),
           Column(
             children: [

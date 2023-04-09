@@ -6,6 +6,7 @@ import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/models/iuser-model.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
+import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:rxdart/rxdart.dart';
@@ -18,6 +19,7 @@ class AuthService {
   final _httpService = GetIt.I.get<HttpHandlerService>();
   final _userService = GetIt.I.get<UserService>();
   final _avatarService = GetIt.I.get<AvatarService>();
+  final _chatService = GetIt.I.get<ChatService>();
   final _socket = GetIt.I.get<Socket>();
 
   Subject<bool> notifyLogin = PublishSubject();
@@ -44,6 +46,7 @@ class AuthService {
           ..disconnect()
           ..connect();
 
+        _chatService.init();
         notifyLogin.add(true);
         return;
       }

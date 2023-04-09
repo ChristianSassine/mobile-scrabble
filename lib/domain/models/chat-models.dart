@@ -1,5 +1,16 @@
 import 'package:rxdart/rxdart.dart';
 
+class ChatRoom {
+  final String name;
+  final String? creatorId;
+  final bool? isDeletable;
+
+  ChatRoom.fromJson(json)
+      : name = json['name'],
+        creatorId = json['creatorId'],
+        isDeletable = json['isDeletable'];
+}
+
 class ChatMessage {
   final String username;
   final String type;
