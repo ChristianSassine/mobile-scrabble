@@ -3,8 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:mobile/components/chatroom-widget.dart';
 
-class SideChatWidget extends StatelessWidget {
+class SideChatWidget extends StatefulWidget {
   const SideChatWidget({Key? key}) : super(key: key);
+
+  @override
+  State<SideChatWidget> createState() => _SideChatWidgetState();
+}
+
+class _SideChatWidgetState extends State<SideChatWidget> {
+  @override
+  dispose(){
+    debugPrint("SideChatWidgetDisposed");
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
