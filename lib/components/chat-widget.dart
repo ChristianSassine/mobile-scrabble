@@ -17,7 +17,7 @@ class SideChatWidget extends StatefulWidget {
 
 class _SideChatWidgetState extends State<SideChatWidget> {
   @override
-  dispose(){
+  dispose() {
     debugPrint("SideChatWidgetDisposed");
     super.dispose();
   }
@@ -25,13 +25,15 @@ class _SideChatWidgetState extends State<SideChatWidget> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      onGenerateRoute: (settings){
-        return CupertinoPageRoute(builder: (BuildContext context) => ChatWidget(inChat: false,));
+      onGenerateRoute: (settings) {
+        return CupertinoPageRoute(
+            builder: (BuildContext context) => ChatWidget(
+                  inChat: false,
+                ));
       },
     );
   }
 }
-
 
 class ChatWidget extends StatefulWidget {
   const ChatWidget({this.inChat = false, Key? key}) : super(key: key);
@@ -56,6 +58,7 @@ class _ChatWidgetState extends State<ChatWidget>
 
   // Listeners
   late final StreamSubscription _updateRoomsSub;
+  late final StreamSubscription _joinRoomSub;
 
   @override
   void initState() {
@@ -63,17 +66,24 @@ class _ChatWidgetState extends State<ChatWidget>
     _availableRooms = _chatService.availableRooms;
     _joinedRooms = _chatService.joinedRooms;
 
-    _updateRoomsSub = _chatService.notifyUpdatedChatrooms.stream.listen((event) {
+    _updateRoomsSub =
+        _chatService.notifyUpdatedChatrooms.stream.listen((event) {
       setState(() {
         _availableRooms = _chatService.availableRooms;
         _joinedRooms = _chatService.joinedRooms;
       });
     });
 
-    if (widget.inChat){
+    _joinRoomSub = _chatService.notifyJoinRoom.stream.listen((event) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => ChatRoomWidget()));
+    });
+
+    if (widget.inChat) {
       Future(() {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const ChatRoomWidget()))
+            .push(
+                MaterialPageRoute(builder: (context) => const ChatRoomWidget()))
             .then((value) => setState(() {}));
       });
     }
@@ -103,12 +113,16 @@ class _ChatWidgetState extends State<ChatWidget>
       return ListView.builder(
           itemCount: _searchedAvailableRooms.length,
           itemBuilder: (context, i) {
+            final room = _searchedAvailableRooms[i];
+
             return Card(
               child: ListTile(
-                title: Text(_searchedAvailableRooms[i].name),
+                title: Text(room.name),
                 trailing: OutlinedButton(
                   child: Text('JOIN'),
-                  onPressed: () {},
+                  onPressed: () {
+                    _chatService.requestJoinChatRoom(room.name);
+                  },
                 ),
               ),
             );
@@ -117,12 +131,16 @@ class _ChatWidgetState extends State<ChatWidget>
     return ListView.builder(
         itemCount: _availableRooms.length,
         itemBuilder: (context, i) {
+          final room = _availableRooms[i];
+
           return Card(
             child: ListTile(
-              title: Text(_availableRooms[i].name),
+              title: Text(room.name),
               trailing: OutlinedButton(
                 child: Text('JOIN'),
-                onPressed: () {},
+                onPressed: () {
+                  _chatService.requestJoinChatRoom(room.name);
+                },
               ),
             ),
           );
@@ -164,22 +182,19 @@ class _ChatWidgetState extends State<ChatWidget>
         // Content of each tab (bodies)
         child: TabBarView(controller: _tabController, children: [
           ListView(
-            children: _joinedRooms.map((room) =>
-              Card(
-                child: ListTile(
-                  title: Text(room.name),
-                  trailing: OutlinedButton(
-                    child: badges.Badge(child: Text('JOIN')),
-                    onPressed: () {
-                      _chatService.startRoomSession(room);
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ChatRoomWidget()));
-                    },
-                  ),
-                ),
-              )
-            ).toList()
-          ),
+              children: _joinedRooms
+                  .map((room) => Card(
+                        child: ListTile(
+                          title: Text(room.name),
+                          trailing: OutlinedButton(
+                            child: badges.Badge(child: Text('JOIN')),
+                            onPressed: () {
+                              _chatService.requestJoinRoomSession(room);
+                            },
+                          ),
+                        ),
+                      ))
+                  .toList()),
           Column(
             children: [
               Container(

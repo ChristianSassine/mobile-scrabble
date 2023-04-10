@@ -38,7 +38,9 @@ class AuthService {
         _cookie = Cookie.fromSetCookieValue(rawCookie!);
         _httpService.updateCookie(_cookie!);
 
-        IUser user = IUser.fromJson(jsonDecode(response.body)['userData']);
+        final data = jsonDecode(response.body);
+
+        IUser user = IUser.fromJson(data['userData']);
         await _userService.updateUser(user);
 
         _socket.io.options['extraHeaders'] = {'cookie': _cookie};
@@ -46,7 +48,13 @@ class AuthService {
           ..disconnect()
           ..connect();
 
-        _chatService.init();
+        // TODO: Might need to refactor this
+        final chatrooms = (data['userData']['chatRooms'] as List)
+            .map((e) {
+              return e['name'] as String;
+        })
+            .toList();
+        _chatService.init(chatrooms);
         notifyLogin.add(true);
         return;
       }

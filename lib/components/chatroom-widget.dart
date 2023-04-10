@@ -108,20 +108,27 @@ class _ChatboxState extends State<Chatbox> {
 
   final ScrollController _scrollController = ScrollController();
 
+  void _scrollToBottom() {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    messages = _chatService.messages;
+    _scrollToBottom();
+
     chatSub = _chatService.notifyUpdateMessages.stream.listen((value) {
       setState(() {
         messages = _chatService.messages;
       });
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-        );
-      });
+      _scrollToBottom();
     });
   }
 

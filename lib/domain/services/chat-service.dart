@@ -15,31 +15,37 @@ class ChatService {
   List<ChatMessage> messages = [];
   List<ChatRoom> _chatRooms = [];
   final HashSet<String> _joinedRooms = HashSet();
-  final HashSet<String> _notifiedRooms = HashSet(); // Contains name of currently notified rooms
+  final HashSet<String> _notifiedRooms =
+      HashSet(); // Contains name of currently notified rooms
 
   // Observables
+  final PublishSubject<ChatRoom> notifyJoinRoom = PublishSubject();
   final PublishSubject<bool> notifyUpdatedChatrooms = PublishSubject();
-  final PublishSubject<List<ChatMessage>> notifyUpdateMessages = PublishSubject();
+  final PublishSubject<List<ChatMessage>> notifyUpdateMessages =
+      PublishSubject();
   final PublishSubject<String> notifyNotificationsUpdate = PublishSubject();
 
   ChatService() {
     initSocketListeners();
   }
 
-  void init() {
-    _joinedRooms.add('main'); // TODO : might do this differently
-    requestJoinChatRoom('main'); // TODO : same here
+  void init(List<String> joinedChatRooms) {
+    _joinedRooms.addAll(joinedChatRooms);
     socket.emit(ChatRoomSocketEvents.GetAllChatRooms.event);
   }
 
   // Getters
-  get availableRooms => _chatRooms.where((e) => !_joinedRooms.contains(e.name)).toList();
-  get joinedRooms => _chatRooms.where((e) => _joinedRooms.contains(e.name)).toList();
+  get availableRooms =>
+      _chatRooms.where((e) => !_joinedRooms.contains(e.name)).toList();
+
+  get joinedRooms =>
+      _chatRooms.where((e) => _joinedRooms.contains(e.name)).toList();
 
   void initSocketListeners() {
     // TODO: Implement
     socket.on(ChatRoomSocketEvents.GetAllChatRooms.event, (data) {
-      final chatrooms = (data as List).map((e) => ChatRoom.fromJson(e)).toList();
+      final chatrooms =
+          (data as List).map((e) => ChatRoom.fromJson(e)).toList();
       _updateChatRooms(chatrooms);
     });
 
@@ -52,6 +58,14 @@ class ChatService {
     socket.on(ChatRoomSocketEvents.JoinChatRoom.event, (data) {
       final room = ChatRoom.fromJson(data);
       _joinChatRoom(room.name);
+    });
+
+    socket.on(ChatRoomSocketEvents.JoinChatRoomSession.event, (data) {
+      final String roomName = data['name'];
+      final List<ChatMessage> newMessages = (data['messages'] as List)
+          .map((e) => ChatMessage.fromJson(e))
+          .toList();
+      _joinRoomSession(roomName, newMessages);
     });
 
     // TODO: Wait for implementation
@@ -78,13 +92,17 @@ class ChatService {
     return _notifiedRooms.contains(roomId);
   }
 
-  void startRoomSession(ChatRoom room) {
-    // TODO: Implement
-    currentRoom = room;
-    _loadMessages();
+  void requestJoinRoomSession(ChatRoom room) {
+    socket.emit(ChatRoomSocketEvents.JoinChatRoomSession.event, room.name);
   }
 
-  void stopRoomSession() {
+  void _joinRoomSession(String roomName, List<ChatMessage> newMessages) {
+    currentRoom = _chatRooms.firstWhere((element) => element.name == roomName);
+    messages = newMessages;
+    notifyJoinRoom.add(currentRoom!);
+  }
+
+  void requestLeaveRoomSession() {
     // TODO: Implement
     currentRoom = null;
   }
@@ -94,17 +112,19 @@ class ChatService {
     socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, roomName);
   }
 
-  void _joinChatRoom(String roomName){
+  void _joinChatRoom(String roomName) {
     _joinedRooms.add(roomName);
     notifyUpdatedChatrooms.add(true);
   }
 
   void leaveChatRoom() {
     // TODO: Implement
+    socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, currentRoom!.name);
   }
 
   void submitMessage(String msg) {
-    socket.emit(ChatRoomSocketEvents.SendMessage.event, [currentRoom?.name, msg]);
+    socket
+        .emit(ChatRoomSocketEvents.SendMessage.event, [currentRoom?.name, msg]);
   }
 
   // void requestFetchMessages() {
@@ -115,14 +135,10 @@ class ChatService {
     messages = [];
   }
 
-  void _loadMessages() {
-
-  }
-
   void _treatReceivedMessage(String roomName, ChatMessage message) {
     // TODO: Implement and take into account notifications
     debugPrint("received message from ${message.userId} :  ${message.message}");
-    if (roomName == currentRoom?.name){
+    if (roomName == currentRoom?.name) {
       messages.add(message);
       notifyUpdateMessages.add(messages);
       return;
