@@ -82,28 +82,39 @@ class ChatService {
       _joinRoomSession(roomName, newMessages);
     });
 
-    // TODO: Wait for implementation
-    // socket.on(ChatRoomSocketEvents.GetRoomMessages.event, (data) {
-    //   messages = (data as List).map((message) => ChatMessage.fromJson(message)).toList();
-    // });
+    socket.on(ChatRoomSocketEvents.CreateChatRoom.event, (data) {
+      final ChatRoom newRoom = ChatRoom.fromJson(data);
+      _onNewChatRoomCreated(newRoom);
+    });
+
+    socket.on(ChatRoomSocketEvents.CreateChatRoomError.event, (data) {
+      final String name = data as String;
+      _onRoomCreationFail(name);
+    });
+  }
+
+  bool isRoomUnread(String roomId) {
+    return _notifiedRooms.contains(roomId);
+  }
+
+  void createChatRoom(String name){
+    socket.emit(ChatRoomSocketEvents.CreateChatRoom.event, name);
+    _joinedRooms.add(name);
+  }
+
+  void _onRoomCreationFail(String name) {
+    _joinedRooms.remove(name);
+    // TODO : Add showing error
+  }
+
+  void _onNewChatRoomCreated(ChatRoom newRoom) {
+    _chatRooms.add(newRoom);
+    notifyUpdatedChatrooms.add(true);
   }
 
   void _updateChatRooms(List<ChatRoom> chatrooms) {
     _chatRooms = chatrooms;
     notifyUpdatedChatrooms.add(true);
-  }
-
-  _sanitizeRooms(rooms) {
-    // TODO: might be removed
-    // Remove from joined rooms if it doesn't exist anymore (Edge case)
-    final tempHashSet = _notifiedRooms;
-    for (var element in rooms) {
-      tempHashSet.remove(element.name);
-    }
-  }
-
-  bool isRoomUnread(String roomId) {
-    return _notifiedRooms.contains(roomId);
   }
 
   void requestJoinRoomSession(ChatRoom room) {
@@ -122,7 +133,7 @@ class ChatService {
   }
 
   void requestLeaveRoomSession() {
-    // TODO: Implement
+    inRoom = false;
     socket.emit(
         ChatRoomSocketEvents.LeaveChatRoomSession.event, currentRoom!.name);
   }
@@ -164,10 +175,6 @@ class ChatService {
     notifyNotificationsUpdate.add(roomName);
   }
 
-  // void requestFetchMessages() {
-  //   //NEED SERVER IMPLEMENTATION
-  // }
-
   void signalInRoom() {
     inRoom = true;
     _notifiedRooms.remove(currentRoom?.name);
@@ -186,6 +193,15 @@ class ChatService {
     //       MessageType.SYSTEM.value,
     //       "${username} has joined the chat",
     //       DateFormat.Hms().format(DateTime.now())));
+    // }
+
+    // _sanitizeRooms(rooms) {
+    //   // TODO: might be removed
+    //   // Remove from joined rooms if it doesn't exist anymore (Edge case)
+    //   final tempHashSet = _notifiedRooms;
+    //   for (var element in rooms) {
+    //     tempHashSet.remove(element.name);
+    //   }
     // }
   }
 }

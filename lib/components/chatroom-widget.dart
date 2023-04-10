@@ -27,7 +27,7 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
 
   @override
   void dispose() {
-    _chatService.signalClosingRoom();
+    if (_chatService.inRoom) _chatService.signalClosingRoom();
     super.dispose();
   }
 

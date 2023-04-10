@@ -131,7 +131,9 @@
         "triple_word": "TRIPLE\nWORD"
     },
     "chat": {
-        "screen_name": "Chat room"
+        "create_room_label": "Create a new room",
+        "create_room_dialog_label": "Room creation",
+        "create_room_name_label": "Room name"
     },
     "user_profile": {
         "title": "User profile",

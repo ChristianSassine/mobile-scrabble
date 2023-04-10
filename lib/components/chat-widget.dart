@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/chatroom-widget.dart';
 import 'package:mobile/domain/models/chat-models.dart';
@@ -44,9 +45,11 @@ class _ChatWidgetState extends State<ChatWidget>
     with SingleTickerProviderStateMixin {
   final _chatService = GetIt.I.get<ChatService>();
 
+  // Tools
   late final TabController _tabController =
       TabController(length: 2, vsync: this);
   final _searchBarController = TextEditingController();
+  final _newRoomCreationController = TextEditingController();
 
   // Rooms
   List<ChatRoom> _availableRooms = [];
@@ -98,6 +101,28 @@ class _ChatWidgetState extends State<ChatWidget>
       if (room.name.contains(search)) _searchedAvailableRooms.add(room);
     }
     setState(() {});
+  }
+
+  AlertDialog _buildRoomCreationDialog() {
+    return AlertDialog(
+      title: Text(FlutterI18n.translate(context, "chat.create_room_dialog_label")),
+      content: TextFormField(
+        controller: _newRoomCreationController,
+        validator: null, // TODO: Add validation (empty room string)
+        decoration: InputDecoration(
+          hintText:
+              FlutterI18n.translate(context, "chat.create_room_name_label"),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true)
+                  .pop(_newRoomCreationController.text);
+              _newRoomCreationController.clear();
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   ListView _buildAvailableRooms() {
@@ -178,18 +203,23 @@ class _ChatWidgetState extends State<ChatWidget>
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(onPressed: (){}, child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Create a room"),
-                    Icon(Icons.add)
-                  ],
-                )),
+                child: ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                              context: context,
+                              builder: (context) => _buildRoomCreationDialog())
+                          .then((newRoomName) => newRoomName != null
+                              ? _chatService.createChatRoom(newRoomName)
+                              : null);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Text("Create a room"), Icon(Icons.add)],
+                    )),
               ),
               Expanded(
                 child: ListView(
-                    children:
-                    _joinedRooms
+                    children: _joinedRooms
                         .map((room) => Card(
                               child: ListTile(
                                 title: Text(room.name),
