@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/reserve-widget.dart';
 import 'package:mobile/domain/models/game-model.dart';
@@ -22,7 +23,9 @@ class GameInfoBar extends StatelessWidget {
           const SizedBox(height: 25),
           PlayerInfo(),
           const SizedBox(height: 25),
-          GameInfo(draggableKey: draggableKey,),
+          GameInfo(
+            draggableKey: draggableKey,
+          ),
         ],
       ),
     );
@@ -81,7 +84,7 @@ class _GameInfoState extends State<GameInfo> {
                             child: Row(children: [
                               const Icon(Icons.timer),
                               Text(
-                                  " ${_gameService.game!.timerLength - _gameService.game!.turnTimer} secondes")
+                                  " ${_gameService.game!.timerLength - _gameService.game!.turnTimer} ${FlutterI18n.translate(context, "game.second")}s")
                             ]),
                           ),
                         ],
@@ -97,9 +100,9 @@ class _GameInfoState extends State<GameInfo> {
                 onPressed: _gameService.pendingLetters.isEmpty
                     ? null
                     : () => {_gameService.confirmWordPlacement()},
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.all(20.0),
-                  child: Text("Placer"),
+                  child: Text(FlutterI18n.translate(context, "game.place")),
                 )),
             const SizedBox(width: 50),
             ElevatedButton(

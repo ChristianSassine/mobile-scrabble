@@ -209,7 +209,10 @@
         "not_in_rack": "Les lettres ne sont pas dans le chavalet",
         "wrong_turn": "Mauvais tour",
         "reserve": "Réserve",
+        "second": "seconde",
         "letter": "lettre",
-        "exchange_letter_prompt": "Êtes vous sûr de vouloir échanger ces lettres?"
+        "place": "Placer",
+        "exchange_letter_prompt": "Êtes vous sûr de vouloir échanger ces lettres?",
+        "abandon_prompt": "Êtes vous sûr de vouloir abandonner?"
     }
 }

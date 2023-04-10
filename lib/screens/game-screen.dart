@@ -25,11 +25,12 @@ class _GameScreenState extends State<GameScreen> {
 
   late StreamSubscription<String> errorSub;
 
-  _promptAbandonConfirmation() async {
+  _promptAbandonConfirmation(context) async {
     if (await confirm(context,
-        textOK: const Text("Oui"),
-        textCancel: const Text("Non"),
-        content: const Text("Êtes vous sûr de vouloir abandonner?"))) {
+        textOK: Text(FlutterI18n.translate(context, "form.yes")),
+        textCancel: Text(FlutterI18n.translate(context, "form.no")),
+        title: Text(FlutterI18n.translate(context, "game.abandon_prompt")),
+        content: const SizedBox.shrink())) {
       _gameService.abandonGame();
     }
   }
@@ -61,7 +62,9 @@ class _GameScreenState extends State<GameScreen> {
           child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          GameInfoBar(draggableKey: _draggableKey,),
+          GameInfoBar(
+            draggableKey: _draggableKey,
+          ),
           Expanded(
             child: InteractiveViewer(
               panEnabled: false,
@@ -82,7 +85,7 @@ class _GameScreenState extends State<GameScreen> {
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.red,
           child: const Icon(Icons.flag),
-          onPressed: _promptAbandonConfirmation),
+          onPressed: () => _promptAbandonConfirmation(context)),
     );
   }
 }
