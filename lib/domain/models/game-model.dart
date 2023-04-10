@@ -63,6 +63,10 @@ class Game {
       activePlayer = players[activePlayerIndex];
     }
   }
+
+  bool isCurrentPlayersTurn(){
+    return activePlayer != null && currentPlayer.player.user.id == activePlayer!.player.user.id;
+  }
 }
 
 class GamePlayer {

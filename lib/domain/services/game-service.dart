@@ -81,6 +81,8 @@ class GameService {
   }
 
   void placeLetterOnBoard(int x, int y, Letter letter) {
+    if(!game!.isCurrentPlayersTurn()) return;
+
     debugPrint("[GAME SERVICE] Place letter to the board: board[$x][$y] = $letter");
     if (!_isLetterPlacementValid(x, y, letter)) {
       if (draggedLetter != null) cancelDragLetter(); // Wrong move
