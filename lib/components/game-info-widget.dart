@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/reserve-widget.dart';
 import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/services/game-service.dart';
-import 'package:mobile/domain/services/room-service.dart';
 import 'dart:math' as math;
 
 class GameInfoBar extends StatelessWidget {
-  final _gameService = GetIt.I.get<GameService>();
+  final GlobalKey draggableKey;
 
-  GameInfoBar({Key? key}) : super(key: key);
+  GameInfoBar({Key? key, required this.draggableKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class GameInfoBar extends StatelessWidget {
           const SizedBox(height: 25),
           PlayerInfo(),
           const SizedBox(height: 25),
-          GameInfo(),
+          GameInfo(draggableKey: draggableKey,),
         ],
       ),
     );
@@ -30,7 +30,9 @@ class GameInfoBar extends StatelessWidget {
 }
 
 class GameInfo extends StatefulWidget {
-  const GameInfo({Key? key}) : super(key: key);
+  final GlobalKey draggableKey;
+
+  const GameInfo({Key? key, required this.draggableKey}) : super(key: key);
 
   @override
   State<GameInfo> createState() => _GameInfoState();
@@ -73,24 +75,15 @@ class _GameInfoState extends State<GameInfo> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Card(
-                              color: Colors.lightGreen[50],
-                              margin: const EdgeInsets.all(10),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    Text("Réserve"),
-                                    SizedBox(height: 5),
-                                    Text(_gameService.game!.reserveLetterCount.toString())
-                                  ],
-                                ),
-                              )),
-                          Row(children: [
-                            const Icon(Icons.timer),
-                            Text(
-                                " ${_gameService.game!.timerLength - _gameService.game!.turnTimer} secondes")
-                          ]),
+                          LetterReserve(draggableKey: widget.draggableKey),
+                          SizedBox(
+                            width: 125,
+                            child: Row(children: [
+                              const Icon(Icons.timer),
+                              Text(
+                                  " ${_gameService.game!.timerLength - _gameService.game!.turnTimer} secondes")
+                            ]),
+                          ),
                         ],
                       )
                     ],
@@ -133,7 +126,6 @@ class PlayerInfo extends StatefulWidget {
 }
 
 class _PlayerInfoState extends State<PlayerInfo> {
-  final _roomService = GetIt.I.get<RoomService>();
   final _gameService = GetIt.I.get<GameService>();
 
   late StreamSubscription _gameInfoUpdate;

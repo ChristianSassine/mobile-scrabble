@@ -61,7 +61,7 @@ class _GameScreenState extends State<GameScreen> {
           child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          GameInfoBar(),
+          GameInfoBar(draggableKey: _draggableKey,),
           Expanded(
             child: InteractiveViewer(
               panEnabled: false,

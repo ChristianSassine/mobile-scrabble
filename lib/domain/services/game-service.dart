@@ -47,7 +47,7 @@ class GameService {
 
     while (game != null) {
       game!.turnTimer += 1;
-      notifyGameInfoChange.add(true);
+      notifyGameInfoChange.add(false);
       await Future.delayed(const Duration(seconds: 1));
     }
   }
@@ -67,7 +67,6 @@ class GameService {
 
   void _publicViewUpdate(GameInfo gameInfo) {
     if (game == null) return;
-
 
     game!.update(gameInfo);
     notifyGameInfoChange.add(true);
@@ -284,15 +283,19 @@ class GameService {
   }
 
   void skipTurn() {
-    _socket.emit("skip");
+    _socket.emit(GameSocketEvent.Skip.event);
   }
 
   void abandonGame() {
-    _socket.emit("AbandonGame");
+    _socket.emit(GameSocketEvent.AbandonGame.event);
     game = null;
   }
 
   void quitGame() {
-    _socket.emit("quitGame");
+    _socket.emit(GameSocketEvent.QuitGame.event);
+  }
+
+  void exchangeLetters(List<Letter> lettersToExchange) {
+    _socket.emit(GameSocketEvent.Exchange.event, lettersToExchange.map<String>((letter) => letter.character).toList());
   }
 }

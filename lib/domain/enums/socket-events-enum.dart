@@ -45,6 +45,7 @@ enum GameSocketEvent {
   Exchange('ExchangeLetters'),
   Skip('skip'),
   QuitGame('quitGame'),
+  AbandonGame('AbandonGame'),
   ReserveCommand('reserveCommand'),
   ClueCommand('clueCommand'),
   NextTurn('nextTurn'),

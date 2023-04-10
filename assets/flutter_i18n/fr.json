@@ -39,7 +39,9 @@
         "game_visibility": "Visibilité de la partie",
         "private": "Privée",
         "public": "Public",
-        "create_game": "Créer une partie"
+        "create_game": "Créer une partie",
+        "yes": "Oui",
+        "no": "Non"
     },
     "waiting_room": {
         "screen_name": "Salle d'attente",
@@ -205,6 +207,9 @@
     "game": {
         "invalid_word": "n'est pas un mot valide",
         "not_in_rack": "Les lettres ne sont pas dans le chavalet",
-        "wrong_turn": "Mauvais tour"
+        "wrong_turn": "Mauvais tour",
+        "reserve": "Réserve",
+        "letter": "lettre",
+        "exchange_letter_prompt": "Êtes vous sûr de vouloir échanger ces lettres?"
     }
 }

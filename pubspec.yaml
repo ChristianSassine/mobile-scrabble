@@ -40,6 +40,7 @@ flutter:
     assets:
         - assets/images/scrabble_logo.png
         - assets/images/test.png
+        - assets/images/exchange.png
         - development.env
         - production.env
         - assets/flutter_i18n/
