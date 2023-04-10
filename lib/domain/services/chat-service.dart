@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
+import 'package:mobile/domain/services/user-service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -10,6 +11,7 @@ import '../models/chat-models.dart';
 
 class ChatService {
   Socket socket = GetIt.I.get<Socket>();
+  final _userService = GetIt.I.get<UserService>();
 
   // DataStructures
   ChatRoom? currentRoom; // Might change type
@@ -96,10 +98,11 @@ class ChatService {
       final room = ChatRoom.fromJson(data);
       _leaveRoom(room.name);
     });
-  }
 
-  bool isRoomUnread(String roomId) {
-    return _notifiedRooms.contains(roomId);
+    socket.on(ChatRoomSocketEvents.DeleteChatRoom.event, (data) {
+      final room = ChatRoom.fromJson(data);
+      _deleteChatRoom(room);
+    });
   }
 
   void requestLeaveRoom(String name) {
@@ -110,6 +113,12 @@ class ChatService {
 
   void _leaveRoom(String name){
     _joinedRooms.remove(name);
+    notifyUpdatedChatrooms.add(true);
+  }
+
+  void _deleteChatRoom(ChatRoom room){
+    _joinedRooms.remove(room.name);
+    _chatRooms.removeWhere((chatRoom) => chatRoom.name == room.name);
     notifyUpdatedChatrooms.add(true);
   }
 
@@ -189,6 +198,12 @@ class ChatService {
     if (_joinedRooms.contains(roomName)) _notifiedRooms.add(roomName);
     notifyNotificationsUpdate.add(roomName);
   }
+
+  bool isRoomUnread(String roomId) {
+    return _notifiedRooms.contains(roomId);
+  }
+
+  // bool isRoomOwner() {}
 
   void onInRoom() {
     inRoom = true;

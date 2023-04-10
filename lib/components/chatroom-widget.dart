@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chat-service.dart';
@@ -33,6 +32,8 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final room = _chatService.currentRoom!;
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -45,9 +46,9 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
               Navigator.of(context).pop();
             },
           ),
-          title: Text(_chatService.currentRoom!.name),
+          title: Text(room.name),
           actions: [ElevatedButton(onPressed: () {
-            _chatService.requestLeaveRoom(_chatService.currentRoom!.name);
+            _chatService.requestLeaveRoom(room.name);
             Navigator.of(context).pop();
           }, child: Text('LEAVE'))],
         ),
