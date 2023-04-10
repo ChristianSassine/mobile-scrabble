@@ -1,7 +1,7 @@
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
-import 'package:mobile/domain/models/iuser-model.dart';
+import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
 
 class Game {

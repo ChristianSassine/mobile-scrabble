@@ -4,10 +4,11 @@ import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
-import 'package:mobile/domain/models/iuser-model.dart';
+import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
+import 'package:mobile/domain/services/settings-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -20,6 +21,7 @@ class AuthService {
   final _userService = GetIt.I.get<UserService>();
   final _avatarService = GetIt.I.get<AvatarService>();
   final _chatService = GetIt.I.get<ChatService>();
+  final _settingsService = GetIt.I.get<SettingsService>();
   final _socket = GetIt.I.get<Socket>();
 
   Subject<bool> notifyLogin = PublishSubject();
@@ -38,10 +40,11 @@ class AuthService {
         _cookie = Cookie.fromSetCookieValue(rawCookie!);
         _httpService.updateCookie(_cookie!);
 
-        final data = jsonDecode(response.body);
-
-        IUser user = IUser.fromJson(data['userData']);
+        final data = jsonDecode(response.body)['userData'];
+        IUser user = IUser.fromJson(data);
         await _userService.updateUser(user);
+        final SettingsInfo settingsInfo = SettingsInfo.fromJson(data);
+        _settingsService.loadConfig(settingsInfo);
 
         _socket.io.options['extraHeaders'] = {'cookie': _cookie};
         _socket
@@ -49,11 +52,9 @@ class AuthService {
           ..connect();
 
         // TODO: Might need to refactor this
-        final chatrooms = (data['userData']['chatRooms'] as List)
-            .map((e) {
-              return e['name'] as String;
-        })
-            .toList();
+        final chatrooms = (data['userData']['chatRooms'] as List).map((e) {
+          return e['name'] as String;
+        }).toList();
         _chatService.init(chatrooms);
         notifyLogin.add(true);
         return;
@@ -86,6 +87,8 @@ class AuthService {
       notifyRegister.add(true);
 
       await connectUser(username, password);
+      await _settingsService.saveConfig();
+
       return;
     }
     notifyError.add("Failed Login");

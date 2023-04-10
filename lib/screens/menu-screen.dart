@@ -233,14 +233,9 @@ class _FooterState extends State<Footer> {
           Positioned(
               right: 0,
               child: Row(
-                children: [
-                  const Icon(Icons.language),
-                  LanguageDropdown(notifyParent: () {
-                    setState(() => {});
-                    widget.notifyParent();
-                    debugPrint(
-                        FlutterI18n.currentLocale(context)!.languageCode);
-                  }),
+                children: const [
+                  Icon(Icons.language),
+                  LanguageDropdown(),
                 ],
               )),
           Row(

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mobile/domain/services/language-service.dart';
+import 'package:mobile/domain/services/settings-service.dart';
 
 class LanguageDropdown extends StatefulWidget {
-  final Function() notifyParent;
-
   const LanguageDropdown({
-    Key? key, required this.notifyParent
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -15,7 +12,7 @@ class LanguageDropdown extends StatefulWidget {
 }
 
 class _LanguageDropdownState extends State<LanguageDropdown> {
-  final _languageService = GetIt.I.get<LanguageService>();
+  final _settingsService = GetIt.I.get<SettingsService>();
   String? dropdownValue;
 
   // Those labels don't need to be translated (We want the language name in the language itself)
@@ -26,16 +23,13 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
   ];
 
   void _changeLanguage(Locale locale) {
-    _languageService.switchLocale(context, locale);
-    setState(() {
-      dropdownValue = locale.languageCode;
-    });
-    widget.notifyParent(); //Refresh the parent widget
+    _settingsService.switchLocale(context, locale);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    dropdownValue ??= FlutterI18n.currentLocale(context)!.languageCode;
+    dropdownValue = _settingsService.currentLocale.languageCode;
 
     return DropdownButton<String>(
       value: dropdownValue,
