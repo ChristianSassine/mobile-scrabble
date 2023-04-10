@@ -73,6 +73,10 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
             : null;
       });
     });
+
+    if(_dictionaryService.dictionaries.isNotEmpty){
+      _selectedDictionary = _dictionaryService.dictionaries[0].title;
+    }
   }
 
   @override

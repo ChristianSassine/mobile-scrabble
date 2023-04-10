@@ -195,5 +195,8 @@
         "close": "Close",
         "error": "Error while loading the default avatar. Please try again.",
         "take_image": "Take an image"
+    },
+    "game": {
+        "invalid_word": "is not a valid word"
     }
 }

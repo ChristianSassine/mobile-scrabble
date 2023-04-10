@@ -247,6 +247,9 @@ class GameService {
   }
 
   void _successfulWordPlacement(){
+    if(pendingLetters.isEmpty) return;
+
+    debugPrint("[Game Service] Placement success");
     pendingLetters = [];
     game!.gameboard.notifyBoardChanged.add(true);
   }
@@ -263,6 +266,11 @@ class GameService {
 
     pendingLetters = [];
     game!.gameboard.notifyBoardChanged.add(true);
+
+    if (error['stringFormat'] != null){
+      error = error['stringFormat'];
+    }
+
     notifyGameError.add(error);
   }
 

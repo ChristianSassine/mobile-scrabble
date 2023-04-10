@@ -13,7 +13,9 @@ import 'package:mobile/screens/end-game-screen.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key,});
+  const GameScreen({
+    super.key,
+  });
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -34,8 +36,8 @@ class _GameScreenState extends State<GameScreen> {
   void initState() {
     super.initState();
     errorSub = _gameService.notifyGameError.stream.listen((event) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
-    FlutterI18n.translate(context, event)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBarFactory.redSnack('"$event" ${FlutterI18n.translate(context, "game.invalid_word")}'));
     });
   }
 

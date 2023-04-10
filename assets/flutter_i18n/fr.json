@@ -196,5 +196,8 @@
         "close": "Fermer",
         "error": "Erreur lors du chargement des images. Veuillez réessayer.",
         "take_image": "Prendre une photo"
+    },
+    "game": {
+        "invalid_word": "n'est pas un mot valide"
     }
 }
