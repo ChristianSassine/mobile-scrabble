@@ -20,6 +20,7 @@ class ChatService {
 
   // Observables
   final PublishSubject<ChatRoom> notifyJoinRoom = PublishSubject();
+  final PublishSubject<bool> notifyLeftRoom = PublishSubject(); // TODO: maybe use this, maybe not
   final PublishSubject<bool> notifyUpdatedChatrooms = PublishSubject();
   final PublishSubject<List<ChatMessage>> notifyUpdateMessages =
       PublishSubject();
@@ -32,6 +33,14 @@ class ChatService {
   void init(List<String> joinedChatRooms) {
     _joinedRooms.addAll(joinedChatRooms);
     socket.emit(ChatRoomSocketEvents.GetAllChatRooms.event);
+  }
+
+  void reset(){
+    _chatRooms = [];
+    currentRoom = null;
+    _joinedRooms.clear();
+    _notifiedRooms.clear();
+    messages = [];
   }
 
   // Getters
@@ -88,7 +97,7 @@ class ChatService {
     }
   }
 
-  bool roomUnread(String roomId) {
+  bool isRoomUnread(String roomId) {
     return _notifiedRooms.contains(roomId);
   }
 
@@ -104,7 +113,12 @@ class ChatService {
 
   void requestLeaveRoomSession() {
     // TODO: Implement
-    currentRoom = null;
+    socket.emit(ChatRoomSocketEvents.LeaveChatRoomSession.event, currentRoom!.name);
+  }
+
+  // TODO: Maybe remove this if it's not useful
+  void _leaveRoomSession() {
+    notifyLeftRoom.add(true);
   }
 
   void requestJoinChatRoom(String roomName) {
@@ -127,14 +141,6 @@ class ChatService {
         .emit(ChatRoomSocketEvents.SendMessage.event, [currentRoom?.name, msg]);
   }
 
-  // void requestFetchMessages() {
-  //   //NEED SERVER IMPLEMENTATION
-  // }
-
-  void _emptyMessages() {
-    messages = [];
-  }
-
   void _treatReceivedMessage(String roomName, ChatMessage message) {
     // TODO: Implement and take into account notifications
     debugPrint("received message from ${message.userId} :  ${message.message}");
@@ -146,6 +152,16 @@ class ChatService {
     if (_joinedRooms.contains(roomName)) _notifiedRooms.add(roomName);
     notifyNotificationsUpdate.add(roomName);
   }
+
+  // void requestFetchMessages() {
+  //   //NEED SERVER IMPLEMENTATION
+  // }
+
+  void _emptyMessages() {
+    messages = [];
+  }
+
+
 
   void _userJoined(String username) {
     // TODO: Adapt or remove this

@@ -94,6 +94,7 @@ class AuthService {
   void diconnect() {
     _userService.updateUser(null);
     _cookie = null;
+    _chatService.reset();
     _socket.disconnect();
   }
 }
