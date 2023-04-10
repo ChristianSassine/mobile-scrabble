@@ -296,6 +296,7 @@ class GameService {
   }
 
   void exchangeLetters(List<Letter> lettersToExchange) {
-    _socket.emit(GameSocketEvent.Exchange.event, lettersToExchange.map<String>((letter) => letter.character).toList());
+    List<String> sLetters = lettersToExchange.map((letter) => letter.character).toList();
+    _socket.emit(GameSocketEvent.Exchange.event, [sLetters]);
   }
 }
