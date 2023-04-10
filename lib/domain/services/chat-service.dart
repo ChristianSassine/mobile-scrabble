@@ -21,7 +21,8 @@ class ChatService {
 
   // Observables
   final PublishSubject<ChatRoom> notifyJoinRoom = PublishSubject();
-  final PublishSubject<bool> notifyLeftRoom = PublishSubject(); // TODO: maybe use this, maybe not
+  final PublishSubject<bool> notifyLeftRoom =
+      PublishSubject(); // TODO: maybe use this, maybe not
   final PublishSubject<bool> notifyUpdatedChatrooms = PublishSubject();
   final PublishSubject<List<ChatMessage>> notifyUpdateMessages =
       PublishSubject();
@@ -39,7 +40,7 @@ class ChatService {
     socket.emit(ChatRoomSocketEvents.GetAllChatRooms.event);
   }
 
-  void reset(){
+  void reset() {
     _chatRooms = [];
     currentRoom = null;
     _joinedRooms.clear();
@@ -115,9 +116,15 @@ class ChatService {
     notifyJoinRoom.add(currentRoom!);
   }
 
+  void quitRoom() {
+    requestLeaveRoomSession();
+    currentRoom = null;
+  }
+
   void requestLeaveRoomSession() {
     // TODO: Implement
-    socket.emit(ChatRoomSocketEvents.LeaveChatRoomSession.event, currentRoom!.name);
+    socket.emit(
+        ChatRoomSocketEvents.LeaveChatRoomSession.event, currentRoom!.name);
   }
 
   // TODO: Maybe remove this if it's not useful
@@ -148,7 +155,7 @@ class ChatService {
   void _treatReceivedMessage(String roomName, ChatMessage message) {
     // TODO: Implement and take into account notifications
     debugPrint("received message from ${message.userId} :  ${message.message}");
-    if (roomName == currentRoom?.name) {
+    if (roomName == currentRoom?.name && inRoom) {
       messages.add(message);
       notifyUpdateMessages.add(messages);
       return;
@@ -161,20 +168,15 @@ class ChatService {
   //   //NEED SERVER IMPLEMENTATION
   // }
 
-  void signalInRoom(){
+  void signalInRoom() {
     inRoom = true;
+    _notifiedRooms.remove(currentRoom?.name);
   }
 
-  void signalClosingRoom(){
+  void signalClosingRoom() {
     inRoom = false;
     requestLeaveRoomSession();
   }
-
-  void _emptyMessages() {
-    messages = [];
-  }
-
-
 
   void _userJoined(String username) {
     // TODO: Adapt or remove this

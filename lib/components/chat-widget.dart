@@ -78,12 +78,6 @@ class _ChatWidgetState extends State<ChatWidget>
 
     if (_chatService.currentRoom != null) {
       _chatService.requestJoinRoomSession(_chatService.currentRoom!);
-      // Future(() {
-      //   Navigator.of(context)
-      //       .push(
-      //           MaterialPageRoute(builder: (context) => const ChatRoomWidget()))
-      //       .then((value) => setState(() {}));
-      // });
     }
   }
 

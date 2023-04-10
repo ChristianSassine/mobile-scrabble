@@ -40,8 +40,12 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
               badgeContent: Text('1'),
               child: Icon(Icons.arrow_back),
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              _chatService.quitRoom();
+              Navigator.of(context).pop();
+            },
           ),
+          title: Text(_chatService.currentRoom!.name),
           actions: [ElevatedButton(onPressed: () {}, child: Text('LEAVE'))],
         ),
         body: Center(
