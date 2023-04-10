@@ -22,12 +22,12 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
   @override
   void initState() {
     super.initState();
-    if(!_chatService.inRoom) _chatService.signalInRoom();
+    if(!_chatService.inRoom) _chatService.onInRoom();
   }
 
   @override
   void dispose() {
-    if (_chatService.inRoom) _chatService.signalClosingRoom();
+    if (_chatService.inRoom) _chatService.onClosingRoom();
     super.dispose();
   }
 
@@ -37,7 +37,7 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
         appBar: AppBar(
           leading: IconButton(
             icon: const badges.Badge(
-              badgeContent: Text('1'),
+              badgeContent: Text('1'), // TODO: Implement notifs
               child: Icon(Icons.arrow_back),
             ),
             onPressed: () {
@@ -46,7 +46,10 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
             },
           ),
           title: Text(_chatService.currentRoom!.name),
-          actions: [ElevatedButton(onPressed: () {}, child: Text('LEAVE'))],
+          actions: [ElevatedButton(onPressed: () {
+            _chatService.requestLeaveRoom(_chatService.currentRoom!.name);
+            Navigator.of(context).pop();
+          }, child: Text('LEAVE'))],
         ),
         body: Center(
           child: Column(
@@ -132,7 +135,7 @@ class _ChatboxState extends State<Chatbox> {
   final ScrollController _scrollController = ScrollController();
 
   void _scrollToBottom() {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 200),

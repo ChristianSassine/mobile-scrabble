@@ -91,15 +91,30 @@ class ChatService {
       final String name = data as String;
       _onRoomCreationFail(name);
     });
+
+    socket.on(ChatRoomSocketEvents.LeaveChatRoom.event, (data) {
+      final room = ChatRoom.fromJson(data);
+      _leaveRoom(room.name);
+    });
   }
 
   bool isRoomUnread(String roomId) {
     return _notifiedRooms.contains(roomId);
   }
 
+  void requestLeaveRoom(String name) {
+    requestLeaveRoomSession();
+    currentRoom = null;
+    socket.emit(ChatRoomSocketEvents.LeaveChatRoom.event, name);
+  }
+
+  void _leaveRoom(String name){
+    _joinedRooms.remove(name);
+    notifyUpdatedChatrooms.add(true);
+  }
+
   void createChatRoom(String name){
     socket.emit(ChatRoomSocketEvents.CreateChatRoom.event, name);
-    _joinedRooms.add(name);
   }
 
   void _onRoomCreationFail(String name) {
@@ -175,12 +190,12 @@ class ChatService {
     notifyNotificationsUpdate.add(roomName);
   }
 
-  void signalInRoom() {
+  void onInRoom() {
     inRoom = true;
     _notifiedRooms.remove(currentRoom?.name);
   }
 
-  void signalClosingRoom() {
+  void onClosingRoom() {
     inRoom = false;
     requestLeaveRoomSession();
   }
