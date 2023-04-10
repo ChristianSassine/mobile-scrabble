@@ -81,10 +81,10 @@ class _GameInfoState extends State<GameInfo> {
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
-                                  children: const [
+                                  children: [
                                     Text("Réserve"),
                                     SizedBox(height: 5),
-                                    Text("100")
+                                    Text(_gameService.game!.reserveLetterCount.toString())
                                   ],
                                 ),
                               )),

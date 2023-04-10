@@ -175,7 +175,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                     onChanged: (value) {
                                       _selectedDifficulty = GameDifficulty.fromString(value!)!;
                                     },
-                                    defaultValue: GameDifficulty.Easy.value,
+                                    value: GameDifficulty.Easy.value,
                                   ),
                                   menu.DropdownMenu(
                                     title:
@@ -195,7 +195,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                     onChanged: (value) {
                                       _selectedTimer = int.parse(value!);
                                     },
-                                    defaultValue: "60",
+                                    value: "60",
                                   ),
                                   menu.DropdownMenu(
                                     title:
@@ -208,11 +208,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                     onChanged: (value) {
                                       _selectedDictionary = value;
                                     },
-                                    defaultValue: _dictionaryService
-                                            .dictionaries.isNotEmpty
-                                        ? _dictionaryService
-                                            .dictionaries[0].title
-                                        : null,
+                                    value: _selectedDictionary,
                                   ),
                                 ],
                               ),

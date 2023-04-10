@@ -48,7 +48,8 @@ enum GameSocketEvent {
   ReserveCommand('reserveCommand'),
   ClueCommand('clueCommand'),
   NextTurn('nextTurn'),
-  GameEnded('endGame');
+  GameEnded('endGame'),
+  LetterReserveUpdated("letterReserveUpdated");
 
   const GameSocketEvent(this.event);
 

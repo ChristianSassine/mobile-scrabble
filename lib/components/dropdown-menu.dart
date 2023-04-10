@@ -4,18 +4,17 @@ class DropdownMenu extends StatefulWidget {
   final Map<String, String> items;
   final String title;
   final void Function(String?)? onChanged;
-  final String? defaultValue;
+  String? value;
 
-  const DropdownMenu({required this.items, required this.title, this.onChanged, this.defaultValue });
+  DropdownMenu({super.key, required this.items, required this.title, this.onChanged, this.value });
 
   @override
-  _DropdownMenuState createState() => _DropdownMenuState(defaultValue);
+  _DropdownMenuState createState() => _DropdownMenuState();
 }
 
 class _DropdownMenuState extends State<DropdownMenu> {
-  String? selected;
 
-  _DropdownMenuState(this.selected);
+  _DropdownMenuState();
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +24,10 @@ class _DropdownMenuState extends State<DropdownMenu> {
         Text(widget.title),
         DropdownButton<String>(
           isExpanded: true,
-          value: selected,
+          value: widget.value,
           onChanged: (newValue) {
             setState(() {
-              selected = newValue;
+              widget.value = newValue;
             });
             if (widget.onChanged != null) widget.onChanged!(newValue);
           },

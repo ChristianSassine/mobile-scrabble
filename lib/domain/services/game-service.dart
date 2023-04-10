@@ -58,6 +58,9 @@ class GameService {
 
     _socket.on(GameSocketEvent.NextTurn.event, (data) => _nextTurn(GameInfo.fromJson(data)));
     _socket.on(GameSocketEvent.GameEnded.event, (_) => _endGame());
+    _socket.on(GameSocketEvent.LetterReserveUpdated.event, (letters) {
+      game!.reserveLetterCount = letters.toList().length;
+    });
   }
 
   void _publicViewUpdate(GameInfo gameInfo) {

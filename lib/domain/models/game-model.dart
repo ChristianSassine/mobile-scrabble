@@ -10,6 +10,7 @@ class Game {
   late GamePlayer currentPlayer;
   GamePlayer? activePlayer;
   int turnTimer = 0;
+  int reserveLetterCount = 0;
 
   Game(GameRoom room, IUser currentUser)
       : players = room.players
