@@ -9,8 +9,27 @@ import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 
 // TODO: Translate and adapt whole widget
-class ChatRoomWidget extends StatelessWidget {
+class ChatRoomWidget extends StatefulWidget {
   const ChatRoomWidget({super.key});
+
+  @override
+  State<ChatRoomWidget> createState() => _ChatRoomWidgetState();
+}
+
+class _ChatRoomWidgetState extends State<ChatRoomWidget> {
+  final _chatService = GetIt.I.get<ChatService>();
+
+  @override
+  void initState() {
+    super.initState();
+    if(!_chatService.inRoom) _chatService.signalInRoom();
+  }
+
+  @override
+  void dispose() {
+    _chatService.signalClosingRoom();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

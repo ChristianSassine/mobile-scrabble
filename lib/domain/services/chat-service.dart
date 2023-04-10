@@ -11,6 +11,7 @@ import '../models/chat-models.dart';
 class ChatService {
   Socket socket = GetIt.I.get<Socket>();
 
+  // DataStructures
   ChatRoom? currentRoom; // Might change type
   List<ChatMessage> messages = [];
   List<ChatRoom> _chatRooms = [];
@@ -25,6 +26,9 @@ class ChatService {
   final PublishSubject<List<ChatMessage>> notifyUpdateMessages =
       PublishSubject();
   final PublishSubject<String> notifyNotificationsUpdate = PublishSubject();
+
+  // Is the sideChatOpen
+  bool inRoom = false;
 
   ChatService() {
     initSocketListeners();
@@ -156,6 +160,15 @@ class ChatService {
   // void requestFetchMessages() {
   //   //NEED SERVER IMPLEMENTATION
   // }
+
+  void signalInRoom(){
+    inRoom = true;
+  }
+
+  void signalClosingRoom(){
+    inRoom = false;
+    requestLeaveRoomSession();
+  }
 
   void _emptyMessages() {
     messages = [];

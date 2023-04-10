@@ -27,17 +27,14 @@ class _SideChatWidgetState extends State<SideChatWidget> {
     return Navigator(
       onGenerateRoute: (settings) {
         return CupertinoPageRoute(
-            builder: (BuildContext context) => ChatWidget(
-                  inChat: false,
-                ));
+            builder: (BuildContext context) => const ChatWidget());
       },
     );
   }
 }
 
 class ChatWidget extends StatefulWidget {
-  const ChatWidget({this.inChat = false, Key? key}) : super(key: key);
-  final bool inChat;
+  const ChatWidget({Key? key}) : super(key: key);
 
   @override
   State<ChatWidget> createState() => _ChatWidgetState();
@@ -79,18 +76,20 @@ class _ChatWidgetState extends State<ChatWidget>
           .push(MaterialPageRoute(builder: (context) => ChatRoomWidget()));
     });
 
-    if (widget.inChat) {
-      Future(() {
-        Navigator.of(context)
-            .push(
-                MaterialPageRoute(builder: (context) => const ChatRoomWidget()))
-            .then((value) => setState(() {}));
-      });
+    if (_chatService.currentRoom != null) {
+      _chatService.requestJoinRoomSession(_chatService.currentRoom!);
+      // Future(() {
+      //   Navigator.of(context)
+      //       .push(
+      //           MaterialPageRoute(builder: (context) => const ChatRoomWidget()))
+      //       .then((value) => setState(() {}));
+      // });
     }
   }
 
   @override
   dispose() {
+    _joinRoomSub.cancel();
     _updateRoomsSub.cancel();
     super.dispose();
   }
