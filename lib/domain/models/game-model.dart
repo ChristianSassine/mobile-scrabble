@@ -9,13 +9,14 @@ class Game {
   List<GamePlayer> players;
   late GamePlayer currentPlayer;
   GamePlayer? activePlayer;
+  final int timerLength;
   int turnTimer = 0;
   int reserveLetterCount = 0;
 
   Game(GameRoom room, IUser currentUser)
       : players = room.players
             .map<GamePlayer>((roomPlayer) => GamePlayer(Easel(7), 0, roomPlayer))
-            .toList() {
+            .toList(), timerLength = room.timer {
     currentPlayer =
         players.firstWhere((player) => player.player.user.username == currentUser.username);
   }
@@ -67,6 +68,10 @@ class Game {
 
   bool isCurrentPlayersTurn(){
     return activePlayer != null && currentPlayer.player.user.id == activePlayer!.player.user.id;
+  }
+
+  double getTurnProcess(){
+    return turnTimer / timerLength;
   }
 }
 

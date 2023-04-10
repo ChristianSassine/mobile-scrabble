@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/game-model.dart';
-import 'package:mobile/domain/models/player-models.dart';
-import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'dart:math' as math;
@@ -91,7 +89,7 @@ class _GameInfoState extends State<GameInfo> {
                           Row(children: [
                             const Icon(Icons.timer),
                             Text(
-                                " ${GameService.turnLength - _gameService.game!.turnTimer} secondes")
+                                " ${_gameService.game!.timerLength - _gameService.game!.turnTimer} secondes")
                           ]),
                         ],
                       )
@@ -113,7 +111,9 @@ class _GameInfoState extends State<GameInfo> {
             const SizedBox(width: 50),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                onPressed: _gameService.game!.isCurrentPlayersTurn() ? () => {_gameService.skipTurn()} : null,
+                onPressed: _gameService.game!.isCurrentPlayersTurn()
+                    ? () => {_gameService.skipTurn()}
+                    : null,
                 child: const Padding(
                   padding: EdgeInsets.all(17.0),
                   child: Icon(Icons.skip_next_rounded),
@@ -174,7 +174,7 @@ class _PlayerInfoState extends State<PlayerInfo> {
                             alignment: Alignment.center,
                             transform: Matrix4.rotationY(math.pi),
                             child: CircularProgressIndicator(
-                              value: 1 - (_gameService.game!.turnTimer / GameService.turnLength),
+                              value: 1 - (_gameService.game!.getTurnProcess()),
                               color: Colors.blue,
                             ))
                         : null,

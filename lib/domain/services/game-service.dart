@@ -26,12 +26,11 @@ class GameService {
   final _userService = GetIt.I.get<UserService>();
 
   Subject<bool> notifyGameInfoChange = PublishSubject();
+  Subject<String> notifyGameError = PublishSubject();
 
   GameRoom? _gameRoom;
   Letter? draggedLetter;
   List<LetterPlacement> pendingLetters = [];
-
-  static const turnLength = 60;
 
   Game? game;
 
@@ -59,8 +58,10 @@ class GameService {
     _socket.on(GameSocketEvent.NextTurn.event, (data) => _nextTurn(GameInfo.fromJson(data)));
     _socket.on(GameSocketEvent.GameEnded.event, (_) => _endGame());
     _socket.on(GameSocketEvent.LetterReserveUpdated.event, (letters) {
-      game!.reserveLetterCount = letters.toList().length;
+      game!.reserveLetterCount = letters.map((letter) => letter['quantity']).toList().reduce((a, b) => a + b);
     });
+    _socket.on(GameSocketEvent.PlacementSuccess.event, (_) => _successfulWordPlacement());
+    _socket.on(GameSocketEvent.PlacementFailure.event, (error) => _invalidWordPlacement(error));
   }
 
   void _publicViewUpdate(GameInfo gameInfo) {
@@ -238,11 +239,31 @@ class GameService {
     List<String> letters =
         List.generate(pendingLetters.length, (index) => pendingLetters[index].letter.character);
 
+    debugPrint("[Game Service] Confirm word placement");
     _socket.emit(GameSocketEvent.PlaceWordCommand.event,
         PlaceWordCommandInfo(firstCoordonate, isHorizontal, letters));
 
+    game!.gameboard.notifyBoardChanged.add(true);
+  }
+
+  void _successfulWordPlacement(){
     pendingLetters = [];
     game!.gameboard.notifyBoardChanged.add(true);
+  }
+
+  void _invalidWordPlacement(error){
+    debugPrint("[Game Service] Invalid word placement");
+
+    var gameboardMatrix = game!.gameboard.getBoardMatrix();
+
+    for (var placement in pendingLetters) {
+      gameboardMatrix[placement.x][placement.y] = null;
+      game!.currentPlayer.easel.addLetter(placement.letter);
+    }
+
+    pendingLetters = [];
+    game!.gameboard.notifyBoardChanged.add(true);
+    notifyGameError.add(error);
   }
 
   void skipTurn() {
