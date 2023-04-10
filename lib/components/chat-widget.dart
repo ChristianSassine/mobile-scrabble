@@ -181,20 +181,37 @@ class _ChatWidgetState extends State<ChatWidget>
           child: Container(
         // Content of each tab (bodies)
         child: TabBarView(controller: _tabController, children: [
-          ListView(
-              children: _joinedRooms
-                  .map((room) => Card(
-                        child: ListTile(
-                          title: Text(room.name),
-                          trailing: OutlinedButton(
-                            child: badges.Badge(child: Text('JOIN')),
-                            onPressed: () {
-                              _chatService.requestJoinRoomSession(room);
-                            },
-                          ),
-                        ),
-                      ))
-                  .toList()),
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(onPressed: (){}, child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Create a room"),
+                    Icon(Icons.add)
+                  ],
+                )),
+              ),
+              Expanded(
+                child: ListView(
+                    children:
+                    _joinedRooms
+                        .map((room) => Card(
+                              child: ListTile(
+                                title: Text(room.name),
+                                trailing: OutlinedButton(
+                                  child: badges.Badge(child: Text('JOIN')),
+                                  onPressed: () {
+                                    _chatService.requestJoinRoomSession(room);
+                                  },
+                                ),
+                              ),
+                            ))
+                        .toList()),
+              ),
+            ],
+          ),
           Column(
             children: [
               Container(
