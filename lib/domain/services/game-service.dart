@@ -31,6 +31,7 @@ class GameService {
   GameRoom? _gameRoom;
   Letter? draggedLetter;
   List<LetterPlacement> pendingLetters = [];
+  List<int> starPlacements = [];
 
   Game? game;
 
@@ -84,7 +85,7 @@ class GameService {
     game = null;
   }
 
-  void placeLetterOnBoard(int x, int y, Letter letter) {
+  void placeLetterOnBoard(int x, int y, Letter letter, bool isStarLetter) {
     if(!game!.isCurrentPlayersTurn()) return;
 
     debugPrint("[GAME SERVICE] Place letter to the board: board[$x][$y] = $letter");
@@ -95,6 +96,7 @@ class GameService {
 
     game!.gameboard.placeLetter(x, y, letter);
     pendingLetters.add(LetterPlacement(x, y, letter));
+    if(isStarLetter) starPlacements.add(pendingLetters.length - 1);
     pendingLetters.sort((a, b) => a.x.compareTo(b.x) + a.y.compareTo(b.y));
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
@@ -153,12 +155,19 @@ class GameService {
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
 
     if (isPlacedLetterRemovalValid(x, y)) {
-      pendingLetters.removeWhere((placement) => placement.x == x && placement.y == y);
+      int index = pendingLetters.indexWhere((placement) => placement.x == x && placement.y == y);
+      pendingLetters.removeAt(index);
 
       debugPrint(
           "[GAME SERVICE] Remove letter from the board: board[$x][$y] = ${game!.gameboard.getSlot(x, y)}");
 
-      return game!.gameboard.removeLetter(x, y);
+      Letter? removedLetter = game!.gameboard.removeLetter(x, y);
+      if(starPlacements.contains(index)) {
+        removedLetter = Letter.STAR;
+        starPlacements.remove(index);
+      }
+
+      return removedLetter;
     } else {
       return null;
     }
@@ -267,7 +276,7 @@ class GameService {
     pendingLetters = [];
     game!.gameboard.notifyBoardChanged.add(true);
 
-    if (error['stringFormat'] != null){
+    if (error is! String){
       error = error['stringFormat'];
     }
 

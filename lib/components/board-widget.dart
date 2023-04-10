@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
@@ -40,11 +41,12 @@ class _BoardState extends State<BoardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if(_gameService.game == null){
+    if (_gameService.game == null) {
       return const SizedBox();
     }
 
-    double slotSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
+    double slotSize =
+        min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
     int boardSize = _gameService.game!.gameboard.size;
 
     return Card(
@@ -71,13 +73,15 @@ class _BoardState extends State<BoardWidget> {
                                 !_gameService.game!.gameboard.isSlotEmpty(vIndex, hIndex)
                                     ? _gameService.isPendingLetter(vIndex, hIndex)
                                         ? PendingBoardLetter(
-                                            value: _gameService.game!.gameboard.getSlot(vIndex, hIndex)!,
+                                            value: _gameService.game!.gameboard
+                                                .getSlot(vIndex, hIndex)!,
                                             dragKey: widget.dragKey,
                                             widgetSize: slotSize,
                                             x: vIndex,
                                             y: hIndex)
                                         : BoardLetter(
-                                            value: _gameService.game!.gameboard.getSlot(vIndex, hIndex)!,
+                                            value: _gameService.game!.gameboard
+                                                .getSlot(vIndex, hIndex)!,
                                             widgetSize: slotSize)
                                     : const SizedBox.shrink()
                               ])).toList(),
@@ -133,9 +137,57 @@ class SlotWidget extends StatelessWidget {
         )));
   }
 
+  Future<Letter?> _promptLetterValue(context) async {
+    final formKey = GlobalKey<FormState>();
+    final letterInputController = TextEditingController();
+    final ValueNotifier<bool> enableConfirm = ValueNotifier(false);
+
+    isInputInvalid(value) =>
+        value == null ||
+        value.isEmpty ||
+        value == "*" ||
+        value == "_" ||
+        value == "-" ||
+        Letter.fromCharacter(value.toUpperCase()) == null;
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+          title: Text(FlutterI18n.translate(context, "board.letter_prompt.dialog_title")),
+          content: Form(
+              key: formKey,
+              child: TextFormField(
+                controller: letterInputController,
+                validator: (value) {
+                  if (isInputInvalid(value)) {
+                    return FlutterI18n.translate(context, "board.letter_prompt.invalid_letter");
+                  }
+                  return null;
+                },
+                onChanged: (value) => enableConfirm.value = !isInputInvalid(value),
+              )),
+          actions: [
+            ValueListenableBuilder<bool>(
+              valueListenable: enableConfirm,
+              builder: (context, value, child) => ElevatedButton(
+                onPressed: value
+                    ? () {
+                        Navigator.pop(context);
+                      }
+                    : null,
+                child: Text(FlutterI18n.translate(context, "board.letter_prompt.confirm")),
+              ),
+            ),
+          ]),
+    );
+
+    return Letter.fromCharacter(letterInputController.text.toUpperCase());
+  }
+
   @override
   Widget build(BuildContext context) {
-    var slotSize = min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
+    var slotSize =
+        min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
 
     return SizedBox(
       height: slotSize,
@@ -151,7 +203,21 @@ class SlotWidget extends StatelessWidget {
             ]);
           }
         },
-        onAccept: (letter) => _gameService.placeLetterOnBoard(x, y, letter),
+        onAccept: (letter) async {
+          if (!_gameService.game!.isCurrentPlayersTurn()) return;
+
+          if (letter == Letter.STAR) {
+            Letter? returnedLetter = await _promptLetterValue(context);
+            if (returnedLetter == null) {
+              // No letter was submitted
+              _gameService.cancelDragLetter();
+            } else {
+              _gameService.placeLetterOnBoard(x, y, returnedLetter, true);
+            }
+            return;
+          }
+          _gameService.placeLetterOnBoard(x, y, letter, false);
+        },
       ),
     );
   }

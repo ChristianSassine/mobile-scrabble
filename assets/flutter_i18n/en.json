@@ -128,7 +128,12 @@
         "double_letter": "DOUBLE\nLETTER",
         "triple_letter": "TRIPLE\nLETTER",
         "double_word": "DOUBLE\nWORD",
-        "triple_word": "TRIPLE\nWORD"
+        "triple_word": "TRIPLE\nWORD",
+        "letter_prompt": {
+            "dialog_title": "Enter a letter of your choice",
+            "invalid_letter": "Letter should be a single character from the alphabet",
+            "confirm": "Confirm"
+        }
     },
     "chat": {
         "screen_name": "Chat room"
@@ -197,6 +202,8 @@
         "take_image": "Take an image"
     },
     "game": {
-        "invalid_word": "is not a valid word"
+        "invalid_word": "is not a valid word",
+        "not_in_rack": "The letters are not in the rack",
+        "wrong_turn": "Wrong turn"
     }
 }

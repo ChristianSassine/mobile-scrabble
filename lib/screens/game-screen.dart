@@ -9,8 +9,6 @@ import 'package:mobile/components/game-info-widget.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/game-service.dart';
-import 'package:mobile/screens/end-game-screen.dart';
-import 'package:rxdart/rxdart.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -27,17 +25,24 @@ class _GameScreenState extends State<GameScreen> {
 
   late StreamSubscription<String> errorSub;
 
-  _abandonGame() {
-    _gameService.abandonGame();
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const EndGameScreen()));
+  _promptAbandonConfirmation() async {
+    if (await confirm(context,
+        textOK: const Text("Oui"),
+        textCancel: const Text("Non"),
+        content: const Text("Êtes vous sûr de vouloir abandonner?"))) {
+      _gameService.abandonGame();
+    }
   }
 
   @override
   void initState() {
     super.initState();
     errorSub = _gameService.notifyGameError.stream.listen((event) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBarFactory.redSnack('"$event" ${FlutterI18n.translate(context, "game.invalid_word")}'));
+      String errorMsg = event.length < 4 || event.substring(0, 4) != "game"
+          ? '"$event" ${FlutterI18n.translate(context, "game.invalid_word")}'
+          : FlutterI18n.translate(context, event);
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(errorMsg));
     });
   }
 
@@ -50,6 +55,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.green[100],
       body: Center(
           child: Row(
@@ -76,14 +82,7 @@ class _GameScreenState extends State<GameScreen> {
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.red,
           child: const Icon(Icons.flag),
-          onPressed: () async {
-            if (await confirm(context,
-                textOK: const Text("Oui"),
-                textCancel: const Text("Non"),
-                content: const Text("Êtes vous sûr de vouloir abandonner?"))) {
-              _abandonGame();
-            }
-          }),
+          onPressed: _promptAbandonConfirmation),
     );
   }
 }

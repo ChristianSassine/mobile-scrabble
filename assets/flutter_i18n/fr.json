@@ -129,7 +129,12 @@
         "double_letter": "DOUBLE\nLETTRE",
         "triple_letter": "TRIPLE\nLETTRE",
         "double_word": "DOUBLE\nMOT",
-        "triple_word": "TRIPLE\nMOT"
+        "triple_word": "TRIPLE\nMOT",
+        "letter_prompt": {
+            "dialog_title": "Entrez la lettre de votre choix",
+            "invalid_letter": "La lettre devrait être un caractère de l'alphabet",
+            "confirm": "Confirmer"
+        }
     },
     "chat": {
         "screen_name": "Salle de clavardage"
@@ -198,6 +203,8 @@
         "take_image": "Prendre une photo"
     },
     "game": {
-        "invalid_word": "n'est pas un mot valide"
+        "invalid_word": "n'est pas un mot valide",
+        "not_in_rack": "Les lettres ne sont pas dans le chavalet",
+        "wrong_turn": "Mauvais tour"
     }
 }
