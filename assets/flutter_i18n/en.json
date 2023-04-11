@@ -44,7 +44,9 @@
         "screen_name": "Waiting room",
         "players": "Players",
         "start_game": "Start the game",
-        "game": "Game"
+        "game": "Game",
+        "copy_link_success": "The invite link has been successfully copied to your clipboard",
+        "copy_link_button": "Copy the invite link"
     },
     "room_create": {
         "room_param_title": "Game parameters",

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "336027519857",
+    "project_id": "scrabble-flutter",
+    "storage_bucket": "scrabble-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336027519857:android:4e8b17a4c091647fd644d0",
+        "android_client_info": {
+          "package_name": "com.example.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336027519857-lchcf7jphfof7jkbv1cfl2skcgagmtva.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWq2CIfFXC5m45GITJ5ThANBClW5tS4pQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336027519857-lchcf7jphfof7jkbv1cfl2skcgagmtva.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

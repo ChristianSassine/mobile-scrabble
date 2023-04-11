@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
@@ -31,7 +32,6 @@ class AuthService {
     try {
       var response = await _httpService
           .signInRequest({"username": username, "password": password});
-
       if (response.statusCode == HttpStatus.ok) {
         // JWT token
         String? rawCookie = response.headers['set-cookie'];
@@ -44,12 +44,10 @@ class AuthService {
         final SettingsInfo settingsInfo =
             SettingsInfo.fromJson(data);
         _settingsService.loadConfig(settingsInfo);
-
         _socket.io.options['extraHeaders'] = {'cookie': _cookie};
         _socket
           ..disconnect()
           ..connect();
-
         notifyLogin.add(true);
         return;
       }
