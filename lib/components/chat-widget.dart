@@ -49,7 +49,8 @@ class _ChatWidgetState extends State<ChatWidget>
   // Tools
   late final TabController _tabController =
       TabController(length: 2, vsync: this);
-  final _searchBarController = TextEditingController();
+  final _joinedSearchBarController = TextEditingController();
+  final _availableSearchBarController = TextEditingController();
   final _newRoomCreationController = TextEditingController();
   final scaffoldMessangerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -57,6 +58,7 @@ class _ChatWidgetState extends State<ChatWidget>
   List<ChatRoom> _availableRooms = [];
   List<ChatRoom> _joinedRooms = [];
   List<ChatRoom> _searchedAvailableRooms = [];
+  List<ChatRoom> _searchedJoinedRooms = [];
 
   // Listeners
   late final StreamSubscription _updateRoomsSub;
@@ -79,7 +81,8 @@ class _ChatWidgetState extends State<ChatWidget>
       setState(() {
         _availableRooms = _chatService.availableRooms;
         _joinedRooms = _chatService.joinedRooms;
-        _onSearchRooms(_searchBarController.text);
+        _onSearchAvailableRooms(_availableSearchBarController.text);
+        _onSearchJoinedRooms(_joinedSearchBarController.text);
       });
     });
 
@@ -103,7 +106,7 @@ class _ChatWidgetState extends State<ChatWidget>
     super.dispose();
   }
 
-  _onSearchRooms(String search) {
+  _onSearchAvailableRooms(String search) {
     _searchedAvailableRooms.clear();
     if (search.isEmpty) {
       setState(() {});
@@ -111,6 +114,18 @@ class _ChatWidgetState extends State<ChatWidget>
     }
     for (var room in _availableRooms) {
       if (room.name.contains(search)) _searchedAvailableRooms.add(room);
+    }
+    setState(() {});
+  }
+
+  _onSearchJoinedRooms(String search) {
+    _searchedJoinedRooms.clear();
+    if (search.isEmpty) {
+      setState(() {});
+      return;
+    }
+    for (var room in _joinedRooms) {
+      if (room.name.contains(search)) _searchedJoinedRooms.add(room);
     }
     setState(() {});
   }
@@ -139,31 +154,14 @@ class _ChatWidgetState extends State<ChatWidget>
   }
 
   ListView _buildAvailableRooms() {
-    if (_searchedAvailableRooms.isNotEmpty ||
-        _searchBarController.text.isNotEmpty) {
-      return ListView.builder(
-          itemCount: _searchedAvailableRooms.length,
-          itemBuilder: (context, i) {
-            final room = _searchedAvailableRooms[i];
-
-            return Card(
-              child: ListTile(
-                title: Text(room.name),
-                trailing: OutlinedButton(
-                  child:
-                      Text(FlutterI18n.translate(context, "chat.join_label")),
-                  onPressed: () {
-                    _chatService.requestJoinChatRoom(room.name);
-                  },
-                ),
-              ),
-            );
-          });
-    }
+    final inSearch = _searchedAvailableRooms.isNotEmpty ||
+        _availableSearchBarController.text.isNotEmpty;
     return ListView.builder(
-        itemCount: _availableRooms.length,
+        itemCount:
+            inSearch ? _searchedAvailableRooms.length : _availableRooms.length,
         itemBuilder: (context, i) {
-          final room = _availableRooms[i];
+          final room =
+              inSearch ? _searchedAvailableRooms[i] : _availableRooms[i];
 
           return Card(
             child: ListTile(
@@ -177,6 +175,70 @@ class _ChatWidgetState extends State<ChatWidget>
             ),
           );
         });
+  }
+
+  ListView _buildJoinedRooms() {
+    final inSearch = _searchedJoinedRooms.isNotEmpty ||
+        _joinedSearchBarController.text.isNotEmpty;
+    return ListView.builder(
+        itemCount: inSearch ? _searchedJoinedRooms.length : _joinedRooms.length,
+        itemBuilder: (context, i) {
+          final room = inSearch ? _searchedJoinedRooms[i] : _joinedRooms[i];
+
+          return Card(
+            child: ListTile(
+              title: Text(room.name),
+              trailing: OutlinedButton(
+                child: _chatService.isRoomUnread(room.name)
+                    ? badges.Badge(
+                        child: Text(
+                            FlutterI18n.translate(context, "chat.join_label")))
+                    : Text(FlutterI18n.translate(context, "chat.join_label")),
+                onPressed: () {
+                  _chatService.requestJoinRoomSession(room);
+                },
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget _buildSearchBar(BuildContext context, bool inAvailableRooms) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Card(
+          child: ListTile(
+            leading: const Icon(Icons.search),
+            title: TextField(
+              controller: inAvailableRooms
+                  ? _availableSearchBarController
+                  : _joinedSearchBarController,
+              decoration: InputDecoration(
+                  hintText: FlutterI18n.translate(context, "chat.search_label"),
+                  border: InputBorder.none),
+              onChanged: (search) {
+                inAvailableRooms
+                    ? _onSearchAvailableRooms(search)
+                    : _onSearchJoinedRooms(search);
+              },
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.cancel),
+              onPressed: () {
+                if (inAvailableRooms) {
+                  _availableSearchBarController.clear();
+                  _onSearchAvailableRooms("");
+                  return;
+                }
+                _joinedSearchBarController.clear();
+                _onSearchJoinedRooms("");
+              },
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -247,60 +309,13 @@ class _ChatWidgetState extends State<ChatWidget>
                           ],
                         )),
                   ),
-                  Expanded(
-                    child: ListView(
-                        children: _joinedRooms
-                            .map((room) => Card(
-                                  child: ListTile(
-                                    title: Text(room.name),
-                                    trailing: OutlinedButton(
-                                      child: _chatService
-                                              .isRoomUnread(room.name)
-                                          ? badges.Badge(
-                                              child: Text(FlutterI18n.translate(
-                                                  context, "chat.join_label")))
-                                          : Text(FlutterI18n.translate(
-                                              context, "chat.join_label")),
-                                      onPressed: () {
-                                        _chatService
-                                            .requestJoinRoomSession(room);
-                                      },
-                                    ),
-                                  ),
-                                ))
-                            .toList()),
-                  ),
+                  _buildSearchBar(context, false),
+                  Expanded(child: _buildJoinedRooms()),
                 ],
               ),
               Column(
                 children: [
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Card(
-                        child: ListTile(
-                          leading: const Icon(Icons.search),
-                          title: TextField(
-                            controller: _searchBarController,
-                            decoration: InputDecoration(
-                                hintText: FlutterI18n.translate(
-                                    context, "chat.search_label"),
-                                border: InputBorder.none),
-                            onChanged: (search) {
-                              _onSearchRooms(search);
-                            },
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.cancel),
-                            onPressed: () {
-                              _searchBarController.clear();
-                              _onSearchRooms("");
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildSearchBar(context, true),
                   Expanded(child: _buildAvailableRooms()),
                 ],
               )
