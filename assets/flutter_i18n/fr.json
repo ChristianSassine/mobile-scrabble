@@ -47,7 +47,9 @@
         "screen_name": "Salle d'attente",
         "players": "Joueurs",
         "start_game": "Démarrer la partie",
-        "game": "Partie"
+        "game": "Partie",
+        "copy_link_success": "Le lien d'invitation a été copié avec succès dans votre presse-papiers",
+        "copy_link_button": "Copier le lien d'invitation"
     },
     "room_create": {
         "room_param_title": "Paramètre de jeu",

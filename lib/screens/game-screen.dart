@@ -9,6 +9,7 @@ import 'package:mobile/components/game-info-widget.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/game-service.dart';
+import 'package:mobile/screens/end-game-screen.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -32,6 +33,7 @@ class _GameScreenState extends State<GameScreen> {
         title: Text(FlutterI18n.translate(context, "game.abandon_prompt")),
         content: const SizedBox.shrink())) {
       _gameService.abandonGame();
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const GameScreen()));
     }
   }
 
