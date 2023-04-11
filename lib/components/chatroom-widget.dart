@@ -21,7 +21,7 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
   @override
   void initState() {
     super.initState();
-    if(!_chatService.inRoom) _chatService.onInRoom();
+    if (!_chatService.inRoom) _chatService.onInRoom();
   }
 
   @override
@@ -47,10 +47,15 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
             },
           ),
           title: Text(room.name),
-          actions: [ElevatedButton(onPressed: () {
-            _chatService.requestLeaveRoom(room.name);
-            Navigator.of(context).pop();
-          }, child: Text('LEAVE'))],
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  _chatService.requestLeaveRoom(room.name);
+                  Navigator.of(context).pop();
+                },
+                child:
+                    _chatService.isRoomOwner() ? Text('LEAVE') : Text('DELETE'))
+          ],
         ),
         body: Center(
           child: Column(

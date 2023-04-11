@@ -203,7 +203,9 @@ class ChatService {
     return _notifiedRooms.contains(roomId);
   }
 
-  // bool isRoomOwner() {}
+  bool isRoomOwner() {
+    return currentRoom?.creatorId == _userService.user!.id;
+  }
 
   void onInRoom() {
     inRoom = true;
