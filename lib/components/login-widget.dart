@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
+import 'package:mobile/domain/models/deeplink-info-model.dart';
 import 'package:mobile/domain/services/auth-service.dart';
+import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/screens/menu-screen.dart';
+import 'package:mobile/screens/room-selection-screen.dart';
 import 'package:provider/provider.dart';
 
 class SignInState extends ChangeNotifier {
   bool formsValid = false;
-
   void updateValidity(bool validity) {
     formsValid = validity;
     notifyListeners();
@@ -22,19 +24,22 @@ class SignInState extends ChangeNotifier {
 }
 
 class Login extends StatelessWidget {
-  const Login({super.key});
+  const Login({super.key, this.deepLinkInfo});
+  final DeepLinkInfo? deepLinkInfo;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => SignInState(),
-      child: const ContainerLogin(),
+      child: ContainerLogin(deepLinkInfo: deepLinkInfo,),
     );
   }
 }
 
 class ContainerLogin extends StatefulWidget {
-  const ContainerLogin({super.key});
+  const ContainerLogin({super.key, this.deepLinkInfo});
+  final DeepLinkInfo? deepLinkInfo;
+
 
   @override
   State<ContainerLogin> createState() => _ContainerLoginState();
@@ -46,6 +51,7 @@ class _ContainerLoginState extends State<ContainerLogin> {
   final passwordController = TextEditingController();
 
   final authService = GetIt.I.get<AuthService>();
+  final _roomService = GetIt.I.get<RoomService>();
   late final StreamSubscription loginSub;
   late final StreamSubscription errorSub;
 
@@ -62,12 +68,23 @@ class _ContainerLoginState extends State<ContainerLogin> {
     loginSub = authService.notifyLogin.stream.listen((event) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.greenSnack(
           FlutterI18n.translate(context, "auth.login.success")));
-      Navigator.of(context).pushAndRemoveUntil(
+
+      if (widget.deepLinkInfo?.isFromDeepLink == true) {
+        Navigator.of(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!)
+          .push(MaterialPageRoute(builder: (context) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          _roomService.requestJoinRoom(widget.deepLinkInfo?.roomID as String, widget.deepLinkInfo?.password);
+        });
+        return const RoomSelectionScreen();
+        }));
+      } else {
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) => MenuScreen(
                   title: FlutterI18n.translate(
                       context, "menu_screen.screen_name"))),
           (route) => false);
+      }
     });
     errorSub = authService.notifyError.stream.listen((event) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(

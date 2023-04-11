@@ -14,12 +14,16 @@ import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/settings-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
+import 'package:mobile/firebase_options.dart';
 import 'package:mobile/screens/login-screen.dart';
 import 'package:socket_io_client/socket_io_client.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:mobile/domain/services/dynamic-link-service.dart';
+
 
 Future<void> setup() async {
   final getIt = GetIt.instance;
-
   String envFile = kDebugMode ? 'development.env' : 'production.env';
 
   // kDebugMode = APK, so hardcoding it for now
@@ -43,6 +47,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<HttpHandlerService>(() => HttpHandlerService(
       "https://$serverAddress:3443",
       httpUrl: "http://$serverAddress:3000"));
+  getIt.registerLazySingleton<DynamicLinkService>(() => DynamicLinkService());
   getIt.registerLazySingleton<ChatService>(() => ChatService());
   getIt.registerLazySingleton<AuthService>(() => AuthService());
   getIt.registerLazySingleton<SettingsService>(() => SettingsService());
@@ -56,7 +61,13 @@ Future<void> setup() async {
 }
 
 Future<void> main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
   await setup();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  Future.delayed(Duration(milliseconds: 1000), () {
+    GetIt.I.get<DynamicLinkService>().handleDynamicLinks();
+});
   runApp(const PolyScrabble());
 }
 
@@ -74,7 +85,6 @@ class _PolyScrabbleState extends State<PolyScrabble> {
   @override
   void initState() {
     super.initState();
-
     _settingsChangeSub =
         _settingsService.notifySettingsChange.stream.listen((event) {
       setState(() {});

@@ -35,7 +35,6 @@ class AuthService {
     try {
       var response = await _httpService
           .signInRequest({"username": username, "password": password});
-
       if (response.statusCode == HttpStatus.ok) {
         // JWT token
         String? rawCookie = response.headers['set-cookie'];
@@ -56,9 +55,9 @@ class AuthService {
           ..connect();
 
         // TODO: Might need to refactor this
-        final chatrooms = (data['chatRooms'] as List).map((room) {
-          return ChatRoomState.fromJson(room);
-        }).toList();
+        final chatrooms = (data['chatRooms'] as List)
+            .map((room) => ChatRoomState.fromJson(room))
+            .toList();
         _chatService.config(chatrooms);
         if (!accountSetup) notifyLogin.add(true);
         return;

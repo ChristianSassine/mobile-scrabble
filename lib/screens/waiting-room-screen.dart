@@ -6,6 +6,8 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
+import 'package:mobile/domain/services/dynamic-link-service.dart';
+import 'package:clipboard/clipboard.dart';
 
 class WaitingRoomScreen extends StatefulWidget {
   const WaitingRoomScreen({Key? key}) : super(key: key);
@@ -16,6 +18,7 @@ class WaitingRoomScreen extends StatefulWidget {
 
 class _WaitingRoomState extends State<WaitingRoomScreen> {
   final _roomService = GetIt.I.get<RoomService>();
+  final DynamicLinkService _dynamicLinkService = GetIt.I.get<DynamicLinkService>();
   late final StreamSubscription newMemberSub;
 
   // late final StreamSubscription kickedOutSub;
@@ -26,7 +29,6 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   @override
   initState() {
     super.initState();
-
     newMemberSub =
         _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
       if (newRoomState == null) {
@@ -36,6 +38,22 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       }
       setState(() {});
     });
+  }
+
+  Future<String> _getShareLink() async {
+      final String link = await _dynamicLinkService.generateDynamicLink(_roomService.currentRoom!.id, _roomService.currentRoom!.password);
+      debugPrint(link);
+      return link;
+  }
+
+  Future<void> _onCopyLinkPressed() async {
+    final link = await _getShareLink();
+    FlutterClipboard.copy(link)
+        .then((value) {
+          debugPrint('Link copied to clipboard: $link');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(FlutterI18n.translate(context, "waiting_room.copy_link_success"))));
+        })
+        .catchError((error) => debugPrint('Error copying link to clipboard: $error'));
   }
 
   _startGame() {
@@ -94,7 +112,10 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
                   ),
                 ),
               ),
-            )
+            ), ElevatedButton(
+              onPressed: _onCopyLinkPressed,
+              child: Text(FlutterI18n.translate(context, "waiting_room.copy_link_button")),
+            ),
           ],
         ),
       ),
