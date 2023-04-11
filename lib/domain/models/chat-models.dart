@@ -11,6 +11,15 @@ class ChatRoom {
         isDeletable = json['isDeletable'];
 }
 
+class ChatRoomState {
+  final String name;
+  final bool notified;
+
+  ChatRoomState.fromJson(json)
+      : name = json['name'],
+        notified = json['notified'];
+}
+
 class ChatMessage {
   final String userId;
   final String message;
@@ -23,12 +32,7 @@ class ChatMessage {
         message = json['message'],
         date = json['date'];
 
-
-  Map toJson() => {
-        "userId": userId,
-        "message": message,
-        "date": date
-      };
+  Map toJson() => {"userId": userId, "message": message, "date": date};
 }
 
 enum MessageType {

@@ -38,8 +38,11 @@ class ChatService {
     initSocketListeners();
   }
 
-  void init(List<String> joinedChatRooms) {
-    _joinedRooms.addAll(joinedChatRooms);
+  void config(List<ChatRoomState> joinedChatRooms) {
+    for (final joinedRoom in joinedChatRooms) {
+      _joinedRooms.add(joinedRoom.name);
+      if (joinedRoom.notified) _notifiedRooms.add(joinedRoom.name);
+    }
     socket.emit(ChatRoomSocketEvents.GetAllChatRooms.event);
   }
 
@@ -114,19 +117,19 @@ class ChatService {
     socket.emit(ChatRoomSocketEvents.LeaveChatRoom.event, name);
   }
 
-  void _leaveRoom(String name){
+  void _leaveRoom(String name) {
     _joinedRooms.remove(name);
     notifyUpdatedChatrooms.add(true);
   }
 
-  void _deleteChatRoom(ChatRoom room){
+  void _deleteChatRoom(ChatRoom room) {
     _joinedRooms.remove(room.name);
     _chatRooms.removeWhere((chatRoom) => chatRoom.name == room.name);
-    if (currentRoom?.name == room.name)  notifyKickedOut.add(room);
+    if (currentRoom?.name == room.name) notifyKickedOut.add(room);
     notifyUpdatedChatrooms.add(true);
   }
 
-  void createChatRoom(String name){
+  void createChatRoom(String name) {
     socket.emit(ChatRoomSocketEvents.CreateChatRoom.event, name);
   }
 

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
+import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
@@ -29,7 +30,8 @@ class AuthService {
   Subject<bool> notifyRegister = PublishSubject();
   Subject<String> notifyError = PublishSubject();
 
-  Future<void> connectUser(String username, String password, {accountSetup = false}) async {
+  Future<void> connectUser(String username, String password,
+      {accountSetup = false}) async {
     try {
       var response = await _httpService
           .signInRequest({"username": username, "password": password});
@@ -43,7 +45,7 @@ class AuthService {
         final data = jsonDecode(response.body)['userData'];
         IUser user = IUser.fromJson(data);
         await _userService.updateUser(user);
-        if (!accountSetup){
+        if (!accountSetup) {
           final SettingsInfo settingsInfo = SettingsInfo.fromJson(data);
           _settingsService.loadConfig(settingsInfo);
         }
@@ -54,10 +56,10 @@ class AuthService {
           ..connect();
 
         // TODO: Might need to refactor this
-        final chatrooms = (data['chatRooms'] as List).map((e) {
-          return e['name'] as String;
+        final chatrooms = (data['chatRooms'] as List).map((room) {
+          return ChatRoomState.fromJson(room);
         }).toList();
-        _chatService.init(chatrooms);
+        _chatService.config(chatrooms);
         if (!accountSetup) notifyLogin.add(true);
         return;
       }
