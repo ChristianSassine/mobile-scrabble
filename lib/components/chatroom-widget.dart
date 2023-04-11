@@ -19,25 +19,37 @@ class ChatRoomWidget extends StatefulWidget {
 }
 
 class _ChatRoomWidgetState extends State<ChatRoomWidget> {
+  // Services
   final _chatService = GetIt.I.get<ChatService>();
 
-  late final StreamSubscription _kickedOutSub;
+  // Tools
   final GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // Subscriptions
+  late final StreamSubscription _kickedOutSub;
+  late final StreamSubscription _updateNotifsSub;
 
   @override
   void initState() {
     super.initState();
     if (!_chatService.inRoom) _chatService.onInRoom();
+
     _kickedOutSub = _chatService.notifyKickedOut.stream.listen((event) {
       widget.scaffoldMessagerKey.currentState
           ?.showSnackBar(SnackBarFactory.redSnack("Room has been deleted"));
       Navigator.of(context).pop();
     });
+
+    _updateNotifsSub =
+        _chatService.notifyUpdatedNotifications.stream.listen((event) {
+          setState(() {});
+        });
   }
 
   @override
   void dispose() {
     if (_chatService.inRoom) _chatService.onClosingRoom();
+    _updateNotifsSub.cancel();
     _kickedOutSub.cancel();
     super.dispose();
   }
@@ -51,10 +63,10 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
         key: _scaffoldKey,
         appBar: AppBar(
           leading: IconButton(
-            icon: const badges.Badge(
-              badgeContent: Text('1'), // TODO: Implement notifs
+            icon: _chatService.notifsCount > 0 ? badges.Badge(
+              badgeContent: Text("${_chatService.notifsCount}"), // TODO: Implement notifs
               child: Icon(Icons.arrow_back),
-            ),
+            ) : Icon(Icons.arrow_back),
             onPressed: () {
               _chatService.quitRoom();
               Navigator.of(context).pop();

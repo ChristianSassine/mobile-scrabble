@@ -29,7 +29,7 @@ class ChatService {
   final PublishSubject<bool> notifyUpdatedChatrooms = PublishSubject();
   final PublishSubject<List<ChatMessage>> notifyUpdateMessages =
       PublishSubject();
-  final PublishSubject<String> notifyNotificationsUpdate = PublishSubject();
+  final PublishSubject<bool> notifyUpdatedNotifications = PublishSubject();
 
   // Is the sideChatOpen
   bool inRoom = false;
@@ -57,6 +57,8 @@ class ChatService {
 
   get joinedRooms =>
       _chatRooms.where((e) => _joinedRooms.contains(e.name)).toList();
+
+  get notifsCount => _notifiedRooms.length;
 
   void initSocketListeners() {
     // TODO: Implement
@@ -198,7 +200,8 @@ class ChatService {
       return;
     }
     if (_joinedRooms.contains(roomName)) _notifiedRooms.add(roomName);
-    notifyNotificationsUpdate.add(roomName);
+    notifyUpdatedNotifications.add(true);
+    debugPrint("notification count : $notifsCount");
   }
 
   bool isRoomUnread(String roomId) {
@@ -212,6 +215,8 @@ class ChatService {
   void onInRoom() {
     inRoom = true;
     _notifiedRooms.remove(currentRoom?.name);
+    notifyUpdatedNotifications.add(true);
+    debugPrint("notification count : $notifsCount");
   }
 
   void onClosingRoom() {

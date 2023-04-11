@@ -43,6 +43,7 @@ class ChatWidget extends StatefulWidget {
 
 class _ChatWidgetState extends State<ChatWidget>
     with SingleTickerProviderStateMixin {
+  // services
   final _chatService = GetIt.I.get<ChatService>();
 
   // Tools
@@ -59,6 +60,7 @@ class _ChatWidgetState extends State<ChatWidget>
 
   // Listeners
   late final StreamSubscription _updateRoomsSub;
+  late final StreamSubscription _updateNotifsSub;
   late final StreamSubscription _joinRoomSub;
 
   @override
@@ -66,6 +68,11 @@ class _ChatWidgetState extends State<ChatWidget>
     super.initState();
     _availableRooms = _chatService.availableRooms;
     _joinedRooms = _chatService.joinedRooms;
+
+    _updateNotifsSub =
+        _chatService.notifyUpdatedNotifications.stream.listen((event) {
+      setState(() {});
+    });
 
     _updateRoomsSub =
         _chatService.notifyUpdatedChatrooms.stream.listen((event) {
@@ -90,6 +97,7 @@ class _ChatWidgetState extends State<ChatWidget>
 
   @override
   dispose() {
+    _updateNotifsSub.cancel();
     _joinRoomSub.cancel();
     _updateRoomsSub.cancel();
     super.dispose();
@@ -233,9 +241,13 @@ class _ChatWidgetState extends State<ChatWidget>
                                   child: ListTile(
                                     title: Text(room.name),
                                     trailing: OutlinedButton(
-                                      child: badges.Badge(child: Text('JOIN')),
+                                      child: _chatService
+                                              .isRoomUnread(room.name)
+                                          ? badges.Badge(child: Text('JOIN'))
+                                          : Text('JOIN'),
                                       onPressed: () {
-                                        _chatService.requestJoinRoomSession(room);
+                                        _chatService
+                                            .requestJoinRoomSession(room);
                                       },
                                     ),
                                   ),

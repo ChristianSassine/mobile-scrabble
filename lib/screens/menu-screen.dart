@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/chat-button-widget.dart';
 import 'package:mobile/components/chat-widget.dart';
 import 'package:mobile/components/high-scores-widget.dart';
 import 'package:mobile/components/language-dropdown-widget.dart';
@@ -55,7 +56,10 @@ class _MenuScreenState extends State<MenuScreen> {
           Navigator.of(context)
               .push(MaterialPageRoute(
                   builder: (context) => const UserProfileScreen()))
-              .then((value) { setState(() {}); print("RETURNED");});
+              .then((value) {
+            setState(() {});
+            print("RETURNED");
+          });
         }
         break;
       case DropDownOption.Disconnect:
@@ -133,22 +137,7 @@ class _MenuScreenState extends State<MenuScreen> {
         child: SafeArea(child: SideChatWidget()),
       ),
       body: Stack(children: [
-        Positioned(
-          top: size.height * 0.1,
-          right: 0,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(100),
-                bottomLeft: Radius.circular(100),
-              ),
-              color: theme.colorScheme.background,
-            ),
-            child: IconButton(
-                onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
-                icon: const Icon(CupertinoIcons.chat_bubble)),
-          ),
-        ),
+        ChatButtonWidget(scaffoldKey: _scaffoldKey),
         Center(
           child: SingleChildScrollView(
             child: Card(
