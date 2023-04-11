@@ -50,6 +50,7 @@ class _ChatWidgetState extends State<ChatWidget>
       TabController(length: 2, vsync: this);
   final _searchBarController = TextEditingController();
   final _newRoomCreationController = TextEditingController();
+  final scaffoldMessangerKey = GlobalKey<ScaffoldMessengerState>();
 
   // Rooms
   List<ChatRoom> _availableRooms = [];
@@ -75,8 +76,10 @@ class _ChatWidgetState extends State<ChatWidget>
     });
 
     _joinRoomSub = _chatService.notifyJoinRoom.stream.listen((event) {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => ChatRoomWidget()));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ChatRoomWidget(
+                scaffoldMessagerKey: scaffoldMessangerKey,
+              )));
     });
 
     if (_chatService.currentRoom != null) {
@@ -105,7 +108,8 @@ class _ChatWidgetState extends State<ChatWidget>
 
   AlertDialog _buildRoomCreationDialog() {
     return AlertDialog(
-      title: Text(FlutterI18n.translate(context, "chat.create_room_dialog_label")),
+      title:
+          Text(FlutterI18n.translate(context, "chat.create_room_dialog_label")),
       content: TextFormField(
         controller: _newRoomCreationController,
         validator: null, // TODO: Add validation (empty room string)
@@ -167,106 +171,112 @@ class _ChatWidgetState extends State<ChatWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          // Navigation buttons (Header)
-          height: 30,
-          child: TabBar(
-            // TODO : Customize colors
-            indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                25.0,
+    return ScaffoldMessenger(
+      key: scaffoldMessangerKey,
+      child: Scaffold(
+        body: Column(children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              // Navigation buttons (Header)
+              height: 30,
+              child: TabBar(
+                // TODO : Customize colors
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(
+                    25.0,
+                  ),
+                  color: Colors.green,
+                ),
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.black,
+                controller: _tabController,
+                tabs: [
+                  Tab(
+                    child: Text("Joined Rooms"),
+                  ),
+                  Tab(
+                    child: Text("Available Rooms"),
+                  )
+                ],
               ),
-              color: Colors.green,
             ),
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.black,
-            controller: _tabController,
-            tabs: [
-              Tab(
-                child: Text("Joined Rooms"),
-              ),
-              Tab(
-                child: Text("Available Rooms"),
-              )
-            ],
           ),
-        ),
-      ),
-      Expanded(
-          child: Container(
-        // Content of each tab (bodies)
-        child: TabBarView(controller: _tabController, children: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                              context: context,
-                              builder: (context) => _buildRoomCreationDialog())
-                          .then((newRoomName) => newRoomName != null
-                              ? _chatService.createChatRoom(newRoomName)
-                              : null);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Text("Create a room"), Icon(Icons.add)],
-                    )),
-              ),
-              Expanded(
-                child: ListView(
-                    children: _joinedRooms
-                        .map((room) => Card(
-                              child: ListTile(
-                                title: Text(room.name),
-                                trailing: OutlinedButton(
-                                  child: badges.Badge(child: Text('JOIN')),
-                                  onPressed: () {
-                                    _chatService.requestJoinRoomSession(room);
-                                  },
-                                ),
-                              ),
-                            ))
-                        .toList()),
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    child: ListTile(
-                      leading: Icon(Icons.search),
-                      title: TextField(
-                        controller: _searchBarController,
-                        decoration: InputDecoration(
-                            hintText: 'Search', border: InputBorder.none),
-                        onChanged: (search) {
-                          _onSearchRooms(search);
-                        },
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.cancel),
+          Expanded(
+              child: Container(
+            // Content of each tab (bodies)
+            child: TabBarView(controller: _tabController, children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
                         onPressed: () {
-                          _searchBarController.clear();
-                          _onSearchRooms("");
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  _buildRoomCreationDialog()).then(
+                              (newRoomName) => newRoomName != null
+                                  ? _chatService.createChatRoom(newRoomName)
+                                  : null);
                         },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [Text("Create a room"), Icon(Icons.add)],
+                        )),
+                  ),
+                  Expanded(
+                    child: ListView(
+                        children: _joinedRooms
+                            .map((room) => Card(
+                                  child: ListTile(
+                                    title: Text(room.name),
+                                    trailing: OutlinedButton(
+                                      child: badges.Badge(child: Text('JOIN')),
+                                      onPressed: () {
+                                        _chatService.requestJoinRoomSession(room);
+                                      },
+                                    ),
+                                  ),
+                                ))
+                            .toList()),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        child: ListTile(
+                          leading: Icon(Icons.search),
+                          title: TextField(
+                            controller: _searchBarController,
+                            decoration: InputDecoration(
+                                hintText: 'Search', border: InputBorder.none),
+                            onChanged: (search) {
+                              _onSearchRooms(search);
+                            },
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.cancel),
+                            onPressed: () {
+                              _searchBarController.clear();
+                              _onSearchRooms("");
+                            },
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              Expanded(child: _buildAvailableRooms()),
-            ],
-          )
+                  Expanded(child: _buildAvailableRooms()),
+                ],
+              )
+            ]),
+          )),
         ]),
-      )),
-    ]);
+      ),
+    );
   }
 }

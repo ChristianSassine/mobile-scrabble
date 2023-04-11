@@ -25,6 +25,7 @@ class ChatService {
   final PublishSubject<ChatRoom> notifyJoinRoom = PublishSubject();
   final PublishSubject<bool> notifyLeftRoom =
       PublishSubject(); // TODO: maybe use this, maybe not
+  final PublishSubject<ChatRoom> notifyKickedOut = PublishSubject();
   final PublishSubject<bool> notifyUpdatedChatrooms = PublishSubject();
   final PublishSubject<List<ChatMessage>> notifyUpdateMessages =
       PublishSubject();
@@ -119,6 +120,7 @@ class ChatService {
   void _deleteChatRoom(ChatRoom room){
     _joinedRooms.remove(room.name);
     _chatRooms.removeWhere((chatRoom) => chatRoom.name == room.name);
+    if (currentRoom?.name == room.name)  notifyKickedOut.add(room);
     notifyUpdatedChatrooms.add(true);
   }
 

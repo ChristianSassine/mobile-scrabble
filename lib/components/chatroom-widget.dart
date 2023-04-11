@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 
 // TODO: Translate and adapt whole widget
 class ChatRoomWidget extends StatefulWidget {
-  const ChatRoomWidget({super.key});
+  const ChatRoomWidget({super.key, required this.scaffoldMessagerKey});
+
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessagerKey;
 
   @override
   State<ChatRoomWidget> createState() => _ChatRoomWidgetState();
@@ -18,23 +21,34 @@ class ChatRoomWidget extends StatefulWidget {
 class _ChatRoomWidgetState extends State<ChatRoomWidget> {
   final _chatService = GetIt.I.get<ChatService>();
 
+  late final StreamSubscription _kickedOutSub;
+  final GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
     if (!_chatService.inRoom) _chatService.onInRoom();
+    _kickedOutSub = _chatService.notifyKickedOut.stream.listen((event) {
+      widget.scaffoldMessagerKey.currentState
+          ?.showSnackBar(SnackBarFactory.redSnack("Room has been deleted"));
+      Navigator.of(context).pop();
+    });
   }
 
   @override
   void dispose() {
     if (_chatService.inRoom) _chatService.onClosingRoom();
+    _kickedOutSub.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final room = _chatService.currentRoom!;
+    final theme = Theme.of(context);
 
     return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           leading: IconButton(
             icon: const badges.Badge(
@@ -48,13 +62,18 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
           ),
           title: Text(room.name),
           actions: [
+            if (room.isDeletable)
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+                foregroundColor: theme.colorScheme.onError
+              ),
                 onPressed: () {
                   _chatService.requestLeaveRoom(room.name);
                   Navigator.of(context).pop();
                 },
                 child:
-                    _chatService.isRoomOwner() ? Text('LEAVE') : Text('DELETE'))
+                    _chatService.isRoomOwner() ? Text('DELETE') : Text('LEAVE'))
           ],
         ),
         body: Center(
