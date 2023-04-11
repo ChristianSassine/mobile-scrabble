@@ -72,6 +72,7 @@ class _ChatWidgetState extends State<ChatWidget>
       setState(() {
         _availableRooms = _chatService.availableRooms;
         _joinedRooms = _chatService.joinedRooms;
+        _onSearchRooms(_searchBarController.text);
       });
     });
 
