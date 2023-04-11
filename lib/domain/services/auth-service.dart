@@ -29,7 +29,7 @@ class AuthService {
   Subject<bool> notifyRegister = PublishSubject();
   Subject<String> notifyError = PublishSubject();
 
-  Future<void> connectUser(String username, String password) async {
+  Future<void> connectUser(String username, String password, {accountSetup = false}) async {
     try {
       var response = await _httpService
           .signInRequest({"username": username, "password": password});
@@ -43,8 +43,10 @@ class AuthService {
         final data = jsonDecode(response.body)['userData'];
         IUser user = IUser.fromJson(data);
         await _userService.updateUser(user);
-        final SettingsInfo settingsInfo = SettingsInfo.fromJson(data);
-        _settingsService.loadConfig(settingsInfo);
+        if (!accountSetup){
+          final SettingsInfo settingsInfo = SettingsInfo.fromJson(data);
+          _settingsService.loadConfig(settingsInfo);
+        }
 
         _socket.io.options['extraHeaders'] = {'cookie': _cookie};
         _socket
@@ -52,11 +54,11 @@ class AuthService {
           ..connect();
 
         // TODO: Might need to refactor this
-        final chatrooms = (data['userData']['chatRooms'] as List).map((e) {
+        final chatrooms = (data['chatRooms'] as List).map((e) {
           return e['name'] as String;
         }).toList();
         _chatService.init(chatrooms);
-        notifyLogin.add(true);
+        if (!accountSetup) notifyLogin.add(true);
         return;
       }
     } catch (_) {
@@ -86,8 +88,9 @@ class AuthService {
       }
       notifyRegister.add(true);
 
-      await connectUser(username, password);
+      await connectUser(username, password, accountSetup: true);
       await _settingsService.saveConfig();
+      notifyLogin.add(true);
 
       return;
     }
