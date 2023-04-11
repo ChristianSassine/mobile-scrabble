@@ -63,17 +63,17 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
           title: Text(room.name),
           actions: [
             if (room.isDeletable)
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.error,
-                foregroundColor: theme.colorScheme.onError
-              ),
-                onPressed: () {
-                  _chatService.requestLeaveRoom(room.name);
-                  Navigator.of(context).pop();
-                },
-                child:
-                    _chatService.isRoomOwner() ? Text('DELETE') : Text('LEAVE'))
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.error,
+                      foregroundColor: theme.colorScheme.onError),
+                  onPressed: () {
+                    _chatService.requestLeaveRoom(room.name);
+                    Navigator.of(context).pop();
+                  },
+                  child: _chatService.isRoomOwner()
+                      ? Text('DELETE')
+                      : Text('LEAVE'))
           ],
         ),
         body: Center(
@@ -206,12 +206,40 @@ class _ChatboxState extends State<Chatbox> {
     //     ),
     //   );
     // }
-    return Card(
-      child: ListTile(
-        leading: Text("test"),
-        subtitle: Center(child: Text(message.message)),
-        trailing: Text(message.date),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Card(
+          child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Container(
+              child: Row(
+                children: _userService.user?.id == message.userId
+                    ? [
+                        Flexible(child: Text(message.date)),
+                        Flexible(child: Text(message.userId)),
+                        CircleAvatar(
+                          child: Icon(Icons.person),
+                        )
+                      ]
+                    : [
+                        CircleAvatar(
+                          child: Icon(Icons.person),
+                        ),
+                        Flexible(child: Text(message.userId)),
+                        Flexible(child: Text(message.date))
+                      ],
+              ),
+            ),
+            Divider(),
+            Container(
+              width: double.infinity,
+              child: Text(message.message),
+            )
+          ],
+        ),
+      )),
     );
   }
 
