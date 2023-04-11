@@ -133,7 +133,20 @@
     "chat": {
         "create_room_label": "Creer un nouveau canal",
         "create_room_dialog_label": "Création de canal",
-        "create_room_name_label": "Nom du canal"
+        "create_room_name_label": "Nom du canal",
+        "join_label": "REJOINDRE",
+        "joined_rooms_label": "Canaux Rejoints",
+        "available_rooms_label": "Canaux Disponibles",
+        "search_label": "Recherche",
+        "leave_label": "QUITTER",
+        "delete_label": "EFFACER",
+        "room_actions": {
+            "kicked": "Le canal a été effacé"
+        },
+        "chatbox": {
+            "input_error": "Entrez quelque chose avant de soumettre",
+            "input_hint": "Ecrivez votre message ici"
+        }
     },
     "user_profile": {
         "title": "Profile utilisateur",

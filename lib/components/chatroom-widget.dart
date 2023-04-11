@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 
-// TODO: Translate and adapt whole widget
+// TODO: Adapt whole widget
 class ChatRoomWidget extends StatefulWidget {
   const ChatRoomWidget({super.key, required this.scaffoldMessagerKey});
 
@@ -35,15 +36,16 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
     if (!_chatService.inRoom) _chatService.onInRoom();
 
     _kickedOutSub = _chatService.notifyKickedOut.stream.listen((event) {
-      widget.scaffoldMessagerKey.currentState
-          ?.showSnackBar(SnackBarFactory.redSnack("Room has been deleted"));
+      widget.scaffoldMessagerKey.currentState?.showSnackBar(
+          SnackBarFactory.redSnack(
+              FlutterI18n.translate(context, "chat.room_actions.kicked")));
       Navigator.of(context).pop();
     });
 
     _updateNotifsSub =
         _chatService.notifyUpdatedNotifications.stream.listen((event) {
-          setState(() {});
-        });
+      setState(() {});
+    });
   }
 
   @override
@@ -63,10 +65,12 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
         key: _scaffoldKey,
         appBar: AppBar(
           leading: IconButton(
-            icon: _chatService.notifsCount > 0 ? badges.Badge(
-              badgeContent: Text("${_chatService.notifsCount}"), // TODO: Implement notifs
-              child: Icon(Icons.arrow_back),
-            ) : Icon(Icons.arrow_back),
+            icon: _chatService.notifsCount > 0
+                ? badges.Badge(
+                    badgeContent: Text("${_chatService.notifsCount}"),
+                    child: Icon(Icons.arrow_back),
+                  )
+                : Icon(Icons.arrow_back),
             onPressed: () {
               _chatService.quitRoom();
               Navigator.of(context).pop();
@@ -84,8 +88,10 @@ class _ChatRoomWidgetState extends State<ChatRoomWidget> {
                     Navigator.of(context).pop();
                   },
                   child: _chatService.isRoomOwner()
-                      ? Text('DELETE')
-                      : Text('LEAVE'))
+                      ? Text(
+                          FlutterI18n.translate(context, "chat.delete_label"))
+                      : Text(
+                          FlutterI18n.translate(context, "chat.leave_label")))
           ],
         ),
         body: Center(
@@ -132,7 +138,7 @@ class _ChatInputState extends State<ChatInput> {
         onEditingComplete: () {},
         validator: (value) {
           if (value == null || value.isEmpty || value.trim() == '') {
-            return 'Entrez quelque chose avant de soumettre'; // TODO: Translate
+            return FlutterI18n.translate(context, "chat.chatbox.input_error");
           }
           return null;
         },
@@ -142,12 +148,12 @@ class _ChatInputState extends State<ChatInput> {
         },
         decoration: InputDecoration(
             border: const OutlineInputBorder(),
-            hintText: "Write your message here",
+            hintText: FlutterI18n.translate(context, "chat.chatbox.input_hint"),
             suffixIcon: IconButton(
               onPressed: () {
                 _submitMessage();
               },
-              icon: Icon(Icons.send),
+              icon: const Icon(Icons.send),
             )),
       ),
     );

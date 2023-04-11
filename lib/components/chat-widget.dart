@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:badges/badges.dart' as badges;
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/chatroom-widget.dart';
@@ -150,7 +150,8 @@ class _ChatWidgetState extends State<ChatWidget>
               child: ListTile(
                 title: Text(room.name),
                 trailing: OutlinedButton(
-                  child: Text('JOIN'),
+                  child:
+                      Text(FlutterI18n.translate(context, "chat.join_label")),
                   onPressed: () {
                     _chatService.requestJoinChatRoom(room.name);
                   },
@@ -168,7 +169,7 @@ class _ChatWidgetState extends State<ChatWidget>
             child: ListTile(
               title: Text(room.name),
               trailing: OutlinedButton(
-                child: Text('JOIN'),
+                child: Text(FlutterI18n.translate(context, "chat.join_label")),
                 onPressed: () {
                   _chatService.requestJoinChatRoom(room.name);
                 },
@@ -202,10 +203,18 @@ class _ChatWidgetState extends State<ChatWidget>
                 controller: _tabController,
                 tabs: [
                   Tab(
-                    child: Text("Joined Rooms"),
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(FlutterI18n.translate(
+                          context, "chat.joined_rooms_label")),
+                    ),
                   ),
                   Tab(
-                    child: Text("Available Rooms"),
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(FlutterI18n.translate(
+                          context, "chat.available_rooms_label")),
+                    ),
                   )
                 ],
               ),
@@ -231,7 +240,11 @@ class _ChatWidgetState extends State<ChatWidget>
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [Text("Create a room"), Icon(Icons.add)],
+                          children: [
+                            Text(FlutterI18n.translate(
+                                context, "chat.create_room_label")),
+                            const Icon(Icons.add)
+                          ],
                         )),
                   ),
                   Expanded(
@@ -243,8 +256,11 @@ class _ChatWidgetState extends State<ChatWidget>
                                     trailing: OutlinedButton(
                                       child: _chatService
                                               .isRoomUnread(room.name)
-                                          ? badges.Badge(child: Text('JOIN'))
-                                          : Text('JOIN'),
+                                          ? badges.Badge(
+                                              child: Text(FlutterI18n.translate(
+                                                  context, "chat.join_label")))
+                                          : Text(FlutterI18n.translate(
+                                              context, "chat.join_label")),
                                       onPressed: () {
                                         _chatService
                                             .requestJoinRoomSession(room);
@@ -263,17 +279,19 @@ class _ChatWidgetState extends State<ChatWidget>
                       padding: const EdgeInsets.all(8.0),
                       child: Card(
                         child: ListTile(
-                          leading: Icon(Icons.search),
+                          leading: const Icon(Icons.search),
                           title: TextField(
                             controller: _searchBarController,
                             decoration: InputDecoration(
-                                hintText: 'Search', border: InputBorder.none),
+                                hintText: FlutterI18n.translate(
+                                    context, "chat.search_label"),
+                                border: InputBorder.none),
                             onChanged: (search) {
                               _onSearchRooms(search);
                             },
                           ),
                           trailing: IconButton(
-                            icon: Icon(Icons.cancel),
+                            icon: const Icon(Icons.cancel),
                             onPressed: () {
                               _searchBarController.clear();
                               _onSearchRooms("");
