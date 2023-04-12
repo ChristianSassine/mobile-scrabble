@@ -13,6 +13,20 @@ import 'package:path/path.dart';
 class AvatarService {
   final httpService = GetIt.I.get<HttpHandlerService>();
 
+  late String botImageUrl;
+
+  AvatarService() {
+    _initBotImage();
+  }
+
+  void _initBotImage() async {
+    var response = await httpService.getBotProfilePicture();
+
+    if (response.statusCode == 200) {
+      botImageUrl = jsonDecode(response.body)['url'];
+    }
+  }
+
   Future<dynamic> getDefaultAvatars() async {
     var response = await httpService.getDefaultAvatarsRequest();
     if (response.statusCode == 200) {

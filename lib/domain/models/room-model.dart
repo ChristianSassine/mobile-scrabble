@@ -129,6 +129,9 @@ class GameRoom {
         gameMode = GameMode.fromString(json['mode']),
         visibility = GameVisibility.fromString(json['visibility'])!,
         password = json['password'];
+
+  bool containsTwoPlayers () => players.where((element) => element.playerType != PlayerType.Bot).length >= 2;
+  bool isPlayerCreator(IUser player) => players.firstWhere((element) => element.isCreator == true).user.id == player.id;
 }
 
 class GameCreationQuery {

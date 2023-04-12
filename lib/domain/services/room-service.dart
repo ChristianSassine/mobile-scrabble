@@ -67,6 +67,12 @@ class RoomService {
         RoomSocketEvent.ErrorJoining.event,
         (errorMsg) => notifyError
             .add(parseServerError(ServerError.fromString(errorMsg))));
+
+    _socket.on(RoomSocketEvent.KickedFromWaitingRoom.event, (_) {
+      currentRoom = null;
+      Navigator.pop(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!);
+
+    });
   }
 
   // TODO: move to more global service if there's other errors we need to parse

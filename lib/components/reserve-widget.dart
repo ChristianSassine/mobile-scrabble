@@ -74,9 +74,9 @@ class _LetterReserveState extends State<LetterReserve> {
                         : (lettersToExchange.isNotEmpty ? Colors.green : Colors.lightGreen[50]),
                     margin: const EdgeInsets.all(10),
                     child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: (widget.draggableKey.currentWidget == null &&
-                                lettersToExchange.isEmpty)
+                        padding: const EdgeInsets.all(14.0),
+                        child: (!_gameService.game!.isCurrentPlayersTurn() || (widget.draggableKey.currentWidget == null &&
+                                lettersToExchange.isEmpty))
                             ? Column(children: [
                                 Text(
                                   FlutterI18n.translate(context, "game.reserve"),

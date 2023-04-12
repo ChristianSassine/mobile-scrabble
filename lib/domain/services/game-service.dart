@@ -68,6 +68,7 @@ class GameService {
     _socket.on(GameSocketEvent.PlacementFailure.event, (error) => _invalidWordPlacement(error));
   }
 
+
   void _publicViewUpdate(GameInfo gameInfo) {
     if (game == null) return;
 
@@ -76,6 +77,7 @@ class GameService {
   }
 
   void _nextTurn(GameInfo gameInfo) {
+    if(game == null) return;
     game!.nextTurn(gameInfo);
     notifyGameInfoChange.add(true);
   }
@@ -304,6 +306,7 @@ class GameService {
 
   void abandonGame() {
     _socket.emit(GameSocketEvent.AbandonGame.event);
+
     game = null;
   }
 

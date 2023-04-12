@@ -55,6 +55,11 @@ class HttpHandlerService {
         headers: headers);
   }
 
+  Future<http.Response> getBotProfilePicture() {
+    return client.get(Uri.parse("$baseUrl/image/bot/profile-picture"),
+        headers: headers);
+  }
+
   Future<http.StreamedResponse> sendAvatarRequest(
       File image, String key) async {
     final request = http.MultipartRequest(

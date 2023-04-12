@@ -63,10 +63,10 @@ class Board {
   }
 
   void updateFromString(List<String> gameboard) {
-    for(int x = 1; x <= size; ++x){
-      for(int y = 1; y <= size; ++y){
+    for(int x = 0; x < size; ++x){
+      for(int y = 0; y < size; ++y){
         String character = gameboard[x + y * size];
-        _boardMatrix[x - 1][y - 1] = character != '' ? Letter.fromCharacter(character) : null;
+        _boardMatrix[x][y] = character != '' ? Letter.fromCharacter(character) : null;
       }
     }
 

@@ -32,8 +32,8 @@ class _GameScreenState extends State<GameScreen> {
         textCancel: Text(FlutterI18n.translate(context, "form.no")),
         title: Text(FlutterI18n.translate(context, "game.abandon_prompt")),
         content: const SizedBox.shrink())) {
-            _gameService.abandonGame();
-            await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const EndGameScreen()));
+      _gameService.abandonGame();
+      await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const EndGameScreen()));
     }
   }
 

@@ -45,6 +45,7 @@ flutter:
         - assets/images/scrabble_logo.png
         - assets/images/test.png
         - assets/images/exchange.png
+        - assets/images/crown.png
         - development.env
         - production.env
         - assets/flutter_i18n/

@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/reserve-widget.dart';
 import 'package:mobile/domain/models/game-model.dart';
+import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'dart:math' as math;
 
@@ -130,6 +133,7 @@ class PlayerInfo extends StatefulWidget {
 
 class _PlayerInfoState extends State<PlayerInfo> {
   final _gameService = GetIt.I.get<GameService>();
+  final _avatarService = GetIt.I.get<AvatarService>();
 
   late StreamSubscription _gameInfoUpdate;
 
@@ -162,6 +166,13 @@ class _PlayerInfoState extends State<PlayerInfo> {
               child: SizedBox(
                   width: 260,
                   child: ListTile(
+                    leading: CircleAvatar(
+                        backgroundImage:
+                        (player.player.playerType == PlayerType.Bot) ? NetworkImage(_avatarService.botImageUrl):
+                        player.player.user.profilePicture?.key != null ? NetworkImage(player.player.user.profilePicture!.key!) : null,
+                        child: player.player.user.profilePicture?.key != null
+                            ? null
+                            : const Icon(CupertinoIcons.profile_circled)),
                     title: Text(player.player.user.username),
                     subtitle: Text("Score: ${player.score}"),
                     trailing: _gameService.game?.activePlayer == player
