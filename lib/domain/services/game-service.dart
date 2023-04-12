@@ -260,7 +260,7 @@ class GameService {
     List.generate(pendingLetters.length, (index) => pendingLetters[index].letter.character);
 
     for (var startIndex in starPlacements) {
-      letters[startIndex].toLowerCase();
+      letters[startIndex] = letters[startIndex].toLowerCase();
     }
 
     debugPrint("[Game Service] Confirm word placement");
