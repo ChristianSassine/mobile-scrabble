@@ -35,8 +35,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="https" android:host="flutterscrabble.page.link" />
-                <data android:scheme="http" android:host="flutterscrabble.page.link" />
+                <data android:scheme="https" android:host="scrabbleflutter.page.link" />
+                <data android:scheme="http" android:host="scrabbleflutter.page.link"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

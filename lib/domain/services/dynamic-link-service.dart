@@ -16,7 +16,7 @@ class DynamicLinkService {
   Future<String> generateDynamicLink(String roomID, String? password) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
         link: Uri.parse('https://www.scrabble.com/join-game?roomID=$roomID&password=$password'),
-        uriPrefix: 'https://flutterscrabble.page.link',
+        uriPrefix: 'https://scrabbleflutter.page.link',
         androidParameters:
             const AndroidParameters(packageName: 'com.example.mobile'));
 
