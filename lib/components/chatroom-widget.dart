@@ -202,28 +202,10 @@ class _ChatboxState extends State<Chatbox> {
   }
 
   Widget _buildMessage(ChatMessage message) {
-    // if (message.type == MessageType.CLIENT.value) {
-    //   return Card(
-    //     color: _userService.user!.username == message.username
-    //         ? Colors.white
-    //         : Colors.lightGreen,
-    //     child: ListTile(
-    //       leading: Text("${message.username}: ",
-    //           style: const TextStyle(fontWeight: FontWeight.bold)),
-    //       title: Text(message.message),
-    //       trailing: Text("| ${message.timeStamp}"),
-    //     ),
-    //   );
-    // }
-    // if (message.type == MessageType.CLIENT.value) {
-    //   return Card(
-    //     child: ListTile(
-    //       leading: Text("${message.username}: "),
-    //       title: Text(message.message),
-    //       trailing: Text("| ${message.timeStamp}"),
-    //     ),
-    //   );
-    // }
+    final theme = Theme.of(context);
+    final userInfo = _chatService.usersInfo[message.userId];
+    final isLoaded = userInfo != null;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Card(
@@ -233,20 +215,63 @@ class _ChatboxState extends State<Chatbox> {
           children: [
             Container(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: _userService.user?.id == message.userId
                     ? [
-                        Flexible(child: Text(message.date)),
-                        Flexible(child: Text(message.userId)),
-                        CircleAvatar(
-                          child: Icon(Icons.person),
-                        )
+                        Text(message.date),
+                        IntrinsicWidth(
+                          child: Row(
+                            children: [
+                              Flexible(
+                                  child: Text(
+                                isLoaded ? userInfo.username : "...",
+                                style: theme.textTheme.bodyMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              )),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: CircleAvatar(
+                                  backgroundImage: isLoaded
+                                      ? NetworkImage(userInfo.imageUrl)
+                                      : null,
+                                  child: isLoaded
+                                      ? null
+                                      : const Icon(Icons.person),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ]
                     : [
-                        CircleAvatar(
-                          child: Icon(Icons.person),
+                        IntrinsicWidth(
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: CircleAvatar(
+                                  backgroundImage: isLoaded
+                                      ? NetworkImage(userInfo.imageUrl)
+                                      : null,
+                                  child: isLoaded ? null : Icon(Icons.person),
+                                ),
+                              ),
+                              Flexible(
+                                child: Text(
+                                  isLoaded ? userInfo.username : "...",
+                                  style: theme.textTheme.bodyMedium!
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        Flexible(child: Text(message.userId)),
-                        Flexible(child: Text(message.date))
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(message.date),
+                        )
                       ],
               ),
             ),

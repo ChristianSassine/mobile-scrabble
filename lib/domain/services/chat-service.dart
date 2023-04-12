@@ -1,8 +1,11 @@
 import 'dart:collection';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
+import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -10,8 +13,10 @@ import 'package:socket_io_client/socket_io_client.dart';
 import '../models/chat-models.dart';
 
 class ChatService {
+  // Services
   Socket socket = GetIt.I.get<Socket>();
   final _userService = GetIt.I.get<UserService>();
+  final _httpService = GetIt.I.get<HttpHandlerService>();
 
   // DataStructures
   ChatRoom? currentRoom; // Might change type
@@ -20,6 +25,7 @@ class ChatService {
   final HashSet<String> _joinedRooms = HashSet();
   final HashSet<String> _notifiedRooms =
       HashSet(); // Contains name of currently notified rooms
+  final HashMap<String, UserChatRoom> usersInfo = HashMap();
 
   // Observables
   final PublishSubject<ChatRoom> notifyJoinRoom = PublishSubject();
@@ -48,6 +54,7 @@ class ChatService {
 
   void reset() {
     _chatRooms = [];
+    usersInfo.clear();
     currentRoom = null;
     _joinedRooms.clear();
     _notifiedRooms.clear();
@@ -155,7 +162,25 @@ class ChatService {
   void _joinRoomSession(String roomName, List<ChatMessage> newMessages) {
     currentRoom = _chatRooms.firstWhere((element) => element.name == roomName);
     messages = newMessages;
+    final currentlyRequested = Set();
+    for (final message in messages) {
+      final id = message.userId;
+      if (!usersInfo.containsKey(id) && !currentlyRequested.contains(id)) {
+        currentlyRequested.add(id);
+        _updateUserInfo(id);
+      }
+    }
     notifyJoinRoom.add(currentRoom!);
+  }
+
+  void _updateUserInfo(String id) {
+    _httpService.getChatUserInfoRequest(id).then((response) {
+      if (response.statusCode == HttpStatus.ok) {
+        final userInfo = UserChatRoom.fromJson(jsonDecode(response.body));
+        usersInfo[id] = userInfo;
+        notifyUpdateMessages.add(messages);
+      }
+    });
   }
 
   void quitRoom() {
@@ -167,6 +192,7 @@ class ChatService {
     inRoom = false;
     socket.emit(
         ChatRoomSocketEvents.LeaveChatRoomSession.event, currentRoom!.name);
+    usersInfo.clear();
   }
 
   // TODO: Maybe remove this if it's not useful
@@ -198,6 +224,8 @@ class ChatService {
     // TODO: Implement and take into account notifications
     debugPrint("received message from ${message.userId} :  ${message.message}");
     if (roomName == currentRoom?.name && inRoom) {
+      if (!usersInfo.containsKey(message.userId))
+        _updateUserInfo(message.userId);
       messages.add(message);
       notifyUpdateMessages.add(messages);
       return;
@@ -225,25 +253,5 @@ class ChatService {
   void onClosingRoom() {
     inRoom = false;
     requestLeaveRoomSession();
-  }
-
-  void _userJoined(String username) {
-    // TODO: Adapt or remove this
-    // if (authService.user!.username != username) {
-    //   chatBox.addMessage(ChatMessage(
-    //       "",
-    //       MessageType.SYSTEM.value,
-    //       "${username} has joined the chat",
-    //       DateFormat.Hms().format(DateTime.now())));
-    // }
-
-    // _sanitizeRooms(rooms) {
-    //   // TODO: might be removed
-    //   // Remove from joined rooms if it doesn't exist anymore (Edge case)
-    //   final tempHashSet = _notifiedRooms;
-    //   for (var element in rooms) {
-    //     tempHashSet.remove(element.name);
-    //   }
-    // }
   }
 }

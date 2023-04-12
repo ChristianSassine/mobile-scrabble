@@ -11,6 +11,15 @@ class ChatRoom {
         isDeletable = json['isDeletable'];
 }
 
+class UserChatRoom {
+  final String username;
+  final String imageUrl;
+
+  UserChatRoom.fromJson(json)
+      : username = json['username'],
+        imageUrl = json['imageUrl'];
+}
+
 class ChatRoomState {
   final String name;
   final bool notified;
