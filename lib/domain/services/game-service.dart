@@ -17,8 +17,9 @@ import 'package:socket_io_client/socket_io_client.dart';
 class LetterPlacement {
   final int x, y;
   final Letter letter;
+  final bool isStar;
 
-  const LetterPlacement(this.x, this.y, this.letter);
+  const LetterPlacement(this.x, this.y, this.letter, this.isStar);
 }
 
 class GameService {
@@ -31,7 +32,6 @@ class GameService {
   GameRoom? _gameRoom;
   Letter? draggedLetter;
   List<LetterPlacement> pendingLetters = [];
-  List<int> starPlacements = [];
 
   Game? game;
 
@@ -40,9 +40,7 @@ class GameService {
   }
 
   void startGame(GameInfo initialGameInfo) async {
-    _gameRoom = GetIt.I
-        .get<RoomService>()
-        .currentRoom!;
+    _gameRoom = GetIt.I.get<RoomService>().currentRoom!;
     game = Game(_gameRoom!, _userService.user!);
 
     _publicViewUpdate(initialGameInfo);
@@ -56,7 +54,7 @@ class GameService {
 
   void setupSocketListeners() {
     _socket.on(RoomSocketEvent.PublicViewUpdate.event,
-            (data) => _publicViewUpdate(GameInfo.fromJson(data)));
+        (data) => _publicViewUpdate(GameInfo.fromJson(data)));
 
     _socket.on(GameSocketEvent.NextTurn.event, (data) => _nextTurn(GameInfo.fromJson(data)));
     _socket.on(GameSocketEvent.GameEnded.event, (_) => _endGame());
@@ -68,7 +66,6 @@ class GameService {
     _socket.on(GameSocketEvent.PlacementFailure.event, (error) => _invalidWordPlacement(error));
   }
 
-
   void _publicViewUpdate(GameInfo gameInfo) {
     if (game == null) return;
 
@@ -77,15 +74,13 @@ class GameService {
   }
 
   void _nextTurn(GameInfo gameInfo) {
-    if(game == null) return;
+    if (game == null) return;
     game!.nextTurn(gameInfo);
     notifyGameInfoChange.add(true);
   }
 
   void _endGame() {
-    Navigator.pushReplacement(GetIt.I
-        .get<GlobalKey<NavigatorState>>()
-        .currentContext!,
+    Navigator.pushReplacement(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
         MaterialPageRoute(builder: (context) => const EndGameScreen()));
 
     game = null;
@@ -101,8 +96,8 @@ class GameService {
     }
 
     game!.gameboard.placeLetter(x, y, letter);
-    pendingLetters.add(LetterPlacement(x, y, letter));
-    if (isStarLetter) starPlacements.add(pendingLetters.length - 1);
+    LetterPlacement placement = LetterPlacement(x, y, letter, isStarLetter);
+    pendingLetters.add(placement);
     pendingLetters.sort((a, b) => a.x.compareTo(b.x) + a.y.compareTo(b.y));
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
@@ -116,8 +111,7 @@ class GameService {
     }
 
     LetterPlacement lastPlacement = pendingLetters.last;
-    bool sameColumn = lastPlacement.x == x,
-        sameRow = lastPlacement.y == y;
+    bool sameColumn = lastPlacement.x == x, sameRow = lastPlacement.y == y;
     if (!(sameColumn || sameRow)) return false;
 
     if (sameColumn) {
@@ -125,8 +119,8 @@ class GameService {
         return false; // Not all on the same column
       }
       for (int checkY = lastPlacement.y;
-      (y - checkY).abs() > 0;
-      checkY += y.compareTo(lastPlacement.y)) {
+          (y - checkY).abs() > 0;
+          checkY += y.compareTo(lastPlacement.y)) {
         if (game!.gameboard.isSlotEmpty(x, checkY)) {
           return false; // Empty slot between last placement
         }
@@ -136,8 +130,8 @@ class GameService {
         return false; // Not all on the same row
       }
       for (int checkX = lastPlacement.x;
-      (x - checkX).abs() > 0;
-      checkX += x.compareTo(lastPlacement.x)) {
+          (x - checkX).abs() > 0;
+          checkX += x.compareTo(lastPlacement.x)) {
         if (game!.gameboard.isSlotEmpty(checkX, y)) {
           return false; // Empty slot between last placement
         }
@@ -162,17 +156,16 @@ class GameService {
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
 
     if (isPlacedLetterRemovalValid(x, y)) {
-      int index = pendingLetters.indexWhere((placement) => placement.x == x && placement.y == y);
-      pendingLetters.removeAt(index);
+      LetterPlacement placement =
+          pendingLetters.firstWhere((placement) => placement.x == x && placement.y == y);
+      pendingLetters.remove(placement);
 
       debugPrint(
-          "[GAME SERVICE] Remove letter from the board: board[$x][$y] = ${game!.gameboard.getSlot(
-              x, y)}");
+          "[GAME SERVICE] Remove letter from the board: board[$x][$y] = ${game!.gameboard.getSlot(x, y)}");
 
       Letter? removedLetter = game!.gameboard.removeLetter(x, y);
-      if (starPlacements.contains(index)) {
+      if (placement.isStar) {
         removedLetter = Letter.STAR;
-        starPlacements.remove(index);
       }
 
       return removedLetter;
@@ -198,10 +191,7 @@ class GameService {
 
   void addLetterInEasel(Letter letter) {
     debugPrint(
-        "[GAME SERVICE] Add letter to the end of easel: easel[${game!
-            .currentPlayer.easel
-            .getLetterList()
-            .length}] = $letter");
+        "[GAME SERVICE] Add letter to the end of easel: easel[${game!.currentPlayer.easel.getLetterList().length}] = $letter");
     game!.currentPlayer.easel.addLetter(letter);
 
     //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
@@ -255,15 +245,14 @@ class GameService {
   void confirmWordPlacement() {
     Coordinate firstCoordonate = Coordinate(pendingLetters[0].x, pendingLetters[0].y);
     bool? isHorizontal =
-    pendingLetters.length > 1 ? pendingLetters[0].y == pendingLetters[1].y : null;
-    List<String> letters =
-    List.generate(pendingLetters.length, (index) => pendingLetters[index].letter.character);
+        pendingLetters.length > 1 ? pendingLetters[0].y == pendingLetters[1].y : null;
+    List<String> letters = List.generate(
+        pendingLetters.length,
+        (index) => pendingLetters[index].isStar
+            ? pendingLetters[index].letter.character.toLowerCase()
+            : pendingLetters[index].letter.character);
 
-    for (var startIndex in starPlacements) {
-      letters[startIndex] = letters[startIndex].toLowerCase();
-    }
-
-    debugPrint("[Game Service] Confirm word placement");
+    debugPrint("[Game Service] Confirm word placement ${letters.toString()}");
     _socket.emit(GameSocketEvent.PlaceWordCommand.event,
         PlaceWordCommandInfo(firstCoordonate, isHorizontal, letters));
 
@@ -275,7 +264,6 @@ class GameService {
 
     debugPrint("[Game Service] Placement success");
     pendingLetters.clear();
-    starPlacements.clear();
     game!.gameboard.notifyBoardChanged.add(true);
   }
 
@@ -290,7 +278,6 @@ class GameService {
     }
 
     pendingLetters.clear();
-    starPlacements.clear();
     game!.gameboard.notifyBoardChanged.add(true);
 
     if (error is! String) {
