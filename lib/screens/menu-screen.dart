@@ -134,7 +134,7 @@ class _MenuScreenState extends State<MenuScreen> {
         notifyParent: () => setState(() {}),
       ),
       endDrawer: const Drawer(
-        child: SafeArea(child: SideChatWidget()),
+        child: SideChatWidget(),
       ),
       body: Stack(children: [
         ChatButtonWidget(scaffoldKey: _scaffoldKey),

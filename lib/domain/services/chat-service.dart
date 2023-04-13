@@ -128,11 +128,13 @@ class ChatService {
 
   void _leaveRoom(String name) {
     _joinedRooms.remove(name);
+    _notifiedRooms.remove(name);
     notifyUpdatedChatrooms.add(true);
   }
 
   void _deleteChatRoom(ChatRoom room) {
     _joinedRooms.remove(room.name);
+    _notifiedRooms.remove(room.name);
     _chatRooms.removeWhere((chatRoom) => chatRoom.name == room.name);
     if (currentRoom?.name == room.name) notifyKickedOut.add(room);
     notifyUpdatedChatrooms.add(true);
@@ -149,6 +151,7 @@ class ChatService {
 
   void _onNewChatRoomCreated(ChatRoom newRoom) {
     _chatRooms.add(newRoom);
+    debugPrint("New chatRoom received : ${newRoom.name}");
     notifyUpdatedChatrooms.add(true);
   }
 
@@ -162,6 +165,7 @@ class ChatService {
   }
 
   void _joinRoomSession(String roomName, List<ChatMessage> newMessages) {
+    debugPrint("Joining Room session : $roomName");
     currentRoom = _chatRooms.firstWhere((element) => element.name == roomName);
     messages = newMessages;
     final currentlyRequested = Set();
@@ -208,6 +212,7 @@ class ChatService {
   }
 
   void _joinChatRoom(ChatRoom room) {
+    debugPrint("Joining Room : ${room.name}");
     _joinedRooms.add(room.name);
     notifyUpdatedChatrooms.add(true);
     requestJoinRoomSession(room);
