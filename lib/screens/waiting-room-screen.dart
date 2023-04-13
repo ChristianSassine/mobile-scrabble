@@ -92,7 +92,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
         trailing: _roomService.currentRoom!.isPlayerCreator(_userService.user!) &&
                 !_roomService.currentRoom!.isPlayerCreator(player.user) &&
                 player.playerType != PlayerType.Bot
-            ? IconButton(onPressed: _kickPlayer(player), icon: const Icon(Icons.output))
+            ? IconButton(onPressed: () => _kickPlayer(player), icon: const Icon(Icons.output))
             : null,
       ),
     );
@@ -148,7 +148,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       floatingActionButton: Visibility(
         visible: _roomService.currentRoom!.isPlayerCreator(_userService.user!),
         child: FloatingActionButton(
-          onPressed: _roomService.currentRoom!.containsTwoPlayers() ? _startGame : _startGame,
+          onPressed: _roomService.currentRoom!.containsTwoPlayers() ? _startGame : null,
           backgroundColor:
               _roomService.currentRoom!.containsTwoPlayers() ? Colors.green : Colors.grey,
           tooltip: FlutterI18n.translate(context, "waiting_room.start_game"),

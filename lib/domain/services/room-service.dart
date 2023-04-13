@@ -116,6 +116,7 @@ class RoomService {
   }
 
   void exitRoom() {
+    if (currentRoom == null) return;
     UserRoomQuery exitQuery =
         UserRoomQuery(user: _userService.user!, roomId: currentRoom!.id);
     _socket.emit(RoomSocketEvent.ExitWaitingRoom.event, exitQuery);
