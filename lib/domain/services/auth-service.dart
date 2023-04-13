@@ -54,7 +54,6 @@ class AuthService {
           ..disconnect()
           ..connect();
 
-        // TODO: Might need to refactor this
         final chatrooms = (data['chatRooms'] as List)
             .map((room) => ChatRoomState.fromJson(room))
             .toList();

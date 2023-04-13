@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
+import 'package:mobile/domain/services/audio_service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:rxdart/rxdart.dart';
@@ -17,6 +18,7 @@ class ChatService {
   Socket socket = GetIt.I.get<Socket>();
   final _userService = GetIt.I.get<UserService>();
   final _httpService = GetIt.I.get<HttpHandlerService>();
+  final _audioService = GetIt.I.get<AudioService>();
 
   // DataStructures
   ChatRoom? currentRoom; // Might change type
@@ -49,6 +51,7 @@ class ChatService {
       _joinedRooms.add(joinedRoom.name);
       if (joinedRoom.notified) _notifiedRooms.add(joinedRoom.name);
     }
+    if (_notifiedRooms.isNotEmpty) _audioService.playNotificationSound();
     socket.emit(ChatRoomSocketEvents.GetAllChatRooms.event);
   }
 
@@ -71,7 +74,6 @@ class ChatService {
   get notifsCount => _notifiedRooms.length;
 
   void initSocketListeners() {
-    // TODO: Implement
     socket.on(ChatRoomSocketEvents.GetAllChatRooms.event, (data) {
       final chatrooms =
           (data as List).map((e) => ChatRoom.fromJson(e)).toList();
@@ -230,7 +232,10 @@ class ChatService {
       notifyUpdateMessages.add(messages);
       return;
     }
-    if (_joinedRooms.contains(roomName)) _notifiedRooms.add(roomName);
+    if (!_joinedRooms.contains(roomName) || _notifiedRooms.contains(roomName))
+      return;
+    _notifiedRooms.add(roomName);
+    _audioService.playNotificationSound();
     notifyUpdatedNotifications.add(true);
     debugPrint("notification count : $notifsCount");
   }
