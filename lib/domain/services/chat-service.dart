@@ -88,7 +88,7 @@ class ChatService {
 
     socket.on(ChatRoomSocketEvents.JoinChatRoom.event, (data) {
       final room = ChatRoom.fromJson(data);
-      _joinChatRoom(room.name);
+      _joinChatRoom(room);
     });
 
     socket.on(ChatRoomSocketEvents.JoinChatRoomSession.event, (data) {
@@ -207,9 +207,10 @@ class ChatService {
     socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, roomName);
   }
 
-  void _joinChatRoom(String roomName) {
-    _joinedRooms.add(roomName);
+  void _joinChatRoom(ChatRoom room) {
+    _joinedRooms.add(room.name);
     notifyUpdatedChatrooms.add(true);
+    requestJoinRoomSession(room);
   }
 
   void leaveChatRoom() {
