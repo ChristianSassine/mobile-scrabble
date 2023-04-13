@@ -49,11 +49,6 @@ class RoomService {
       notifyRoomMemberList.add(currentRoom);
     });
 
-    _socket.on(RoomSocketEvent.KickedFromWaitingRoom.event, (_) {
-      currentRoom = null;
-      notifyRoomMemberList.add(currentRoom);
-    });
-
     _socket.on(RoomSocketEvent.GameAboutToStart.event, (data) {
       if(data == null) return;
       GameService gameService = GetIt.I.get<GameService>();
@@ -71,7 +66,6 @@ class RoomService {
     _socket.on(RoomSocketEvent.KickedFromWaitingRoom.event, (_) {
       currentRoom = null;
       Navigator.pop(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!);
-
     });
   }
 
@@ -130,5 +124,11 @@ class RoomService {
   void startScrabbleGame() {
     GetIt.I.get<GameService>(); // Init Game Service
     _socket.emit(RoomSocketEvent.StartScrabbleGame.event, currentRoom!.id);
+  }
+
+  void kickPlayerFromWaitingRoom(RoomPlayer player){
+    UserRoomQuery exitQuery =
+    UserRoomQuery(user: player.user, roomId: currentRoom!.id);
+    _socket.emit(RoomSocketEvent.ExitWaitingRoom.event, exitQuery);
   }
 }

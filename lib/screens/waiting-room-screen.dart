@@ -33,15 +33,14 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   @override
   initState() {
     super.initState();
-    newMemberSub =
-        _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
-          if (newRoomState == null) {
-            // Exit waiting room (From kick or host closed the)
-            Navigator.pop(context);
-            return;
-          }
-          setState(() {});
-        });
+    newMemberSub = _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
+      if (newRoomState == null) {
+        // Exit waiting room (From kick or host closed the)
+        Navigator.pop(context);
+        return;
+      }
+      setState(() {});
+    });
   }
 
   Future<String> _getShareLink() async {
@@ -53,13 +52,11 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
 
   Future<void> _onCopyLinkPressed() async {
     final link = await _getShareLink();
-    FlutterClipboard.copy(link)
-        .then((value) {
+    FlutterClipboard.copy(link).then((value) {
       debugPrint('Link copied to clipboard: $link');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(FlutterI18n.translate(context, "waiting_room.copy_link_success"))));
-    })
-        .catchError((error) => debugPrint('Error copying link to clipboard: $error'));
+    }).catchError((error) => debugPrint('Error copying link to clipboard: $error'));
   }
 
   _startGame() {
@@ -67,32 +64,36 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   }
 
   _kickPlayer(RoomPlayer player) {
-
+    _roomService.kickPlayerFromWaitingRoom(player);
   }
 
   Widget _buildRoomMemberCard(RoomPlayer player) {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-            backgroundImage:
-            (player.playerType == PlayerType.Bot) ? NetworkImage(_avatarService.botImageUrl):
-            player.user.profilePicture?.key != null ? NetworkImage(player.user.profilePicture!.key!) : null,
+            backgroundImage: (player.playerType == PlayerType.Bot)
+                ? NetworkImage(_avatarService.botImageUrl)
+                : player.user.profilePicture?.key != null
+                    ? NetworkImage(player.user.profilePicture!.key!)
+                    : null,
             child: player.user.profilePicture?.key != null
                 ? null
                 : const Icon(CupertinoIcons.profile_circled)),
         title: Row(
           children: [
             Text(player.user.username),
-            const SizedBox(width: 5,),
-            if (player.isCreator == true) const Image(
-                image: AssetImage("assets/images/crown.png"),
-                width: 14)
+            const SizedBox(
+              width: 5,
+            ),
+            if (player.isCreator == true)
+              const Image(image: AssetImage("assets/images/crown.png"), width: 14)
           ],
         ),
-        trailing: _roomService.currentRoom!.isPlayerCreator(_userService.user!)
-            && !_roomService.currentRoom!.isPlayerCreator(player.user)
-            && player.playerType != PlayerType.Bot ?
-        IconButton(onPressed: _kickPlayer(player), icon: const Icon(Icons.output)) : null,
+        trailing: _roomService.currentRoom!.isPlayerCreator(_userService.user!) &&
+                !_roomService.currentRoom!.isPlayerCreator(player.user) &&
+                player.playerType != PlayerType.Bot
+            ? IconButton(onPressed: _kickPlayer(player), icon: const Icon(Icons.output))
+            : null,
       ),
     );
   }
@@ -102,9 +103,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
     super.dispose();
     newMemberSub.cancel();
 
-    if (GetIt.I
-        .get<GameService>()
-        .game == null) {
+    if (GetIt.I.get<GameService>().game == null) {
       _roomService.exitRoom();
     }
   }
@@ -112,9 +111,7 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title:
-          Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
+      appBar: AppBar(title: Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -134,14 +131,14 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
                   child: ListView(
                     controller: _scrollController,
                     children: [
-                      for (RoomPlayer player
-                      in _roomService.currentRoom!.players)
+                      for (RoomPlayer player in _roomService.currentRoom!.players)
                         _buildRoomMemberCard(player)
                     ],
                   ),
                 ),
               ),
-            ), ElevatedButton(
+            ),
+            ElevatedButton(
               onPressed: _onCopyLinkPressed,
               child: Text(FlutterI18n.translate(context, "waiting_room.copy_link_button")),
             ),
@@ -151,9 +148,9 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       floatingActionButton: Visibility(
         visible: _roomService.currentRoom!.isPlayerCreator(_userService.user!),
         child: FloatingActionButton(
-          onPressed: _roomService.currentRoom!.containsTwoPlayers() ? _startGame : null,
-          backgroundColor: _roomService.currentRoom!.containsTwoPlayers() ? Colors.green : Colors
-              .grey,
+          onPressed: _roomService.currentRoom!.containsTwoPlayers() ? _startGame : _startGame,
+          backgroundColor:
+              _roomService.currentRoom!.containsTwoPlayers() ? Colors.green : Colors.grey,
           tooltip: FlutterI18n.translate(context, "waiting_room.start_game"),
           child: const Icon(Icons.play_arrow),
         ),
