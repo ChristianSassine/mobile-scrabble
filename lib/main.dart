@@ -1,27 +1,25 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/services/audio_service.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/dictionary-service.dart';
+import 'package:mobile/domain/services/dynamic-link-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/settings-service.dart';
-import 'package:mobile/domain/services/audio_service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/firebase_options.dart';
 import 'package:mobile/screens/login-screen.dart';
 import 'package:socket_io_client/socket_io_client.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'package:mobile/domain/services/dynamic-link-service.dart';
-
 
 Future<void> setup() async {
   final getIt = GetIt.instance;
@@ -45,7 +43,7 @@ Future<void> setup() async {
   socket.onConnect((_) => debugPrint('Socket connection established'));
   socket.onDisconnect((data) => debugPrint('Socket connection lost'));
 
-  getIt.registerLazySingleton<HttpHandlerService>(() => HttpHandlerService(
+  getIt.registerSingleton<HttpHandlerService>(HttpHandlerService(
       "https://$serverAddress:3443",
       httpUrl: "http://$serverAddress:3000"));
   getIt.registerLazySingleton<DynamicLinkService>(() => DynamicLinkService());
@@ -63,13 +61,12 @@ Future<void> setup() async {
 }
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await setup();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Future.delayed(Duration(milliseconds: 1000), () {
     GetIt.I.get<DynamicLinkService>().handleDynamicLinks();
-});
+  });
   runApp(const PolyScrabble());
 }
 
