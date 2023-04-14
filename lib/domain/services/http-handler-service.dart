@@ -100,7 +100,8 @@ class HttpHandlerService {
 
   // Profile data requests
   Future<http.Response> fetchHistoriesRequest() {
-    return client.get(Uri.parse("$baseUrl/profile/history-events"), headers: headers);
+    return client.get(Uri.parse("$baseUrl/profile/history-events"),
+        headers: headers);
   }
 
   Future<http.Response> fetchStatsRequest() {
@@ -123,19 +124,24 @@ class HttpHandlerService {
     return client.get(Uri.parse("$baseUrl/highScore/classique"));
   }
 
-  Future<http.Response> fetchDictionaries(){
+  Future<http.Response> fetchDictionaries() {
     return client.get(Uri.parse("$baseUrl/dictionary/info"));
   }
 
   // App Settings requests
   Future<http.Response> modifyThemeRequest(Object body) {
     return client.patch(Uri.parse("$baseUrl/profile/theme"),
-        body: {"theme" : jsonEncode(body) }, headers: headers);
+        body: {"theme": jsonEncode(body)}, headers: headers);
   }
 
   Future<http.Response> modifyLanguageRequest(Object body) {
     return client.patch(Uri.parse("$baseUrl/profile/language"),
-        body:{"language" : body}, headers: headers);
+        body: {"language": body}, headers: headers);
+  }
+
+  // Chat requests
+  Future<http.Response> getChatUserInfoRequest(String id) {
+    return client.get(Uri.parse("$baseUrl/chat/user/$id"), headers: headers);
   }
 
   // Common utilities

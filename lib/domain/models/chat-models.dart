@@ -1,26 +1,47 @@
 import 'package:rxdart/rxdart.dart';
 
-class ChatMessage {
-  final String username;
-  final String type;
-  final String message;
-  final String timeStamp;
+class ChatRoom {
+  final String name;
+  final String? creatorId;
+  final bool isDeletable;
 
-  ChatMessage(this.username, this.type, this.message, this.timeStamp);
+  ChatRoom.fromJson(json)
+      : name = json['name'],
+        creatorId = json['creatorId'],
+        isDeletable = json['isDeletable'];
+}
+
+class UserChatRoom {
+  final String username;
+  final String imageUrl;
+
+  UserChatRoom.fromJson(json)
+      : username = json['username'],
+        imageUrl = json['imageUrl'];
+}
+
+class ChatRoomState {
+  final String name;
+  final bool notified;
+
+  ChatRoomState.fromJson(json)
+      : name = json['name'],
+        notified = json['notified'];
+}
+
+class ChatMessage {
+  final String userId;
+  final String message;
+  final String date;
+
+  ChatMessage(this.userId, this.message, this.date);
 
   ChatMessage.fromJson(json)
-      : username = json['username'],
-        type = json['type'],
+      : userId = json['userId'],
         message = json['message'],
-        timeStamp = json['timeStamp'];
+        date = json['date'];
 
-
-  Map toJson() => {
-        "username": username,
-        "type": type,
-        "message": message,
-        "timeStamp": timeStamp
-      };
+  Map toJson() => {"userId": userId, "message": message, "date": date};
 }
 
 enum MessageType {

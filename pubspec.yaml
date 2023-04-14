@@ -26,11 +26,13 @@ dependencies:
     webview_flutter: ^4.0.7
     path: ^1.8.2
     http_parser: ^4.0.2
+    badges: ^3.0.3
     fl_chart: ^0.61.0
     firebase_core: ^2.9.0
     firebase_dynamic_links: ^5.1.0
     firebase_analytics: ^10.2.0
     clipboard: ^0.1.3
+    audioplayers: ^4.0.1
 
 dev_dependencies:
     flutter_test:
@@ -49,5 +51,6 @@ flutter:
         - development.env
         - production.env
         - assets/flutter_i18n/
+        - assets/audio/
         - assets/certs/server.key
         - assets/certs/server.pem

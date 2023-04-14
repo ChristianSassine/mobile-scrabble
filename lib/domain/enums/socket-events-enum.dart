@@ -1,18 +1,21 @@
 enum ChatRoomSocketEvents {
-  JoinHomeRoom('joinHomeRoom'),
-  UserJoinedRoom('userJoinedRoom'),
-  RoomIsFull('roomIsFull'),
-  SendHomeMessage('sendMessageHome'),
-  BroadCastMessageHome('broadcastMessageHome'),
-  LeaveHomeRoom('leaveHomeRoom'),
-  userLeftHomeRoom('userLeftHomeRoom'),
-  UserConnected('userConnected'),
-  usernameTaken('usernameTaken'),
-  RoomLobby('roomLobby'),
-  UpdateRoomJoinable('updateListOfRooms'),
-  PlayerJoinGameAvailable('roomJoin'),
-  JoinValidGame('joinValid'),
-  ExitWaitingRoom('exitWaitingRoom');
+  SendMessage('sendMessage'),
+  CreateChatRoom('createChatRoom'),
+  DeleteChatRoom('deleteChatRoom'),
+  JoinChatRoom('joinChatRoom'),
+  LeaveChatRoom('leaveChatRoom'),
+  JoinChatRoomSession('joinChatRoomSession'),
+  LeaveChatRoomSession('leaveChatRoomSession'),
+  GetAllChatRooms('getAllChatRooms'),
+  CreateChatRoomError('createChatRoomError'),
+  DeleteChatRoomNotFoundError('deleteChatRoomNotFoundError'),
+  DeleteChatNotCreatorError('deleteChatNotCreatorError'),
+  JoinChatRoomNotFoundError('joinChatRoomNotFoundError'),
+  LeaveChatRoomNotFoundError('leaveChatRoomNotFoundError'),
+  JoinChatRoomSessionNotFoundError('joinChatRoomSessionNotFoundError'),
+  LeaveChatRoomSessionNotFoundError('leaveChatRoomSessionNotFoundError'),
+  SendMessageError('sendMessageError')
+  ;
 
   const ChatRoomSocketEvents(this.event);
 

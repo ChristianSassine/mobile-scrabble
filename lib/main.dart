@@ -13,6 +13,7 @@ import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/settings-service.dart';
+import 'package:mobile/domain/services/audio_service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/firebase_options.dart';
 import 'package:mobile/screens/login-screen.dart';
@@ -56,6 +57,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<GameService>(() => GameService());
   getIt.registerLazySingleton<UserService>(() => UserService());
   getIt.registerLazySingleton<DictionaryService>(() => DictionaryService());
+  getIt.registerSingleton<AudioService>(AudioService());
   getIt.registerSingleton<GlobalKey<NavigatorState>>(
       GlobalKey<NavigatorState>());
 }
