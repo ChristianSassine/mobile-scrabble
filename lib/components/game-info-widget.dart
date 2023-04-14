@@ -100,7 +100,7 @@ class _GameInfoState extends State<GameInfo> {
           children: [
             ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green[400]),
-                onPressed: _gameService.pendingLetters.isEmpty
+                onPressed: !_gameService.game!.isCurrentPlayersTurn() || _gameService.pendingLetters.isEmpty
                     ? null
                     : () => {_gameService.confirmWordPlacement()},
                 child: Padding(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/board-widget.dart';
+import 'package:mobile/components/chat-widget.dart';
 import 'package:mobile/components/easel-widget.dart';
 import 'package:mobile/components/game-info-widget.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
@@ -33,7 +34,8 @@ class _GameScreenState extends State<GameScreen> {
         title: Text(FlutterI18n.translate(context, "game.abandon_prompt")),
         content: const SizedBox.shrink())) {
       _gameService.abandonGame();
-      await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const EndGameScreen()));
+      await Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const EndGameScreen()));
     }
   }
 
@@ -77,6 +79,7 @@ class _GameScreenState extends State<GameScreen> {
               child: BoardWidget(dragKey: _draggableKey),
             ),
           ),
+          Container(width: 300, child: const SideChatWidget()),
         ],
       )),
       bottomNavigationBar: BottomAppBar(

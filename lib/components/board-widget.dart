@@ -49,45 +49,41 @@ class _BoardState extends State<BoardWidget> {
         min(MediaQuery.of(context).size.height, MediaQuery.of(context).size.width) * 0.055;
     int boardSize = _gameService.game!.gameboard.size;
 
-    return Card(
-      color: Colors.green[900],
-      shape: Border.all(width: 0),
-      child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-              boardSize,
-              (vIndex) => Padding(
-                    padding: const EdgeInsets.only(left: 25, right: 25),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                          boardSize,
-                          (hIndex) => Stack(children: [
-                                SlotWidget(
-                                    value: _gameService.game!.gameboard.layout.layoutMatrix[hIndex]
-                                        [vIndex],
-                                    x: vIndex,
-                                    y: hIndex),
-                                !_gameService.game!.gameboard.isSlotEmpty(vIndex, hIndex)
-                                    ? _gameService.isPendingLetter(vIndex, hIndex)
-                                        ? PendingBoardLetter(
-                                            value: _gameService.game!.gameboard
-                                                .getSlot(vIndex, hIndex)!,
-                                            dragKey: widget.dragKey,
-                                            widgetSize: slotSize,
-                                            x: vIndex,
-                                            y: hIndex)
-                                        : BoardLetter(
-                                            value: _gameService.game!.gameboard
-                                                .getSlot(vIndex, hIndex)!,
-                                            widgetSize: slotSize)
-                                    : const SizedBox.shrink()
-                              ])).toList(),
-                    ),
-                  )).toList()),
-    );
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+            boardSize,
+            (vIndex) => Padding(
+                  padding: const EdgeInsets.only(left: 25, right: 25),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                        boardSize,
+                        (hIndex) => Stack(children: [
+                              SlotWidget(
+                                  value: _gameService.game!.gameboard.layout.layoutMatrix[hIndex]
+                                      [vIndex],
+                                  x: vIndex,
+                                  y: hIndex),
+                              !_gameService.game!.gameboard.isSlotEmpty(vIndex, hIndex)
+                                  ? _gameService.isPendingLetter(vIndex, hIndex)
+                                      ? PendingBoardLetter(
+                                          value:
+                                              _gameService.game!.gameboard.getSlot(vIndex, hIndex)!,
+                                          dragKey: widget.dragKey,
+                                          widgetSize: slotSize,
+                                          x: vIndex,
+                                          y: hIndex)
+                                      : BoardLetter(
+                                          value:
+                                              _gameService.game!.gameboard.getSlot(vIndex, hIndex)!,
+                                          widgetSize: slotSize)
+                                  : const SizedBox.shrink()
+                            ])).toList(),
+                  ),
+                )).toList());
   }
 }
 

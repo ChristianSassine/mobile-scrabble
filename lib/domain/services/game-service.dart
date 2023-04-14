@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/models/game-model.dart';
+import 'package:mobile/domain/models/letter-synchronisation-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
@@ -25,6 +26,7 @@ class LetterPlacement {
 class GameService {
   final _socket = GetIt.I.get<Socket>();
   final _userService = GetIt.I.get<UserService>();
+  final _roomService = GetIt.I.get<RoomService>();
 
   Subject<bool> notifyGameInfoChange = PublishSubject();
   Subject<String> notifyGameError = PublishSubject();
@@ -47,7 +49,7 @@ class GameService {
 
     _publicViewUpdate(initialGameInfo);
 
-    if(game!.currentPlayer.player.playerType == PlayerType.Observer) {
+    if (game!.currentPlayer.player.playerType == PlayerType.Observer) {
       observerView = game!.players.firstWhere((element) => element.player.isCreator == true);
     }
 
@@ -70,14 +72,22 @@ class GameService {
     });
     _socket.on(GameSocketEvent.PlacementSuccess.event, (_) => _successfulWordPlacement());
     _socket.on(GameSocketEvent.PlacementFailure.event, (error) => _invalidWordPlacement(error));
+    _socket.on(GameSocketEvent.CannotReplaceBot.event, (_) => _cannotReplaceBot());
+    _socket.on(
+        GameSocketEvent.DragEvent.event, (dragInfos) => _syncDrag(DragInfos.fromJson(dragInfos)));
+    _socket.on(GameSocketEvent.LetterTaken.event,
+        (tile) => _syncLetterTaken(SimpleLetterInfos.fromJson(tile)));
+    _socket.on(GameSocketEvent.LetterPlaced.event,
+        (tile) => _syncLetterPlaced(SimpleLetterInfos.fromJson(tile)));
   }
 
   void _publicViewUpdate(GameInfo gameInfo) {
     if (game == null) return;
 
     game!.update(gameInfo);
+    pendingLetters.clear();
 
-    if(observerView != null && game!.currentPlayer.player.playerType == PlayerType.User) {
+    if (observerView != null && game!.currentPlayer.player.playerType == PlayerType.User) {
       observerView = null;
     }
 
@@ -111,7 +121,10 @@ class GameService {
     pendingLetters.add(placement);
     pendingLetters.sort((a, b) => a.x.compareTo(b.x) + a.y.compareTo(b.y));
 
-    //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
+    _socket.emit(
+        GameSocketEvent.LetterPlaced.event,
+        SimpleLetterInfos(_roomService.currentRoom!.id, _socket.id!, letter.character,
+            x + y * game!.gameboard.size));
   }
 
   bool _isLetterPlacementValid(int x, int y, Letter letter) {
@@ -175,6 +188,12 @@ class GameService {
           "[GAME SERVICE] Remove letter from the board: board[$x][$y] = ${game!.gameboard.getSlot(x, y)}");
 
       Letter? removedLetter = game!.gameboard.removeLetter(x, y);
+
+      _socket.emit(
+          GameSocketEvent.LetterTaken.event,
+          SimpleLetterInfos(_roomService.currentRoom!.id, _socket.id!, removedLetter!.character,
+              x + y * game!.gameboard.size));
+
       if (placement.isStar) {
         removedLetter = Letter.STAR;
       }
@@ -318,11 +337,52 @@ class GameService {
   }
 
   switchToPlayerView(GamePlayer player) {
-    if(player.player.playerType == PlayerType.Bot){
+    if (player.player.playerType == PlayerType.Bot) {
       _socket.emit(GameSocketEvent.JoinAsObserver.event, player.player.user.id);
-    }
-    else{
+    } else {
       observerView = player;
+    }
+  }
+
+  _cannotReplaceBot() {}
+
+  _syncDrag(dragInfos) {}
+
+  _syncLetterPlaced(SimpleLetterInfos simpleLetterInfos) {
+    if (simpleLetterInfos.socketId != _socket.id) {
+      int x = simpleLetterInfos.coord % game!.gameboard.size;
+      int y = simpleLetterInfos.coord ~/ game!.gameboard.size;
+      Letter? letter = Letter.fromCharacter(simpleLetterInfos.letter);
+
+      if(letter == null){
+        debugPrint("Sync error: ${simpleLetterInfos.letter} is not a valid letter");
+        return;
+      }
+
+      pendingLetters.add(LetterPlacement(x, y, letter, false));
+      game!.gameboard.placeLetter(x, y, letter);
+
+      debugPrint(
+          "New letter placed: ${pendingLetters.map((placement) => "(${placement.x}, ${placement.y}): ${placement.letter}").toList().toString()}");
+    }
+  }
+
+  _syncLetterTaken(SimpleLetterInfos simpleLetterInfos) {
+    if (simpleLetterInfos.socketId != _socket.id) {
+      int x = simpleLetterInfos.coord % game!.gameboard.size;
+      int y = simpleLetterInfos.coord ~/ game!.gameboard.size;
+      int index = pendingLetters.indexWhere((element) =>
+          element.x == x &&
+          element.y == y);
+      if (index >= 0) {
+        pendingLetters.removeAt(index);
+        game!.gameboard.removeLetter(x, y);
+        debugPrint(
+            "New letter taken: ${pendingLetters.map((placement) => "(${placement.x}, ${placement.y}): ${placement.letter}").toList().toString()}");
+        game!.gameboard.notifyBoardChanged.add(true);
+      } else {
+        debugPrint("Received sync letter taken that is not in pending letters...");
+      }
     }
   }
 }
