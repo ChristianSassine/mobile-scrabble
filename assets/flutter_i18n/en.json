@@ -151,6 +151,14 @@
             "note_4": "and they can't start with",
             "note_5": "game"
         },
+        "errors": {
+            "delete_not_found": "Room to delete not found",
+            "message": "Error while sending the message",
+            "join_session": "The room has been removed",
+            "join_room": "The room you're joining has not been found",
+            "create": "Falied to create the room",
+            "leave_room": "Falied to leave the room"
+        },
         "join_label": "JOIN",
         "joined_rooms_label": "Joined Rooms",
         "available_rooms_label": "Available Rooms",

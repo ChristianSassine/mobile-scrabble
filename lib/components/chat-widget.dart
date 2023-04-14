@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/chatroom-widget.dart';
+import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 
@@ -67,6 +68,7 @@ class _ChatWidgetState extends State<ChatWidget>
   late final StreamSubscription _updateRoomsSub;
   late final StreamSubscription _updateNotifsSub;
   late final StreamSubscription _joinRoomSub;
+  late final StreamSubscription _errorRoomSub;
 
   @override
   void initState() {
@@ -96,6 +98,11 @@ class _ChatWidgetState extends State<ChatWidget>
               )));
     });
 
+    _errorRoomSub = _chatService.notifyError.stream.listen((error) {
+      scaffoldMessangerKey.currentState!.showSnackBar(
+          SnackBarFactory.redSnack(FlutterI18n.translate(context, error)));
+    });
+
     if (_chatService.currentRoom != null) {
       _chatService.requestJoinRoomSession(_chatService.currentRoom!);
     }
@@ -103,6 +110,7 @@ class _ChatWidgetState extends State<ChatWidget>
 
   @override
   dispose() {
+    _errorRoomSub.cancel();
     _updateNotifsSub.cancel();
     _joinRoomSub.cancel();
     _updateRoomsSub.cancel();
