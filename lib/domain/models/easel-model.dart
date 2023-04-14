@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mobile/domain/services/game-service.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../enums/letter-enum.dart';
 
 class Easel {
-  Subject<int> notifyEaselChanged = PublishSubject();
+  final _gameService = GetIt.I.get<GameService>();
 
   List<Letter> _letters = [];
 
@@ -19,7 +21,7 @@ class Easel {
     }
 
     _letters.insert(index, letter);
-    notifyEaselChanged.add(index);
+    _gameService.notifyEaselChanged.add(index);
   }
 
   void addLetter(Letter letter) {
@@ -34,7 +36,7 @@ class Easel {
     }
 
     Letter letter = _letters.removeAt(index);
-    notifyEaselChanged.add(index);
+    _gameService.notifyEaselChanged.add(index);
     return letter;
   }
 
@@ -48,7 +50,7 @@ class Easel {
     }
 
     _letters.remove(letter);
-    notifyEaselChanged.add(index);
+    _gameService.notifyEaselChanged.add(index);
     return letter;
   }
 
@@ -58,6 +60,6 @@ class Easel {
 
   void updateFromRack(List<Letter> rack) {
     _letters = rack;
-    notifyEaselChanged.add(0);
+    _gameService.notifyEaselChanged.add(0);
   }
 }

@@ -30,6 +30,7 @@ class GameService {
 
   Subject<bool> notifyGameInfoChange = PublishSubject();
   Subject<String> notifyGameError = PublishSubject();
+  Subject<int> notifyEaselChanged = PublishSubject();
 
   GameRoom? _gameRoom;
   Letter? draggedLetter;
@@ -85,7 +86,7 @@ class GameService {
     if (game == null) return;
 
     game!.update(gameInfo);
-    pendingLetters.clear();
+    game!.currentPlayer = game!.players.firstWhere((element) => element.player.user.id == _userService.user!.id);
 
     if (observerView != null && game!.currentPlayer.player.playerType == PlayerType.User) {
       observerView = null;
@@ -96,8 +97,10 @@ class GameService {
 
   void _nextTurn(GameInfo gameInfo) {
     if (game == null) return;
-    game!.nextTurn(gameInfo);
-    notifyGameInfoChange.add(true);
+
+    game!.nextTurn();
+    pendingLetters.clear();
+    _publicViewUpdate(gameInfo);
   }
 
   void _endGame() {
@@ -341,6 +344,7 @@ class GameService {
       _socket.emit(GameSocketEvent.JoinAsObserver.event, player.player.user.id);
     } else {
       observerView = player;
+      notifyEaselChanged.add(0);
     }
   }
 

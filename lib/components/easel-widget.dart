@@ -84,7 +84,7 @@ class _EaselState extends State<EaselWidget> {
     super.initState();
 
     easelUpdate =
-        _gameService.game!.currentPlayer.easel.notifyEaselChanged.stream.listen((letterIndex) {
+        _gameService.notifyEaselChanged.stream.listen((letterIndex) {
       setState(() {
         _actuateVirtualEasel();
       });
@@ -168,7 +168,7 @@ class EaselLetter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (_roomService.currentRoom!.isPlayerObserver(_userService.user!)) {
+    if (_gameService.observerView != null) {
       return LetterWidget(
         character: value.character,
         points: value.points,

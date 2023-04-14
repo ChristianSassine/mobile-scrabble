@@ -1,12 +1,16 @@
 import 'dart:math';
 
+import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/room-service.dart';
 
 class Game {
+  final _roomService = GetIt.I.get<RoomService>();
+
   final Board gameboard = Board(15);
   List<GamePlayer> players;
   late GamePlayer currentPlayer;
@@ -23,9 +27,8 @@ class Game {
         players.firstWhere((player) => player.player.user.username == currentUser.username);
   }
 
-  void nextTurn(GameInfo gameInfo) {
+  void nextTurn() {
     turnTimer = 0;
-    update(gameInfo);
   }
 
   void update(GameInfo gameInfo) {
@@ -34,34 +37,10 @@ class Game {
 
     setActivePlayer(gameInfo.activePlayer);
 
-    List<PlayerInformation> unknownPlayer = [];
-    List<GamePlayer> notVisitedPlayers = players.toList();
-    gameInfo.players.forEach((playerInfo) {
-      int playerIndex = notVisitedPlayers
-          .indexWhere((element) => element.player.user.id == playerInfo.player.user.id);
-      if (playerIndex >= 0) {
-        notVisitedPlayers[playerIndex].update(playerInfo);
-        notVisitedPlayers.removeAt(playerIndex);
-      } else {
-        unknownPlayer.add(playerInfo);
-      }
-    });
-
-    // If room player changed
-    while (unknownPlayer.isNotEmpty) {
-      if(notVisitedPlayers.isNotEmpty) {
-        notVisitedPlayers[0].update(unknownPlayer[0]);
-        notVisitedPlayers.removeAt(0);
-      }else{
-        players.add(unknownPlayer[0].createGamePlayer());
-      }
-      unknownPlayer.removeAt(0);
-    }
-
-    if(notVisitedPlayers.isNotEmpty){
-      players.removeWhere((element) => notVisitedPlayers.contains(element));
-    }
-
+    players.clear();
+    players = gameInfo.players.map((playerInfo) => playerInfo.createGamePlayer()).toList();
+    
+    _roomService.currentRoom!.players = players.map((player) => player.player).toList();
   }
 
   void setActivePlayer(IUser? newActivePlayer) {

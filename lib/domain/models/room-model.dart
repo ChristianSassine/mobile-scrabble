@@ -105,7 +105,7 @@ class RoomPlayer {
 
 class GameRoom {
   final String id;
-  final List<RoomPlayer> players;
+  List<RoomPlayer> players;
   final String dictionary;
   final int timer;
   final GameMode gameMode;
