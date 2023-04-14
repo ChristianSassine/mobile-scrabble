@@ -119,6 +119,11 @@ class HttpHandlerService {
         body: body, headers: headers);
   }
 
+  Future<http.Response> forgotPassword(Object body) {
+    return client.post(Uri.parse("$baseUrl/profile/forgot-password"),
+        body: body);
+  }
+
   // High Scores requests
   Future<http.Response> fetchHighScoresRequest() {
     return client.get(Uri.parse("$baseUrl/highScore/classique"));
