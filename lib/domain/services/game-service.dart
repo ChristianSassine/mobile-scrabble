@@ -33,6 +33,8 @@ class GameService {
   Letter? draggedLetter;
   List<LetterPlacement> pendingLetters = [];
 
+  GamePlayer? observerView;
+
   Game? game;
 
   GameService() {
@@ -44,6 +46,10 @@ class GameService {
     game = Game(_gameRoom!, _userService.user!);
 
     _publicViewUpdate(initialGameInfo);
+
+    if(game!.currentPlayer.player.playerType == PlayerType.Observer) {
+      observerView = game!.players.firstWhere((element) => element.player.isCreator == true);
+    }
 
     while (game != null) {
       game!.turnTimer += 1;
@@ -70,6 +76,11 @@ class GameService {
     if (game == null) return;
 
     game!.update(gameInfo);
+
+    if(observerView != null && game!.currentPlayer.player.playerType == PlayerType.User) {
+      observerView = null;
+    }
+
     notifyGameInfoChange.add(true);
   }
 
@@ -304,5 +315,14 @@ class GameService {
   void exchangeLetters(List<Letter> lettersToExchange) {
     List<String> sLetters = lettersToExchange.map((letter) => letter.character).toList();
     _socket.emit(GameSocketEvent.Exchange.event, [sLetters]);
+  }
+
+  switchToPlayerView(GamePlayer player) {
+    if(player.player.playerType == PlayerType.Bot){
+      _socket.emit(GameSocketEvent.JoinAsObserver.event, player.player.user.id);
+    }
+    else{
+      observerView = player;
+    }
   }
 }

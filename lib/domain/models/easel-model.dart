@@ -58,5 +58,6 @@ class Easel {
 
   void updateFromRack(List<Letter> rack) {
     _letters = rack;
+    notifyEaselChanged.add(0);
   }
 }

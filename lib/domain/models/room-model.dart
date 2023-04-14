@@ -82,7 +82,7 @@ class RoomPlayer {
   final IUser user;
   final String roomId;
   final String? password;
-  final PlayerType? playerType;
+  PlayerType? playerType;
   final bool? isCreator;
 
   RoomPlayer(this.user, this.roomId, { this.playerType, this.isCreator, this.password});
@@ -132,6 +132,7 @@ class GameRoom {
 
   bool containsTwoPlayers () => players.where((element) => element.playerType != PlayerType.Bot).length >= 2;
   bool isPlayerCreator(IUser player) => players.firstWhere((element) => element.isCreator == true).user.id == player.id;
+  bool isPlayerObserver(IUser player) => players.firstWhere((element) => element.user.id == player.id).playerType == PlayerType.Observer;
 }
 
 class GameCreationQuery {

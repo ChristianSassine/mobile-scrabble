@@ -1,4 +1,6 @@
 import 'package:mobile/domain/enums/letter-enum.dart';
+import 'package:mobile/domain/models/easel-model.dart';
+import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
 
@@ -38,6 +40,12 @@ class PlayerInformation{
         player = RoomPlayer.fromJson(json['player']),
         score = json['score'],
         rack = json['rack']?.map<Letter>((letter) => Letter.fromCharacter(letter['value'])!)?.toList();
+
+  GamePlayer createGamePlayer() {
+    GamePlayer gamePlayer = GamePlayer(new Easel(7), score, player);
+    gamePlayer.easel.updateFromRack(rack);
+    return gamePlayer;
+  }
 }
 
 class GameInfo {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/models/easel-model.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
@@ -32,25 +34,34 @@ class Game {
 
     setActivePlayer(gameInfo.activePlayer);
 
-    List<GamePlayer> unknownPlayer = [];
-    players.forEach((player) {
-      int playerIndex = gameInfo.players
-          .indexWhere((element) => element.player.user.username == player.player.user.username);
+    List<PlayerInformation> unknownPlayer = [];
+    List<GamePlayer> notVisitedPlayers = players.toList();
+    gameInfo.players.forEach((playerInfo) {
+      int playerIndex = notVisitedPlayers
+          .indexWhere((element) => element.player.user.id == playerInfo.player.user.id);
       if (playerIndex >= 0) {
-        player.update(gameInfo.players[playerIndex]);
-        gameInfo.players.removeAt(playerIndex);
+        notVisitedPlayers[playerIndex].update(playerInfo);
+        notVisitedPlayers.removeAt(playerIndex);
       } else {
-        unknownPlayer.add(player);
+        unknownPlayer.add(playerInfo);
       }
     });
 
     // If room player changed
-    while (unknownPlayer.isNotEmpty && gameInfo.players.isNotEmpty) {
-      unknownPlayer[0].player = gameInfo.players[0].player;
-      unknownPlayer[0].update(gameInfo.players[0]);
+    while (unknownPlayer.isNotEmpty) {
+      if(notVisitedPlayers.isNotEmpty) {
+        notVisitedPlayers[0].update(unknownPlayer[0]);
+        notVisitedPlayers.removeAt(0);
+      }else{
+        players.add(unknownPlayer[0].createGamePlayer());
+      }
       unknownPlayer.removeAt(0);
-      gameInfo.players.removeAt(0);
     }
+
+    if(notVisitedPlayers.isNotEmpty){
+      players.removeWhere((element) => notVisitedPlayers.contains(element));
+    }
+
   }
 
   void setActivePlayer(IUser? newActivePlayer) {
@@ -71,7 +82,7 @@ class Game {
   }
 
   double getTurnProcess(){
-    return turnTimer / timerLength;
+    return min(turnTimer / timerLength, 1);
   }
 }
 
@@ -85,5 +96,6 @@ class GamePlayer {
   void update(PlayerInformation playerInfo) {
     easel.updateFromRack(playerInfo.rack);
     score = playerInfo.score;
+    player.playerType = playerInfo.player.playerType;
   }
 }

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/letter-enum.dart';
 import 'package:mobile/domain/services/game-service.dart';
+import 'package:mobile/domain/services/room-service.dart';
+import 'package:mobile/domain/services/user-service.dart';
 import 'letter-widget.dart';
 
 class EaselWidget extends StatefulWidget {
@@ -24,7 +26,7 @@ class _EaselState extends State<EaselWidget> {
   StreamSubscription? easelUpdate, boardUpdate;
 
   _EaselState() {
-    _visualLetters = _gameService.game!.currentPlayer.easel.getLetterList().toList();
+    _actuateVirtualEasel();
   }
 
   void _moveGhostLetterAt(int index) {
@@ -69,22 +71,29 @@ class _EaselState extends State<EaselWidget> {
     });
   }
 
+  _actuateVirtualEasel(){
+    List<Letter> actualEasel = _gameService.observerView == null
+        ? _gameService.game!.currentPlayer.easel.getLetterList()
+        : _gameService.observerView!.easel.getLetterList();
+
+    _visualLetters = actualEasel.toList();
+  }
+
   @override
   void initState() {
     super.initState();
 
-    easelUpdate = _gameService.game!.currentPlayer.easel.notifyEaselChanged.stream.listen((letterIndex) {
+    easelUpdate =
+        _gameService.game!.currentPlayer.easel.notifyEaselChanged.stream.listen((letterIndex) {
       setState(() {
-        List<Letter> actualEasel = _gameService.game!.currentPlayer.easel.getLetterList();
-
-        _visualLetters = actualEasel.toList();
+        _actuateVirtualEasel();
       });
     });
 
     boardUpdate = _gameService.game!.gameboard.notifyBoardChanged.stream.listen((even) {
       setState(() {
         // Executed for when a new letter is placed
-        _visualLetters = _gameService.game!.currentPlayer.easel.getLetterList().toList();
+        _actuateVirtualEasel();
       });
     });
   }
@@ -142,6 +151,8 @@ class _EaselState extends State<EaselWidget> {
 
 class EaselLetter extends StatelessWidget {
   final _gameService = GetIt.I.get<GameService>();
+  final _roomService = GetIt.I.get<RoomService>();
+  final _userService = GetIt.I.get<UserService>();
 
   EaselLetter(
       {super.key,
@@ -157,18 +168,27 @@ class EaselLetter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LongPressDraggable(
-      data: value,
-      delay: const Duration(milliseconds: 0),
-      feedback: DraggedLetter(value: value, dragKey: dragKey),
-      child: LetterWidget(
+    if (_roomService.currentRoom!.isPlayerObserver(_userService.user!)) {
+      return LetterWidget(
         character: value.character,
         points: value.points,
         widgetSize: widgetSize,
         opacity: value != Letter.EMPTY ? 1 : 0.75,
-      ),
-      onDragStarted: () => _gameService.dragLetterFromEasel(index),
-      onDraggableCanceled: (v, o) => _gameService.cancelDragLetter(),
-    );
+      );
+    } else {
+      return LongPressDraggable(
+        data: value,
+        delay: const Duration(milliseconds: 0),
+        feedback: DraggedLetter(value: value, dragKey: dragKey),
+        child: LetterWidget(
+          character: value.character,
+          points: value.points,
+          widgetSize: widgetSize,
+          opacity: value != Letter.EMPTY ? 1 : 0.75,
+        ),
+        onDragStarted: () => _gameService.dragLetterFromEasel(index),
+        onDraggableCanceled: (v, o) => _gameService.cancelDragLetter(),
+      );
+    }
   }
 }
