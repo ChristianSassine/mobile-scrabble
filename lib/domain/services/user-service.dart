@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
+import 'package:mobile/domain/enums/server-errors-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/user-profile-models.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:mobile/domain/enums/server-errors-enum.dart';
 
 class UserService {
   IUser? user;
@@ -102,7 +102,7 @@ class UserService {
       return;
     }
     debugPrint("Failed to fetch user profile avatar");
-    throw("error fetching user profile picture");
+    throw ("error fetching user profile picture");
   }
 
   // Modify username and password
@@ -130,5 +130,13 @@ class UserService {
     } else {
       return ServerError.PasswordChangeError;
     }
+  }
+
+  Future<ServerError> forgotPassword(String username) async {
+    final response = await _httpService.forgotPassword({'username': username});
+    if (response.statusCode == HttpStatus.created) {
+      return ServerError.EmailPasswordSuccess;
+    }
+    return ServerError.EmailPasswordError;
   }
 }
