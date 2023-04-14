@@ -25,11 +25,13 @@ class _SideChatWidgetState extends State<SideChatWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      onGenerateRoute: (settings) {
-        return CupertinoPageRoute(
-            builder: (BuildContext context) => const ChatWidget());
-      },
+    return SafeArea(
+      child: Navigator(
+        onGenerateRoute: (settings) {
+          return CupertinoPageRoute(
+              builder: (BuildContext context) => const ChatWidget());
+        },
+      ),
     );
   }
 }
