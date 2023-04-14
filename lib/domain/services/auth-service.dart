@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
+import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
+import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/settings-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
@@ -20,6 +21,7 @@ class AuthService {
   final _httpService = GetIt.I.get<HttpHandlerService>();
   final _userService = GetIt.I.get<UserService>();
   final _avatarService = GetIt.I.get<AvatarService>();
+  final _chatService = GetIt.I.get<ChatService>();
   final _settingsService = GetIt.I.get<SettingsService>();
   final _socket = GetIt.I.get<Socket>();
 
@@ -28,7 +30,8 @@ class AuthService {
   Subject<bool> notifyRegister = PublishSubject();
   Subject<String> notifyError = PublishSubject();
 
-  Future<void> connectUser(String username, String password) async {
+  Future<void> connectUser(String username, String password,
+      {accountSetup = false}) async {
     try {
       var response = await _httpService
           .signInRequest({"username": username, "password": password});
@@ -41,14 +44,21 @@ class AuthService {
         final data = jsonDecode(response.body)['userData'];
         IUser user = IUser.fromJson(data);
         await _userService.updateUser(user);
-        final SettingsInfo settingsInfo =
-            SettingsInfo.fromJson(data);
-        _settingsService.loadConfig(settingsInfo);
+        if (!accountSetup) {
+          final SettingsInfo settingsInfo = SettingsInfo.fromJson(data);
+          _settingsService.loadConfig(settingsInfo);
+        }
+
         _socket.io.options['extraHeaders'] = {'cookie': _cookie};
         _socket
           ..disconnect()
           ..connect();
-        notifyLogin.add(true);
+
+        final chatrooms = (data['chatRooms'] as List)
+            .map((room) => ChatRoomState.fromJson(room))
+            .toList();
+        _chatService.config(chatrooms);
+        if (!accountSetup) notifyLogin.add(true);
         return;
       }
     } catch (_) {
@@ -78,8 +88,9 @@ class AuthService {
       }
       notifyRegister.add(true);
 
-      await connectUser(username, password);
+      await connectUser(username, password, accountSetup: true);
       await _settingsService.saveConfig();
+      notifyLogin.add(true);
 
       return;
     }
@@ -89,6 +100,7 @@ class AuthService {
   void diconnect() {
     _userService.updateUser(null);
     _cookie = null;
+    _chatService.reset();
     _socket.disconnect();
   }
 }
