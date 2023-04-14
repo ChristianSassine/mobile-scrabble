@@ -207,7 +207,6 @@ class ChatService {
   }
 
   void requestJoinChatRoom(String roomName) {
-    // TODO: Implement
     socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, roomName);
   }
 
@@ -219,7 +218,6 @@ class ChatService {
   }
 
   void leaveChatRoom() {
-    // TODO: Implement
     socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, currentRoom!.name);
   }
 
