@@ -133,6 +133,7 @@ class ChatService {
   }
 
   void _deleteChatRoom(ChatRoom room) {
+    debugPrint("Chat Room destroyed : ${room.name}");
     _joinedRooms.remove(room.name);
     _notifiedRooms.remove(room.name);
     _chatRooms.removeWhere((chatRoom) => chatRoom.name == room.name);
@@ -211,14 +212,11 @@ class ChatService {
   }
 
   void _joinChatRoom(ChatRoom room) {
+    if (!_chatRooms.any((curRoom) => curRoom.name == room.name)) return;
     debugPrint("Joining Room : ${room.name}");
     _joinedRooms.add(room.name);
     notifyUpdatedChatrooms.add(true);
     requestJoinRoomSession(room);
-  }
-
-  void leaveChatRoom() {
-    socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, currentRoom!.name);
   }
 
   void submitMessage(String msg) {
