@@ -141,6 +141,16 @@
     },
     "chat": {
         "create_room_label": "Creer un nouveau canal",
+        "create_room": {
+            "label": "Création de canal",
+            "hint": "Nom du canal",
+            "error": "Entrez un nom pour le canal",
+            "note_1": "Note",
+            "note_2": "Les canaux doivent avoir des",
+            "note_3": "nom uniques",
+            "note_4": "et ne doivent pas commencer par",
+            "note_5": "game"
+        },
         "create_room_dialog_label": "Création de canal",
         "create_room_name_label": "Nom du canal",
         "join_label": "REJOINDRE",

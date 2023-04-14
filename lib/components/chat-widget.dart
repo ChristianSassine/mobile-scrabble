@@ -54,6 +54,7 @@ class _ChatWidgetState extends State<ChatWidget>
   final _joinedSearchBarController = TextEditingController();
   final _availableSearchBarController = TextEditingController();
   final _newRoomCreationController = TextEditingController();
+  final _createRoomKey = GlobalKey<FormFieldState>();
   final scaffoldMessangerKey = GlobalKey<ScaffoldMessengerState>();
 
   // Rooms
@@ -133,25 +134,76 @@ class _ChatWidgetState extends State<ChatWidget>
   }
 
   AlertDialog _buildRoomCreationDialog() {
+    final theme = Theme.of(context);
+
     return AlertDialog(
-      title:
-          Text(FlutterI18n.translate(context, "chat.create_room_dialog_label")),
-      content: TextFormField(
-        controller: _newRoomCreationController,
-        validator: null, // TODO: Add validation (empty room string)
-        decoration: InputDecoration(
-          hintText:
-              FlutterI18n.translate(context, "chat.create_room_name_label"),
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true)
-                  .pop(_newRoomCreationController.text);
-              _newRoomCreationController.clear();
-            },
-          ),
+      title: Text(FlutterI18n.translate(context, "chat.create_room.label")),
+      content: IntrinsicHeight(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                key: _createRoomKey,
+                controller: _newRoomCreationController,
+                validator: (value) {
+                  if (value == null || value.isEmpty || value.trim() == '') {
+                    return FlutterI18n.translate(
+                        context, "chat.create_room.error");
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  hintText:
+                      FlutterI18n.translate(context, "chat.create_room.hint"),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      if (!_createRoomKey.currentState!.validate()) return;
+                      Navigator.of(context, rootNavigator: true)
+                          .pop(_newRoomCreationController.text);
+                      _newRoomCreationController.clear();
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RichText(
+                text: TextSpan(children: [
+                  TextSpan(
+                      text:
+                          "${FlutterI18n.translate(context, "chat.create_room.note_1")}: ",
+                      style: theme.textTheme.labelMedium!
+                          .copyWith(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          "${FlutterI18n.translate(context, "chat.create_room.note_2")} ",
+                      style: theme.textTheme.labelMedium),
+                  TextSpan(
+                      text: FlutterI18n.translate(
+                          context, "chat.create_room.note_3"),
+                      style: theme.textTheme.labelMedium!
+                          .copyWith(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          " ${FlutterI18n.translate(context, "chat.create_room.note_4")} ",
+                      style: theme.textTheme.labelMedium),
+                  TextSpan(
+                      text: FlutterI18n.translate(
+                          context, "chat.create_room.note_5"),
+                      style: theme.textTheme.labelMedium!
+                          .copyWith(fontWeight: FontWeight.bold))
+                ]),
+              ),
+            )
+          ],
         ),
       ),
+      // actions: [
+
+      // ],
     );
   }
 
