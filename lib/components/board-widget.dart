@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/letter-widget.dart';
 import 'package:mobile/domain/enums/letter-enum.dart';
+import 'package:mobile/domain/models/game-command-models.dart';
+import 'package:mobile/domain/services/clue-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/models/board-models.dart';
 import 'package:mobile/domain/services/game-sync-service.dart';
@@ -22,8 +23,11 @@ class BoardWidget extends StatefulWidget {
 
 class _BoardState extends State<BoardWidget> {
   final _gameService = GetIt.I.get<GameService>();
+  final _clueService = GetIt.I.get<ClueService>();
 
-  late StreamSubscription boardUpdate;
+  late StreamSubscription boardUpdate, clueSelectorUpdate;
+
+  PlaceWordCommandInfo? clue;
 
   @override
   initState() {
@@ -32,12 +36,23 @@ class _BoardState extends State<BoardWidget> {
     boardUpdate = _gameService.game!.gameboard.notifyBoardChanged.stream.listen((event) {
       setState(() {});
     });
+
+    clueSelectorUpdate = _clueService.notifyClueSelector.stream.listen((event) {
+      setState(() {
+        if(_clueService.clues == null || _clueService.clues!.isEmpty) {
+          clue = null;
+          return;
+        }
+        clue = _clueService.clues![_clueService.clueSelector];
+      });
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     boardUpdate.cancel();
+    clueSelectorUpdate.cancel();
   }
 
   @override
@@ -81,7 +96,14 @@ class _BoardState extends State<BoardWidget> {
                                           value:
                                               _gameService.game!.gameboard.getSlot(hIndex, vIndex)!,
                                           widgetSize: slotSize)
-                                  : const SizedBox.shrink()
+                                  : ((ClueService.isClueLetter(clue, hIndex, vIndex))
+                                      ? ClueBoardLetter(
+                                          value: ClueService.getClueLetter(clue, hIndex, vIndex)!,
+                                          dragKey: widget.dragKey,
+                                          widgetSize: slotSize,
+                                          x: hIndex,
+                                          y: vIndex)
+                                      : const SizedBox.shrink())
                             ])).toList(),
                   ),
                 )).toList());
@@ -263,17 +285,44 @@ class PendingBoardLetter extends StatelessWidget {
               character: value.character,
               points: value.points,
               widgetSize: widgetSize,
-              highlighted: true,
+              color: Colors.orange[100],
             ),
             onDragStarted: () => _gameService.dragLetterFromBoard(x, y),
             onDraggableCanceled: (v, o) => _gameService.cancelDragLetter(),
-            onDragUpdate: (detail) => _gameSyncService.updateDraggedLetterPosition(detail.globalPosition),
+            onDragUpdate: (detail) =>
+                _gameSyncService.updateDraggedLetterPosition(detail.globalPosition),
           )
         : LetterWidget(
             character: value.character,
             points: value.points,
             widgetSize: widgetSize,
-            highlighted: true,
+            color: Colors.orange[100],
           );
+  }
+}
+
+class ClueBoardLetter extends StatelessWidget {
+  const ClueBoardLetter(
+      {super.key,
+      required this.value,
+      required this.dragKey,
+      required this.widgetSize,
+      required this.x,
+      required this.y});
+
+  final Letter value;
+  final GlobalKey dragKey;
+  final double widgetSize;
+  final int x, y;
+
+  @override
+  Widget build(BuildContext context) {
+    return LetterWidget(
+      character: value.character,
+      points: value.points,
+      widgetSize: widgetSize,
+      opacity: 0.5,
+      color: Colors.lightBlueAccent[100],
+    );
   }
 }
