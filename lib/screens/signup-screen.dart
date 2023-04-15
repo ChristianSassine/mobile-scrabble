@@ -9,7 +9,6 @@ import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
-import 'package:mobile/screens/menu-screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key, required this.title});
@@ -23,6 +22,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   RecaptchaV2Controller recaptchaV2Controller = RecaptchaV2Controller();
   bool _isVisible = false;
+  bool _isLoading = true;
 
   final _httpService = GetIt.I.get<HttpHandlerService>();
 
@@ -30,11 +30,13 @@ class _SignupScreenState extends State<SignupScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => recaptchaV2Controller.show());
+        .addPostFrameCallback((_) => recaptchaV2Controller.hide());
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -57,6 +59,12 @@ class _SignupScreenState extends State<SignupScreen> {
         RecaptchaV2(
           pluginURL: "${_httpService.httpUrl}/auth/captcha",
           controller: recaptchaV2Controller,
+          onLoadFinished: (_) {
+            setState(() {
+              _isLoading = false;
+              recaptchaV2Controller.show();
+            });
+          },
           onManualVerification: (token) {
             if (token != Null) {
               setState(() {
@@ -71,6 +79,12 @@ class _SignupScreenState extends State<SignupScreen> {
           },
           autoVerify: false,
         ),
+        if (_isLoading)
+          Center(
+              child: SizedBox(
+                  height: size.height * 0.3,
+                  width: size.height * 0.3,
+                  child: CircularProgressIndicator()))
       ]),
     );
   }

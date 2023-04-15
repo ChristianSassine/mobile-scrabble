@@ -17,8 +17,10 @@ class RecaptchaV2 extends StatefulWidget {
   final ValueChanged<bool>? onVerifiedSuccessfully;
   final ValueChanged<String>? onVerifiedError;
   final ValueChanged<String>? onManualVerification;
+  final ValueChanged<String>? onLoadFinished;
 
-  RecaptchaV2({super.key,
+  RecaptchaV2({
+    super.key,
     this.apiKey,
     this.apiSecret,
     required this.pluginURL,
@@ -28,8 +30,9 @@ class RecaptchaV2 extends StatefulWidget {
     this.onVerifiedSuccessfully,
     this.onVerifiedError,
     this.onManualVerification,
+    this.onLoadFinished,
     this.autoVerify = true,
-  })  : controller = controller ?? RecaptchaV2Controller();
+  }) : controller = controller ?? RecaptchaV2Controller();
 
   @override
   State<StatefulWidget> createState() => _RecaptchaV2State();
@@ -77,19 +80,22 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
     }
 
     final WebViewController webController =
-    WebViewController.fromPlatformCreationParams(params);
+        WebViewController.fromPlatformCreationParams(params);
 
     webController
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.transparent)
-      ..setNavigationDelegate(NavigationDelegate(
-        onNavigationRequest: (NavigationRequest request) {
-          if (request.url != widget.pluginURL) {
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        },
-      ),)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: widget.onLoadFinished,
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url != widget.pluginURL) {
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
       ..addJavaScriptChannel(
         'Captcha',
         onMessageReceived: (JavaScriptMessage receiver) {
@@ -132,32 +138,32 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
   Widget build(BuildContext context) {
     return controller.visible
         ? Stack(
-      children: <Widget>[
-        WebViewWidget(controller: _controller),
-        Visibility(
-          visible: widget.visibleCancelBottom,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              height: 60,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Expanded(
-                    child: InkWell(
-                      child: Text(widget.textCancelButtom),
-                      onTap: () {
-                        controller.hide();
-                      },
+            children: <Widget>[
+              WebViewWidget(controller: _controller),
+              Visibility(
+                visible: widget.visibleCancelBottom,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SizedBox(
+                    height: 60,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Expanded(
+                          child: InkWell(
+                            child: Text(widget.textCancelButtom),
+                            onTap: () {
+                              controller.hide();
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
-      ],
-    )
+            ],
+          )
         : Container();
   }
 }
