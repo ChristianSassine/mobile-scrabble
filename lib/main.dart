@@ -10,6 +10,7 @@ import 'package:mobile/domain/services/audio_service.dart';
 import 'package:mobile/domain/services/auth-service.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
 import 'package:mobile/domain/services/chat-service.dart';
+import 'package:mobile/domain/services/clue-service.dart';
 import 'package:mobile/domain/services/dictionary-service.dart';
 import 'package:mobile/domain/services/dynamic-link-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
@@ -58,6 +59,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<DictionaryService>(() => DictionaryService());
   getIt.registerSingleton<AudioService>(AudioService());
   getIt.registerLazySingleton<GameSyncService>(() => GameSyncService());
+  getIt.registerLazySingleton<ClueService>(() => ClueService());
   getIt.registerSingleton<GlobalKey<NavigatorState>>(
       GlobalKey<NavigatorState>());
 }

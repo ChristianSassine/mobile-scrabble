@@ -8,6 +8,7 @@ import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/models/letter-synchronisation-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/clue-service.dart';
 import 'package:mobile/domain/services/game-sync-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
@@ -121,10 +122,12 @@ class GameService {
     pendingLetters.add(placement);
     pendingLetters.sort((a, b) => a.x.compareTo(b.x) + a.y.compareTo(b.y));
 
-    _socket.emit(
-        GameSocketEvent.LetterPlaced.event,
-        SimpleLetterInfos(_roomService.currentRoom!.id, _socket.id!, letter.character,
-            x + y * game!.gameboard.size));
+    if (_socket.id != null) {
+      _socket.emit(
+          GameSocketEvent.LetterPlaced.event,
+          SimpleLetterInfos(_roomService.currentRoom!.id, _socket.id!, letter.character,
+              x + y * game!.gameboard.size));
+    }
   }
 
   bool _isLetterPlacementValid(int x, int y, Letter letter) {
