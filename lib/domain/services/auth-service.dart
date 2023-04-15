@@ -63,8 +63,12 @@ class AuthService {
         IUser user = IUser.fromJson(data);
         await _userService.updateUser(user);
         if (!accountSetup) {
-          final SettingsInfo settingsInfo = SettingsInfo.fromJson(data);
-          _settingsService.loadConfig(settingsInfo);
+          try {
+            final SettingsInfo settingsInfo = SettingsInfo.fromJson(data);
+            _settingsService.loadConfig(settingsInfo);
+          } catch (e) {
+            debugPrint('Failed to load config');
+          }
         }
 
         final chatrooms = (data['chatRooms'] as List)
