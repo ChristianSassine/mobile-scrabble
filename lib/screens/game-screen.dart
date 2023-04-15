@@ -64,26 +64,52 @@ class _GameScreenState extends State<GameScreen> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.green[100],
       body: Stack(children: [
-        Center(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GameInfoBar(
-              draggableKey: _draggableKey,
-            ),
-            Expanded(
-              child: InteractiveViewer(
-                panEnabled: false,
-                // Set it to false to prevent panning.
-                boundaryMargin: EdgeInsets.zero,
-                minScale: 1,
-                maxScale: 4,
-                child: BoardWidget(dragKey: _draggableKey),
+        if (MediaQuery.of(context).size.width > MediaQuery.of(context).size.height)
+          Center(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GameInfoBar(
+                draggableKey: _draggableKey,
               ),
-            ),
-            Container(width: 300, child: const SideChatWidget()),
-          ],
-        )),
+              Expanded(
+                child: InteractiveViewer(
+                  panEnabled: false,
+                  // Set it to false to prevent panning.
+                  boundaryMargin: EdgeInsets.zero,
+                  minScale: 1,
+                  maxScale: 4,
+                  child: BoardWidget(dragKey: _draggableKey),
+                ),
+              ),
+              const SizedBox(width: 300, child: SideChatWidget()),
+            ],
+          )),
+        if (MediaQuery.of(context).size.width < MediaQuery.of(context).size.height)
+          Center(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  GameInfoBar(
+                    draggableKey: _draggableKey,
+                  ),
+                  const SizedBox(width: 300, height: 480, child: SideChatWidget()),
+                ],
+              ),
+              Expanded(
+                child: InteractiveViewer(
+                  panEnabled: false,
+                  // Set it to false to prevent panning.
+                  boundaryMargin: EdgeInsets.zero,
+                  minScale: 1,
+                  maxScale: 4,
+                  child: BoardWidget(dragKey: _draggableKey),
+                ),
+              ),
+            ],
+          )),
         const OpponentDraggedLetterWidget()
       ]),
       bottomNavigationBar: BottomAppBar(

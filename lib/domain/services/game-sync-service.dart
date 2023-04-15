@@ -139,6 +139,8 @@ class GameSyncService {
       int windowWidth = MediaQuery.of(_globalKey.currentContext!).size.width.toInt();
       int windowHeight = MediaQuery.of(_globalKey.currentContext!).size.height.toInt();
 
+      if(_socket.id == null) return;
+
       _socket.emit(
           GameSocketEvent.SendDrag.event,
           DragInfos(

@@ -18,38 +18,61 @@ class GameInfoBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.green[200],
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(height: 25),
-          PlayerInfo(),
-          const SizedBox(height: 25),
-          GameInfo(
-            draggableKey: draggableKey,
-          ),
-        ],
-      ),
-    );
+    if (MediaQuery.of(context).size.width > MediaQuery.of(context).size.height) {
+      return Card(
+        color: Colors.green[200],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(height: 25),
+            PlayerInfo(),
+            const SizedBox(height: 25),
+            GameInformation(draggableKey: draggableKey),
+            const SizedBox(height: 25),
+            GameActions(vertical: false)
+          ],
+        ),
+      );
+    } else {
+      return Card(
+        color: Colors.green[200],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Column(
+              children: [
+                const SizedBox(height: 25),
+                PlayerInfo(),
+                SizedBox(height: 25),
+                GameInformation(draggableKey: draggableKey),
+              ],
+            ),
+            GameActions(vertical: true),
+            SizedBox(width: 15,)
+          ],
+        ),
+      );
+    }
   }
 }
 
-class GameInfo extends StatefulWidget {
+class GameInformation extends StatefulWidget {
   final GlobalKey draggableKey;
 
-  const GameInfo({Key? key, required this.draggableKey}) : super(key: key);
+  const GameInformation({Key? key, required this.draggableKey}) : super(key: key);
 
   @override
-  State<GameInfo> createState() => _GameInfoState();
+  State<GameInformation> createState() => _GameInformationState();
 }
 
-class _GameInfoState extends State<GameInfo> {
+class _GameInformationState extends State<GameInformation> {
   final _gameService = GetIt.I.get<GameService>();
 
   late StreamSubscription _gameInfoUpdate;
 
-  _GameInfoState() {
+  @override
+  initState() {
+    super.initState();
     _gameInfoUpdate = _gameService.notifyGameInfoChange.stream.listen((event) {
       setState(() {});
     });
@@ -67,60 +90,92 @@ class _GameInfoState extends State<GameInfo> {
       return const SizedBox();
     }
 
-    return Column(
-      children: [
-        SizedBox(
-            width: 260,
-            child: Card(
-              color: Colors.lightGreen[200],
-              elevation: 10,
-              child: Container(
-                  margin: EdgeInsets.all(5),
-                  child: Column(
+    return SizedBox(
+        width: 260,
+        child: Card(
+          color: Colors.lightGreen[200],
+          elevation: 10,
+          child: Container(
+              margin: EdgeInsets.all(5),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          LetterReserve(draggableKey: widget.draggableKey),
-                          SizedBox(
-                            width: 125,
-                            child: Row(children: [
-                              const Icon(Icons.timer),
-                              Text(
-                                  " ${_gameService.game!.timerLength - _gameService.game!.turnTimer} ${FlutterI18n.translate(context, "game.second")}s")
-                            ]),
-                          ),
-                        ],
-                      )
+                      LetterReserve(draggableKey: widget.draggableKey),
+                      SizedBox(
+                        width: 125,
+                        child: Row(children: [
+                          const Icon(Icons.timer),
+                          Text(
+                              " ${_gameService.game!.timerLength - _gameService.game!.turnTimer} ${FlutterI18n.translate(context, "game.second")}s")
+                        ]),
+                      ),
                     ],
-                  )),
-            )),
-        const SizedBox(height: 25),
-        Row(
-          children: [
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green[400]),
-                onPressed: !_gameService.game!.isCurrentPlayersTurn() || _gameService.pendingLetters.isEmpty
-                    ? null
-                    : () => {_gameService.confirmWordPlacement()},
-                child: Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Text(FlutterI18n.translate(context, "game.place")),
-                )),
-            const SizedBox(width: 50),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                onPressed: _gameService.game!.isCurrentPlayersTurn()
-                    ? () => {_gameService.skipTurn()}
-                    : null,
-                child: const Padding(
-                  padding: EdgeInsets.all(17.0),
-                  child: Icon(Icons.skip_next_rounded),
-                ))
-          ],
-        )
-      ],
-    );
+                  )
+                ],
+              )),
+        ));
+  }
+}
+
+class GameActions extends StatefulWidget {
+  bool vertical;
+
+  GameActions({Key? key, required this.vertical}) : super(key: key);
+
+  @override
+  State<GameActions> createState() => _GameActionsState();
+}
+
+class _GameActionsState extends State<GameActions> {
+  final _gameService = GetIt.I.get<GameService>();
+
+  late StreamSubscription _gameInfoUpdate;
+
+  @override
+  initState() {
+    super.initState();
+    _gameInfoUpdate = _gameService.notifyGameInfoChange.stream.listen((event) {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _gameInfoUpdate.cancel();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> buttons = [
+      ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.green[400]),
+          onPressed:
+              !_gameService.game!.isCurrentPlayersTurn() || _gameService.pendingLetters.isEmpty
+                  ? null
+                  : () => {_gameService.confirmWordPlacement()},
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Text(FlutterI18n.translate(context, "game.place")),
+          )),
+      const SizedBox(width: 50, height: 25,),
+      ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+          onPressed:
+              _gameService.game!.isCurrentPlayersTurn() ? () => {_gameService.skipTurn()} : null,
+          child: const Padding(
+            padding: EdgeInsets.all(17.0),
+            child: Icon(Icons.skip_next_rounded),
+          ))
+    ];
+
+    if (!widget.vertical) {
+      return Row(children: buttons);
+    } else {
+      return Column(children: buttons);
+    }
   }
 }
 

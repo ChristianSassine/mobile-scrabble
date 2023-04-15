@@ -82,7 +82,8 @@ class GameService {
     if (game == null) return;
 
     game!.update(gameInfo);
-    game!.currentPlayer = game!.players.firstWhere((element) => element.player.user.id == _userService.user!.id);
+    game!.currentPlayer =
+        game!.players.firstWhere((element) => element.player.user.id == _userService.user!.id);
 
     if (observerView != null && game!.currentPlayer.player.playerType == PlayerType.User) {
       observerView = null;
@@ -246,7 +247,10 @@ class GameService {
   Letter? dragLetterFromEasel(int index) {
     debugPrint("[GAME SERVICE] Start drag from easel");
     draggedLetter = removeLetterFromEaselAt(index);
-    GetIt.I.get<GameSyncService>().startDragSync();
+
+    if (game!.isCurrentPlayersTurn()) {
+      GetIt.I.get<GameSyncService>().startDragSync();
+    }
 
     return draggedLetter;
   }
@@ -254,7 +258,10 @@ class GameService {
   Letter? dragLetterFromBoard(int x, int y) {
     debugPrint("[GAME SERVICE] Start drag from board");
     draggedLetter = removeLetterFromBoard(x, y);
-    GetIt.I.get<GameSyncService>().startDragSync();
+
+    if (game!.isCurrentPlayersTurn()) {
+      GetIt.I.get<GameSyncService>().startDragSync();
+    }
 
     return draggedLetter;
   }

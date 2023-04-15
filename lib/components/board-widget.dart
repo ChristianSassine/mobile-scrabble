@@ -201,7 +201,10 @@ class SlotWidget extends StatelessWidget {
           }
         },
         onAccept: (letter) async {
-          if (!_gameService.game!.isCurrentPlayersTurn()) return;
+          if (!_gameService.game!.isCurrentPlayersTurn()) {
+            _gameService.cancelDragLetter();
+            return;
+          }
 
           if (letter == Letter.STAR) {
             Letter? returnedLetter = await _promptLetterValue(context);
