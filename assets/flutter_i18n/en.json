@@ -246,6 +246,7 @@
         "second": "second",
         "place": "Place",
         "exchange_letter_prompt": "Are you sure you want to exchange these letters?",
-        "abandon_prompt": "Are you sure you want to abandon?"
+        "abandon_prompt": "Are you sure you want to abandon?",
+        "clue": "Clue"
     }
 }

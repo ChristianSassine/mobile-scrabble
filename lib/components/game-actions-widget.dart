@@ -50,7 +50,7 @@ class _ClueControlState extends State<ClueControl> {
           ));
     } else {
       return SizedBox(
-          width: 185,
+          width: 195.4,
           height: 58,
           child: Row(
             children: [
@@ -67,14 +67,14 @@ class _ClueControlState extends State<ClueControl> {
                       : () => {_clueService.placeClueSelection()},
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Text(FlutterI18n.translate(context, "confirm")),
+                    child: Text(FlutterI18n.translate(context, "board.letter_prompt.confirm")),
                   )),
 
               IconButton(
                 onPressed: !_gameService.game!.isCurrentPlayersTurn()
                     ? null
                     : () => {_clueService.incClueSelector()},
-                icon: Icon(Icons.chevron_right),
+                icon: const Icon(Icons.chevron_right),
               ),
             ],
           ));

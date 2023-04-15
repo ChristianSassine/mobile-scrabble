@@ -248,6 +248,7 @@
         "letter": "lettre",
         "place": "Placer",
         "exchange_letter_prompt": "Êtes vous sûr de vouloir échanger ces lettres?",
-        "abandon_prompt": "Êtes vous sûr de vouloir abandonner?"
+        "abandon_prompt": "Êtes vous sûr de vouloir abandonner?",
+        "clue": "Incide",
     }
 }
