@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/components/chatroom-widget.dart';
+import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 
@@ -54,6 +55,7 @@ class _ChatWidgetState extends State<ChatWidget>
   final _joinedSearchBarController = TextEditingController();
   final _availableSearchBarController = TextEditingController();
   final _newRoomCreationController = TextEditingController();
+  final _createRoomKey = GlobalKey<FormFieldState>();
   final scaffoldMessangerKey = GlobalKey<ScaffoldMessengerState>();
 
   // Rooms
@@ -66,6 +68,7 @@ class _ChatWidgetState extends State<ChatWidget>
   late final StreamSubscription _updateRoomsSub;
   late final StreamSubscription _updateNotifsSub;
   late final StreamSubscription _joinRoomSub;
+  late final StreamSubscription _errorRoomSub;
 
   @override
   void initState() {
@@ -95,6 +98,11 @@ class _ChatWidgetState extends State<ChatWidget>
               )));
     });
 
+    _errorRoomSub = _chatService.notifyError.stream.listen((error) {
+      scaffoldMessangerKey.currentState!.showSnackBar(
+          SnackBarFactory.redSnack(FlutterI18n.translate(context, error)));
+    });
+
     if (_chatService.currentRoom != null) {
       _chatService.requestJoinRoomSession(_chatService.currentRoom!);
     }
@@ -102,6 +110,7 @@ class _ChatWidgetState extends State<ChatWidget>
 
   @override
   dispose() {
+    _errorRoomSub.cancel();
     _updateNotifsSub.cancel();
     _joinRoomSub.cancel();
     _updateRoomsSub.cancel();
@@ -133,25 +142,76 @@ class _ChatWidgetState extends State<ChatWidget>
   }
 
   AlertDialog _buildRoomCreationDialog() {
+    final theme = Theme.of(context);
+
     return AlertDialog(
-      title:
-          Text(FlutterI18n.translate(context, "chat.create_room_dialog_label")),
-      content: TextFormField(
-        controller: _newRoomCreationController,
-        validator: null, // TODO: Add validation (empty room string)
-        decoration: InputDecoration(
-          hintText:
-              FlutterI18n.translate(context, "chat.create_room_name_label"),
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true)
-                  .pop(_newRoomCreationController.text);
-              _newRoomCreationController.clear();
-            },
-          ),
+      title: Text(FlutterI18n.translate(context, "chat.create_room.label")),
+      content: IntrinsicHeight(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                key: _createRoomKey,
+                controller: _newRoomCreationController,
+                validator: (value) {
+                  if (value == null || value.isEmpty || value.trim() == '') {
+                    return FlutterI18n.translate(
+                        context, "chat.create_room.error");
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                  hintText:
+                      FlutterI18n.translate(context, "chat.create_room.hint"),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      if (!_createRoomKey.currentState!.validate()) return;
+                      Navigator.of(context, rootNavigator: true)
+                          .pop(_newRoomCreationController.text);
+                      _newRoomCreationController.clear();
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RichText(
+                text: TextSpan(children: [
+                  TextSpan(
+                      text:
+                          "${FlutterI18n.translate(context, "chat.create_room.note_1")}: ",
+                      style: theme.textTheme.labelMedium!
+                          .copyWith(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          "${FlutterI18n.translate(context, "chat.create_room.note_2")} ",
+                      style: theme.textTheme.labelMedium),
+                  TextSpan(
+                      text: FlutterI18n.translate(
+                          context, "chat.create_room.note_3"),
+                      style: theme.textTheme.labelMedium!
+                          .copyWith(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          " ${FlutterI18n.translate(context, "chat.create_room.note_4")} ",
+                      style: theme.textTheme.labelMedium),
+                  TextSpan(
+                      text: FlutterI18n.translate(
+                          context, "chat.create_room.note_5"),
+                      style: theme.textTheme.labelMedium!
+                          .copyWith(fontWeight: FontWeight.bold))
+                ]),
+              ),
+            )
+          ],
         ),
       ),
+      // actions: [
+
+      // ],
     );
   }
 
@@ -305,9 +365,9 @@ class _ChatWidgetState extends State<ChatWidget>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            const Icon(Icons.add),
                             Text(FlutterI18n.translate(
                                 context, "chat.create_room_label")),
-                            const Icon(Icons.add)
                           ],
                         )),
                   ),

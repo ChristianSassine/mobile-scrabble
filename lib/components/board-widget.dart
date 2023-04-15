@@ -96,9 +96,9 @@ class _BoardState extends State<BoardWidget> {
                                           value:
                                               _gameService.game!.gameboard.getSlot(hIndex, vIndex)!,
                                           widgetSize: slotSize)
-                                  : ((ClueService.isClueLetter(clue, hIndex, vIndex))
+                                  : ((_clueService.isClueLetter(clue, hIndex, vIndex))
                                       ? ClueBoardLetter(
-                                          value: ClueService.getClueLetter(clue, hIndex, vIndex)!,
+                                          value: _clueService.getClueLetter(clue, hIndex, vIndex)!,
                                           dragKey: widget.dragKey,
                                           widgetSize: slotSize,
                                           x: hIndex,

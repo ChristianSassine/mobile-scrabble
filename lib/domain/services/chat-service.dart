@@ -31,8 +31,7 @@ class ChatService {
 
   // Observables
   final PublishSubject<ChatRoom> notifyJoinRoom = PublishSubject();
-  final PublishSubject<bool> notifyLeftRoom =
-      PublishSubject(); // TODO: maybe use this, maybe not
+  final PublishSubject<String> notifyError = PublishSubject();
   final PublishSubject<ChatRoom> notifyKickedOut = PublishSubject();
   final PublishSubject<bool> notifyUpdatedChatrooms = PublishSubject();
   final PublishSubject<List<ChatMessage>> notifyUpdateMessages =
@@ -121,6 +120,36 @@ class ChatService {
       final room = ChatRoom.fromJson(data);
       _deleteChatRoom(room);
     });
+
+    socket.on(ChatRoomSocketEvents.DeleteChatRoomNotFoundError.event, (_) {
+      debugPrint('DeleteChatRoomNotFoundError');
+      notifyError.add("chat.errors.delete_not_found");
+    });
+
+    socket.on(ChatRoomSocketEvents.SendMessageError.event, (_) {
+      debugPrint('SendMessageError');
+      notifyError.add("chat.errors.message");
+    });
+
+    socket.on(ChatRoomSocketEvents.JoinChatRoomSessionNotFoundError.event, (_) {
+      debugPrint('JoinChatRoomSessionNotFoundError');
+      notifyError.add("chat.errors.join_session");
+    });
+
+    socket.on(ChatRoomSocketEvents.JoinChatRoomNotFoundError.event, (_) {
+      debugPrint('JoinChatRoomNotFoundError');
+      notifyError.add("chat.errors.join_room");
+    });
+
+    socket.on(ChatRoomSocketEvents.CreateChatRoomError.event, (_) {
+      debugPrint('CreateChatRoomError');
+      notifyError.add("chat.errors.create");
+    });
+
+    socket.on(ChatRoomSocketEvents.LeaveChatRoomNotFoundError.event, (_) {
+      debugPrint('LeaveChatRoomNotFoundError');
+      notifyError.add("chat.errors.leave_room");
+    });
   }
 
   void requestLeaveRoom(String name) {
@@ -136,6 +165,7 @@ class ChatService {
   }
 
   void _deleteChatRoom(ChatRoom room) {
+    debugPrint("Chat Room destroyed : ${room.name}");
     _joinedRooms.remove(room.name);
     _notifiedRooms.remove(room.name);
     _chatRooms.removeWhere((chatRoom) => chatRoom.name == room.name);
@@ -204,24 +234,16 @@ class ChatService {
     usersInfo.clear();
   }
 
-  // TODO: Maybe remove this if it's not useful
-  void _leaveRoomSession() {
-    notifyLeftRoom.add(true);
-  }
-
   void requestJoinChatRoom(String roomName) {
     socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, roomName);
   }
 
   void _joinChatRoom(ChatRoom room) {
+    if (!_chatRooms.any((curRoom) => curRoom.name == room.name)) return;
     debugPrint("Joining Room : ${room.name}");
     _joinedRooms.add(room.name);
     notifyUpdatedChatrooms.add(true);
     requestJoinRoomSession(room);
-  }
-
-  void leaveChatRoom() {
-    socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, currentRoom!.name);
   }
 
   void submitMessage(String msg) {

@@ -142,6 +142,24 @@
     },
     "chat": {
         "create_room_label": "Creer un nouveau canal",
+        "create_room": {
+            "label": "Création de canal",
+            "hint": "Nom du canal",
+            "error": "Entrez un nom pour le canal",
+            "note_1": "Note",
+            "note_2": "Les canaux doivent avoir des",
+            "note_3": "nom uniques",
+            "note_4": "et ne doivent pas commencer par",
+            "note_5": "game"
+        },
+        "errors": {
+            "delete_not_found": "Le canal à effacer n'a pas été trouver",
+            "message": "Une erreur est survenue sur le message envoyé",
+            "join_session": "Le canal a été enlever",
+            "join_room": "Le canal que vous rejoignez n'a pas été trouver",
+            "create": "Echéc lors de la création du canal",
+            "leave_room": "Echéc pour quitter le canal"
+        },
         "create_room_dialog_label": "Création de canal",
         "create_room_name_label": "Nom du canal",
         "join_label": "REJOINDRE",
@@ -230,6 +248,7 @@
         "letter": "lettre",
         "place": "Placer",
         "exchange_letter_prompt": "Êtes vous sûr de vouloir échanger ces lettres?",
-        "abandon_prompt": "Êtes vous sûr de vouloir abandonner?"
+        "abandon_prompt": "Êtes vous sûr de vouloir abandonner?",
+        "clue": "Incide",
     }
 }

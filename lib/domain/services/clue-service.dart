@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/letter-enum.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
@@ -13,6 +14,7 @@ class ClueService {
   final _gameService = GetIt.I.get<GameService>();
 
   List<PlaceWordCommandInfo>? clues;
+  List<List<Coordinate>>? _alreadyPlacedLetters;
   int clueSelector = 0;
 
   Subject<int> notifyNewClues = PublishSubject();
@@ -43,6 +45,7 @@ class ClueService {
 
   resetClues() {
     clues = null;
+    _alreadyPlacedLetters = null;
     notifyNewClues.add(0);
     notifyClueSelector.add(0);
   }
@@ -61,26 +64,37 @@ class ClueService {
     notifyClueSelector.add(clueSelector);
   }
 
-  static bool isClueLetter(PlaceWordCommandInfo? clue, int x, int y) {
+  bool isClueLetter(PlaceWordCommandInfo? clue, int x, int y) {
     if (clue == null) return false;
 
     if (clue.isHorizontal == true) {
       return clue.firstCoordinate.y == y &&
           clue.firstCoordinate.x <= x &&
-          x < clue.firstCoordinate.x + clue.letters.length;
+          x <
+              clue.firstCoordinate.x +
+                  clue.letters.length +
+                  _alreadyPlacedLetters![clueSelector].length;
     } else {
       return clue.firstCoordinate.x == x &&
           clue.firstCoordinate.y <= y &&
-          y < clue.firstCoordinate.y + clue.letters.length;
+          y <
+              clue.firstCoordinate.y +
+                  clue.letters.length +
+                  _alreadyPlacedLetters![clueSelector].length;
     }
   }
 
-  static Letter? getClueLetter(PlaceWordCommandInfo? clue, int x, int y) {
+  Letter? getClueLetter(PlaceWordCommandInfo? clue, int x, int y) {
     if (clue == null) return null;
 
+    int alreadyPlaceLetterCount = _alreadyPlacedLetters![clueSelector]
+        .where((element) => element.x <= x && element.y <= y)
+        .toList()
+        .length;
+
     return Letter.fromCharacter((clue.isHorizontal == true
-            ? clue.letters[x - clue.firstCoordinate.x]
-            : clue.letters[y - clue.firstCoordinate.y])
+            ? clue.letters[x - alreadyPlaceLetterCount - clue.firstCoordinate.x]
+            : clue.letters[y - alreadyPlaceLetterCount - clue.firstCoordinate.y])
         .toUpperCase());
   }
 
@@ -88,30 +102,32 @@ class ClueService {
     if (clues == null) return;
 
     var clue = clues![clueSelector];
+    clue.letters = clue.letters
+        .map((letter) =>
+            letter.toLowerCase() == letter ? letter.toUpperCase() : letter.toLowerCase())
+        .toList();
 
-    // Removing already placed letters in clue
-    var position = clue.firstCoordinate;
-    int letterCount = clue.letters.length;
-    for (var letterIndex = 0; letterIndex < letterCount; letterIndex++) {
-      if (_gameService.game!.gameboard.isSlotEmpty(position.x, position.y)) {
-        _gameService.placeLetterOnBoard(
-            position.x,
-            position.y,
-            Letter.fromCharacter(clue.letters[letterIndex].toUpperCase())!,
-            clue.letters[letterIndex] == clue.letters[letterIndex].toUpperCase());
-      }
-      if (clue.isHorizontal == true) {
-        position.x++;
-      } else {
-        position.y++;
-      }
-    }
-
-    _gameService.confirmWordPlacement();
+    _socket.emit(GameSocketEvent.PlaceWordCommand.event, clues![clueSelector]);
   }
 
   _receiveClues(List<PlaceWordCommandInfo> incomingClues) {
     clues = incomingClues;
+    _alreadyPlacedLetters = incomingClues.map<List<Coordinate>>((clue) {
+      List<Coordinate> alreadyPlaced = [];
+      for (int letterIndex = 0;
+          letterIndex < clue.letters.length;
+          letterIndex++) {
+        Coordinate position = (clue.isHorizontal == true)
+            ? Coordinate(clue.firstCoordinate.x + letterIndex + alreadyPlaced.length, clue.firstCoordinate.y)
+            : Coordinate(clue.firstCoordinate.x, clue.firstCoordinate.y + letterIndex  + alreadyPlaced.length);
+        if(!_gameService.game!.gameboard.isSlotValid(position.x, position.y)) break;
+        if (!_gameService.game!.gameboard.isSlotEmpty(position.x, position.y)) {
+          alreadyPlaced.add(position);
+          letterIndex--;
+        }
+      }
+      return alreadyPlaced;
+    }).toList();
     clueSelector = 0;
     notifyNewClues.add(incomingClues.length);
     notifyClueSelector.add(clueSelector);
