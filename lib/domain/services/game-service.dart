@@ -8,6 +8,7 @@ import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/models/letter-synchronisation-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/services/game-sync-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/end-game-screen.dart';
@@ -245,12 +246,16 @@ class GameService {
   Letter? dragLetterFromEasel(int index) {
     debugPrint("[GAME SERVICE] Start drag from easel");
     draggedLetter = removeLetterFromEaselAt(index);
+    GetIt.I.get<GameSyncService>().startDragSync();
+
     return draggedLetter;
   }
 
   Letter? dragLetterFromBoard(int x, int y) {
     debugPrint("[GAME SERVICE] Start drag from board");
     draggedLetter = removeLetterFromBoard(x, y);
+    GetIt.I.get<GameSyncService>().startDragSync();
+
     return draggedLetter;
   }
 
