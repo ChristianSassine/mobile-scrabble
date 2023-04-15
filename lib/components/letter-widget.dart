@@ -7,15 +7,16 @@ class LetterWidget extends StatelessWidget {
   final int points;
   final double widgetSize;
   final double opacity;
-  final bool highlighted;
+  final Color? color;
+  final Color _defaultColor = Colors.orange[200]!;
 
-  const LetterWidget(
+  LetterWidget(
       {super.key,
       required this.character,
       required this.points,
       required this.widgetSize,
       this.opacity = 1,
-      this.highlighted = false});
+      this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class LetterWidget extends StatelessWidget {
         height: widgetSize,
         width: widgetSize,
         child: Card(
-          color: Colors.orange[highlighted ? 100 : 200]!.withOpacity(opacity),
+          color: (color == null ? _defaultColor : color!).withOpacity(opacity),
           child: Stack(
             children: [
               Center(

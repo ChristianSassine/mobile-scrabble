@@ -8,6 +8,8 @@ import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/room-service.dart';
+import 'package:mobile/domain/services/user-service.dart';
+import 'package:mobile/screens/game-screen.dart';
 import 'package:mobile/screens/waiting-room-screen.dart';
 
 class RoomSelectionScreen extends StatefulWidget {
@@ -21,6 +23,7 @@ class RoomSelectionScreen extends StatefulWidget {
 
 class _RoomListState extends State<RoomSelectionScreen> {
   final _roomService = GetIt.I.get<RoomService>();
+  final _userService = GetIt.I.get<UserService>();
   List<GameRoom> roomList = [];
 
   final ScrollController _scrollController = ScrollController();
@@ -46,10 +49,18 @@ class _RoomListState extends State<RoomSelectionScreen> {
     });
 
     _validJoinSub = _roomService.notifyRoomJoin.stream.listen((room) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const WaitingRoomScreen()),
-      );
+      if(room!.isPlayerObserver(_userService.user!)) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const GameScreen()),
+        );
+      }
+      else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const WaitingRoomScreen()),
+        );
+      }
     });
 
     _errorSub = _roomService.notifyError.stream.listen((errorKey) {

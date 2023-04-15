@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/OpponentDraggedLetterWidget.dart';
 import 'package:mobile/components/board-widget.dart';
+import 'package:mobile/components/chat-widget.dart';
 import 'package:mobile/components/easel-widget.dart';
 import 'package:mobile/components/game-info-widget.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
@@ -33,7 +35,8 @@ class _GameScreenState extends State<GameScreen> {
         title: Text(FlutterI18n.translate(context, "game.abandon_prompt")),
         content: const SizedBox.shrink())) {
       _gameService.abandonGame();
-      await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const EndGameScreen()));
+      await Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const EndGameScreen()));
     }
   }
 
@@ -60,25 +63,55 @@ class _GameScreenState extends State<GameScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.green[100],
-      body: Center(
-          child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GameInfoBar(
-            draggableKey: _draggableKey,
-          ),
-          Expanded(
-            child: InteractiveViewer(
-              panEnabled: false,
-              // Set it to false to prevent panning.
-              boundaryMargin: EdgeInsets.zero,
-              minScale: 1,
-              maxScale: 4,
-              child: BoardWidget(dragKey: _draggableKey),
-            ),
-          ),
-        ],
-      )),
+      body: Stack(children: [
+        if (MediaQuery.of(context).size.width > MediaQuery.of(context).size.height)
+          Center(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GameInfoBar(
+                draggableKey: _draggableKey,
+              ),
+              Expanded(
+                child: InteractiveViewer(
+                  panEnabled: false,
+                  // Set it to false to prevent panning.
+                  boundaryMargin: EdgeInsets.zero,
+                  minScale: 1,
+                  maxScale: 4,
+                  child: BoardWidget(dragKey: _draggableKey),
+                ),
+              ),
+              const SizedBox(width: 300, child: SideChatWidget()),
+            ],
+          )),
+        if (MediaQuery.of(context).size.width < MediaQuery.of(context).size.height)
+          Center(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  GameInfoBar(
+                    draggableKey: _draggableKey,
+                  ),
+                  const SizedBox(width: 300, height: 480, child: SideChatWidget()),
+                ],
+              ),
+              Expanded(
+                child: InteractiveViewer(
+                  panEnabled: false,
+                  // Set it to false to prevent panning.
+                  boundaryMargin: EdgeInsets.zero,
+                  minScale: 1,
+                  maxScale: 4,
+                  child: BoardWidget(dragKey: _draggableKey),
+                ),
+              ),
+            ],
+          )),
+        const OpponentDraggedLetterWidget()
+      ]),
       bottomNavigationBar: BottomAppBar(
           child: EaselWidget(
         dragKey: _draggableKey,

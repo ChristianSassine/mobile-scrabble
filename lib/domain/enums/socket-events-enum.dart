@@ -14,8 +14,7 @@ enum ChatRoomSocketEvents {
   LeaveChatRoomNotFoundError('leaveChatRoomNotFoundError'),
   JoinChatRoomSessionNotFoundError('joinChatRoomSessionNotFoundError'),
   LeaveChatRoomSessionNotFoundError('leaveChatRoomSessionNotFoundError'),
-  SendMessageError('sendMessageError')
-  ;
+  SendMessageError('sendMessageError');
 
   const ChatRoomSocketEvents(this.event);
 
@@ -55,9 +54,24 @@ enum GameSocketEvent {
   GameEnded('endGame'),
   PlacementSuccess('placementSuccess'),
   PlacementFailure('placementFailure'),
-  LetterReserveUpdated("letterReserveUpdated");
+  LetterReserveUpdated("letterReserveUpdated"),
+  JoinAsObserver('joinAsObserver'),
+  CannotReplaceBot('cannotReplaceBot'),
+  SendDrag('sd'),
+  DragEvent('de'),
+  LetterPlaced('lp'),
+  LetterTaken('lt');
 
   const GameSocketEvent(this.event);
+
+  final String event;
+}
+
+enum ConnectionEvent {
+  SuccessfulConnection('SuccessfulConnection'),
+  UserAlreadyConnected('UserAlreadyConnected');
+
+  const ConnectionEvent(this.event);
 
   final String event;
 }

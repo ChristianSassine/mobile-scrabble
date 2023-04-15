@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/image-type-enum.dart';
+import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/models/user-auth-models.dart';
@@ -30,6 +32,22 @@ class AuthService {
   Subject<bool> notifyRegister = PublishSubject();
   Subject<String> notifyError = PublishSubject();
 
+  AuthService() {
+    _initSocketSubs();
+  }
+
+  void _initSocketSubs() {
+    _socket.on(ConnectionEvent.SuccessfulConnection.event, (_) {
+      notifyLogin.add(true);
+      _chatService.playNotifSound();
+    });
+
+    _socket.on(ConnectionEvent.UserAlreadyConnected.event, (_) {
+      disconnect();
+      notifyError.add("auth.login.user_taken");
+    });
+  }
+
   Future<void> connectUser(String username, String password,
       {accountSetup = false}) async {
     try {
@@ -45,26 +63,27 @@ class AuthService {
         IUser user = IUser.fromJson(data);
         await _userService.updateUser(user);
         if (!accountSetup) {
-          final SettingsInfo settingsInfo = SettingsInfo.fromJson(data);
-          _settingsService.loadConfig(settingsInfo);
+          try {
+            final SettingsInfo settingsInfo = SettingsInfo.fromJson(data);
+            _settingsService.loadConfig(settingsInfo);
+          } catch (e) {
+            debugPrint('Failed to load config');
+          }
         }
-
-        _socket.io.options['extraHeaders'] = {'cookie': _cookie};
-        _socket
-          ..disconnect()
-          ..connect();
 
         final chatrooms = (data['chatRooms'] as List)
             .map((room) => ChatRoomState.fromJson(room))
             .toList();
         _chatService.config(chatrooms);
-        if (!accountSetup) notifyLogin.add(true);
+
+        if (!accountSetup) _connectSockets();
         return;
       }
     } catch (_) {
+      debugPrint("Server not responding...");
       // Server not responding...
     }
-    notifyError.add("Failed Login");
+    notifyError.add("auth.login.failure");
   }
 
   Future<void> createUser(
@@ -77,7 +96,7 @@ class AuthService {
       "email": email,
       "password": password,
       "profilePicture": profileImageInfo
-    }); // TODO: Make a model later maybe? (Will only be used here)
+    });
 
     var response = await _httpService.signUpRequest(signUpForm);
 
@@ -90,16 +109,24 @@ class AuthService {
 
       await connectUser(username, password, accountSetup: true);
       await _settingsService.saveConfig();
-      notifyLogin.add(true);
+      _connectSockets();
 
       return;
     }
-    notifyError.add("Failed Login");
+    notifyError.add("auth.signup.failure");
   }
 
-  void diconnect() {
+  void _connectSockets() {
+    _socket.io.options['extraHeaders'] = {'cookie': _cookie};
+    _socket
+      ..disconnect()
+      ..connect();
+  }
+
+  void disconnect() {
     _userService.updateUser(null);
     _cookie = null;
+    _httpService.resetCookie();
     _chatService.reset();
     _socket.disconnect();
   }

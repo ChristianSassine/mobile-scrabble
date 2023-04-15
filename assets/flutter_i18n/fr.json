@@ -95,6 +95,7 @@
             "button": "S'identifier",
             "success": "Succès d'identification!",
             "failure": "Erreur lors de l'identification!",
+            "user_taken" : "L'utilisateur est déja connecté!",
             "button_sign_up": "Créer un nouveau compte"
         },
         "signup": {
