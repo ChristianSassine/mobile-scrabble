@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:mobile/screens/menu-screen.dart';
 
-
 class EndGameScreen extends StatefulWidget {
   const EndGameScreen({super.key});
 
@@ -11,30 +10,33 @@ class EndGameScreen extends StatefulWidget {
 }
 
 class _EndGameScreenState extends State<EndGameScreen> {
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(FlutterI18n.translate(context, "end_game.game_ended"), style: TextStyle(fontWeight: FontWeight.bold),),
+              Text(
+                FlutterI18n.translate(context, "end_game.game_ended"),
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               SizedBox(
                   width: 250,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       ElevatedButton(
-                          onPressed: () => Navigator.push(
+                          onPressed: () => Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                  MenuScreen(
-                                      title: FlutterI18n.translate(context, "menu_screen.screen_name")))),
-                          child: Text(FlutterI18n.translate(context, "end_game.return_to_menu")))
+                                  builder: (context) => MenuScreen(
+                                      title: FlutterI18n.translate(
+                                          context, "menu_screen.screen_name"))),
+                              (_) => false),
+                          child: Text(FlutterI18n.translate(
+                              context, "end_game.return_to_menu")))
                     ],
                   )),
             ],
