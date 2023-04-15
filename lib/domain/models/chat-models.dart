@@ -44,6 +44,19 @@ class ChatMessage {
   Map toJson() => {"userId": userId, "message": message, "date": date};
 }
 
+class SentMessage {
+  final String chatRoomName;
+  final String msg;
+
+  SentMessage(this.chatRoomName, this.msg);
+
+  SentMessage.fromJson(json)
+      : chatRoomName = json['chatRoomName'],
+        msg = json['msg'];
+
+  Map toJson() => {"chatRoomName": chatRoomName, "msg": msg};
+}
+
 enum MessageType {
   CLIENT("client"),
   SYSTEM("system"),

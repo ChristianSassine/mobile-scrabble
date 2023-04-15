@@ -225,8 +225,8 @@ class ChatService {
   }
 
   void submitMessage(String msg) {
-    socket
-        .emit(ChatRoomSocketEvents.SendMessage.event, [currentRoom?.name, msg]);
+    socket.emit(ChatRoomSocketEvents.SendMessage.event,
+        SentMessage(currentRoom!.name, msg));
   }
 
   void _treatReceivedMessage(String roomName, ChatMessage message) {
