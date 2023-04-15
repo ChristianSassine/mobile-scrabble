@@ -153,4 +153,8 @@ class HttpHandlerService {
   void updateCookie(Cookie cookie) {
     headers['cookie'] = "${cookie.name}=${cookie.value}";
   }
+
+  void resetCookie() {
+    headers['cookie'] = "";
+  }
 }

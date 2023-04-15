@@ -95,6 +95,7 @@
             "button": "Sign in",
             "success": "Successful sign in!",
             "failure": "Error while signing in!",
+            "user_taken": "The user is already logged in!",
             "button_sign_up": "Create a new account"
         },
         "signup": {

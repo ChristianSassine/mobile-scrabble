@@ -31,7 +31,9 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => SignInState(),
-      child: ContainerLogin(deepLinkInfo: deepLinkInfo,),
+      child: ContainerLogin(
+        deepLinkInfo: deepLinkInfo,
+      ),
     );
   }
 }
@@ -39,7 +41,6 @@ class Login extends StatelessWidget {
 class ContainerLogin extends StatefulWidget {
   const ContainerLogin({super.key, this.deepLinkInfo});
   final DeepLinkInfo? deepLinkInfo;
-
 
   @override
   State<ContainerLogin> createState() => _ContainerLoginState();
@@ -71,24 +72,25 @@ class _ContainerLoginState extends State<ContainerLogin> {
 
       if (widget.deepLinkInfo?.isFromDeepLink == true) {
         Navigator.of(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!)
-          .push(MaterialPageRoute(builder: (context) {
-        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          _roomService.requestJoinRoom(widget.deepLinkInfo?.roomID as String, widget.deepLinkInfo?.password);
-        });
-        return const RoomSelectionScreen();
+            .push(MaterialPageRoute(builder: (context) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            _roomService.requestJoinRoom(widget.deepLinkInfo?.roomID as String,
+                widget.deepLinkInfo?.password);
+          });
+          return const RoomSelectionScreen();
         }));
       } else {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (context) => MenuScreen(
-                  title: FlutterI18n.translate(
-                      context, "menu_screen.screen_name"))),
-          (route) => false);
+            MaterialPageRoute(
+                builder: (context) => MenuScreen(
+                    title: FlutterI18n.translate(
+                        context, "menu_screen.screen_name"))),
+            (route) => false);
       }
     });
     errorSub = authService.notifyError.stream.listen((event) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
-          FlutterI18n.translate(context, "auth.login.failure")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBarFactory.redSnack(FlutterI18n.translate(context, event)));
     });
   }
 

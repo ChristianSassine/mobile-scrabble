@@ -66,3 +66,12 @@ enum GameSocketEvent {
 
   final String event;
 }
+
+enum ConnectionEvent {
+  SuccessfulConnection('SuccessfulConnection'),
+  UserAlreadyConnected('UserAlreadyConnected');
+
+  const ConnectionEvent(this.event);
+
+  final String event;
+}

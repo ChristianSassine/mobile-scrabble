@@ -51,8 +51,11 @@ class ChatService {
       _joinedRooms.add(joinedRoom.name);
       if (joinedRoom.notified) _notifiedRooms.add(joinedRoom.name);
     }
-    if (_notifiedRooms.isNotEmpty) _audioService.playNotificationSound();
     socket.emit(ChatRoomSocketEvents.GetAllChatRooms.event);
+  }
+
+  void playNotifSound() {
+    if (_notifiedRooms.isNotEmpty) _audioService.playNotificationSound();
   }
 
   void reset() {

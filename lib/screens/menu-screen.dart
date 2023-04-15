@@ -63,7 +63,7 @@ class _MenuScreenState extends State<MenuScreen> {
         }
         break;
       case DropDownOption.Disconnect:
-        _authService.diconnect();
+        _authService.disconnect();
         {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
