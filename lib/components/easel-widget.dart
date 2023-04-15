@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/letter-enum.dart';
 import 'package:mobile/domain/services/game-service.dart';
+import 'package:mobile/domain/services/game-sync-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'letter-widget.dart';
@@ -151,8 +152,7 @@ class _EaselState extends State<EaselWidget> {
 
 class EaselLetter extends StatelessWidget {
   final _gameService = GetIt.I.get<GameService>();
-  final _roomService = GetIt.I.get<RoomService>();
-  final _userService = GetIt.I.get<UserService>();
+  final _gameSyncService = GetIt.I.get<GameSyncService>();
 
   EaselLetter(
       {super.key,
@@ -188,6 +188,7 @@ class EaselLetter extends StatelessWidget {
         ),
         onDragStarted: () => _gameService.dragLetterFromEasel(index),
         onDraggableCanceled: (v, o) => _gameService.cancelDragLetter(),
+        onDragUpdate: (detail) => _gameSyncService.updateDraggedLetterPosition(detail.globalPosition),
       );
     }
   }

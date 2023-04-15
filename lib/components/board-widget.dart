@@ -9,6 +9,7 @@ import 'package:mobile/components/letter-widget.dart';
 import 'package:mobile/domain/enums/letter-enum.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/domain/models/board-models.dart';
+import 'package:mobile/domain/services/game-sync-service.dart';
 
 class BoardWidget extends StatefulWidget {
   final GlobalKey dragKey;
@@ -63,22 +64,22 @@ class _BoardState extends State<BoardWidget> {
                         boardSize,
                         (hIndex) => Stack(children: [
                               SlotWidget(
-                                  value: _gameService.game!.gameboard.layout.layoutMatrix[hIndex]
-                                      [vIndex],
-                                  x: vIndex,
-                                  y: hIndex),
-                              !_gameService.game!.gameboard.isSlotEmpty(vIndex, hIndex)
-                                  ? _gameService.isPendingLetter(vIndex, hIndex)
+                                  value: _gameService.game!.gameboard.layout.layoutMatrix[vIndex]
+                                      [hIndex],
+                                  x: hIndex,
+                                  y: vIndex),
+                              !_gameService.game!.gameboard.isSlotEmpty(hIndex, vIndex)
+                                  ? _gameService.isPendingLetter(hIndex, vIndex)
                                       ? PendingBoardLetter(
                                           value:
-                                              _gameService.game!.gameboard.getSlot(vIndex, hIndex)!,
+                                              _gameService.game!.gameboard.getSlot(hIndex, vIndex)!,
                                           dragKey: widget.dragKey,
                                           widgetSize: slotSize,
-                                          x: vIndex,
-                                          y: hIndex)
+                                          x: hIndex,
+                                          y: vIndex)
                                       : BoardLetter(
                                           value:
-                                              _gameService.game!.gameboard.getSlot(vIndex, hIndex)!,
+                                              _gameService.game!.gameboard.getSlot(hIndex, vIndex)!,
                                           widgetSize: slotSize)
                                   : const SizedBox.shrink()
                             ])).toList(),
@@ -233,6 +234,7 @@ class BoardLetter extends StatelessWidget {
 
 class PendingBoardLetter extends StatelessWidget {
   final _gameService = GetIt.I.get<GameService>();
+  final _gameSyncService = GetIt.I.get<GameSyncService>();
 
   PendingBoardLetter(
       {super.key,
@@ -262,6 +264,7 @@ class PendingBoardLetter extends StatelessWidget {
             ),
             onDragStarted: () => _gameService.dragLetterFromBoard(x, y),
             onDraggableCanceled: (v, o) => _gameService.cancelDragLetter(),
+            onDragUpdate: (detail) => _gameSyncService.updateDraggedLetterPosition(detail.globalPosition),
           )
         : LetterWidget(
             character: value.character,

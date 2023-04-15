@@ -13,6 +13,7 @@ import 'package:mobile/domain/services/chat-service.dart';
 import 'package:mobile/domain/services/dictionary-service.dart';
 import 'package:mobile/domain/services/dynamic-link-service.dart';
 import 'package:mobile/domain/services/game-service.dart';
+import 'package:mobile/domain/services/game-sync-service.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/settings-service.dart';
@@ -56,6 +57,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton<UserService>(() => UserService());
   getIt.registerLazySingleton<DictionaryService>(() => DictionaryService());
   getIt.registerSingleton<AudioService>(AudioService());
+  getIt.registerLazySingleton<GameSyncService>(() => GameSyncService());
   getIt.registerSingleton<GlobalKey<NavigatorState>>(
       GlobalKey<NavigatorState>());
 }
