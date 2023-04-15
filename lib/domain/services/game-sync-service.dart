@@ -50,8 +50,8 @@ class GameSyncService {
   final MOBILE_BOARD_SIZE = 620;
   final MOBILE_BOARD_HORIZONTAL_MIDDLE_X = 625;
   final MOBILE_BOARD_HORIZONTAL_MIDDLE_Y = 255;
-  final MOBILE_BOARD_VERTICAL_MIDDLE_X = 630;
-  final MOBILE_BOARD_VERTICAL_MIDDLE_Y = 260;
+  final MOBILE_BOARD_VERTICAL_MIDDLE_X = 365;
+  final MOBILE_BOARD_VERTICAL_MIDDLE_Y = 725;
 
   Coordinate _parseScreenCoordinate(DragInfos dragInfos) {
     int windowWidth = MediaQuery.of(_globalKey.currentContext!).size.width.toInt();
@@ -74,7 +74,7 @@ class GameSyncService {
     double normalizedX = (x - xMiddle) / DESKTOP_BOARD_SIZE,
         normalizedY = (y - yMiddle) / DESKTOP_BOARD_SIZE;
 
-    if (vertical) {
+    if (!vertical) {
       coord = Coordinate(
           (MOBILE_BOARD_SIZE * normalizedX + MOBILE_BOARD_HORIZONTAL_MIDDLE_X).toInt(),
           (MOBILE_BOARD_SIZE * normalizedY + MOBILE_BOARD_HORIZONTAL_MIDDLE_Y).toInt());
