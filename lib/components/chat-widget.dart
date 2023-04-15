@@ -365,9 +365,9 @@ class _ChatWidgetState extends State<ChatWidget>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            const Icon(Icons.add),
                             Text(FlutterI18n.translate(
                                 context, "chat.create_room_label")),
-                            const Icon(Icons.add)
                           ],
                         )),
                   ),
