@@ -9,21 +9,31 @@ import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/user-image-info-model.dart';
 import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:path/path.dart';
+import 'package:rxdart/rxdart.dart';
 
 class AvatarService {
   final httpService = GetIt.I.get<HttpHandlerService>();
 
-  late String botImageUrl;
+  String? _botImageUrl;
+  final notifyBotImageUrl = PublishSubject<String>();
 
   AvatarService() {
     _initBotImage();
+  }
+
+  get botImageUrl {
+    if (_botImageUrl == null) {
+      _initBotImage();
+    }
+    return _botImageUrl;
   }
 
   void _initBotImage() async {
     var response = await httpService.getBotProfilePicture();
 
     if (response.statusCode == 200) {
-      botImageUrl = jsonDecode(response.body)['url'];
+      _botImageUrl = jsonDecode(response.body)['url'];
+      notifyBotImageUrl.add(botImageUrl!);
     }
   }
 

@@ -28,20 +28,27 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   final _avatarService = GetIt.I.get<AvatarService>();
   final DynamicLinkService _dynamicLinkService =
       GetIt.I.get<DynamicLinkService>();
-  late final StreamSubscription newMemberSub;
+
+  // Subscriptions
+  late final StreamSubscription _newMemberSub;
+  late final StreamSubscription _botUrlSub;
 
   final ScrollController _scrollController = ScrollController();
 
   @override
   initState() {
     super.initState();
-    newMemberSub =
+    _newMemberSub =
         _roomService.notifyRoomMemberList.stream.listen((newRoomState) {
       if (newRoomState == null) {
         // Exit waiting room (From kick or host closed the)
         Navigator.pop(context);
         return;
       }
+      setState(() {});
+    });
+
+    _botUrlSub = _avatarService.notifyBotImageUrl.stream.listen((_) {
       setState(() {});
     });
   }
@@ -76,8 +83,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-            backgroundImage: (player.playerType == PlayerType.Bot)
-                ? NetworkImage(_avatarService.botImageUrl)
+            backgroundImage: (player.playerType == PlayerType.Bot && _avatarService.botImageUrl != null)
+                ? NetworkImage(_avatarService.botImageUrl!)
                 : player.user.profilePicture?.key != null
                     ? NetworkImage(player.user.profilePicture!.key!)
                     : null,
@@ -110,7 +117,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
   @override
   void dispose() {
     super.dispose();
-    newMemberSub.cancel();
+    _newMemberSub.cancel();
+    _botUrlSub.cancel();
 
     if (GetIt.I.get<GameService>().game == null) {
       _roomService.exitRoom();

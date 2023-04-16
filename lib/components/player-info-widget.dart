@@ -20,9 +20,14 @@ class _PlayerInfoState extends State<PlayerInfo> {
   final _avatarService = GetIt.I.get<AvatarService>();
 
   late StreamSubscription _gameInfoUpdate;
+  late final StreamSubscription _botUrlSub;
 
   _PlayerInfoState() {
     _gameInfoUpdate = _gameService.notifyGameInfoChange.stream.listen((event) {
+      setState(() {});
+    });
+
+    _botUrlSub = _avatarService.notifyBotImageUrl.stream.listen((_) {
       setState(() {});
     });
   }
@@ -31,6 +36,7 @@ class _PlayerInfoState extends State<PlayerInfo> {
   void dispose() {
     super.dispose();
     _gameInfoUpdate.cancel();
+    _botUrlSub.cancel();
   }
 
   @override
@@ -61,8 +67,8 @@ class _PlayerInfoState extends State<PlayerInfo> {
                         ),
                       ListTile(
                         leading: CircleAvatar(
-                            backgroundImage: (player.player.playerType == PlayerType.Bot)
-                                ? NetworkImage(_avatarService.botImageUrl)
+                            backgroundImage: (player.player.playerType == PlayerType.Bot && _avatarService.botImageUrl != null)
+                                ? NetworkImage(_avatarService.botImageUrl!)
                                 : player.player.user.profilePicture?.key != null
                                     ? NetworkImage(player.player.user.profilePicture!.key!)
                                     : null,
