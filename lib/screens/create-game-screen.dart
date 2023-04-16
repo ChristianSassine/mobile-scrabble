@@ -91,7 +91,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: Drawer(child: SideChatWidget()),
+      endDrawer: const Drawer(child: SideChatWidget()),
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
@@ -258,6 +258,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
             ),
           ),
         ),
+        ChatButtonWidget(scaffoldKey: _scaffoldKey)
       ]),
     );
   }

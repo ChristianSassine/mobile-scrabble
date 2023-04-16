@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/chat-button-widget.dart';
+import 'package:mobile/components/chat-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/models/user-auth-models.dart';
@@ -25,6 +27,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
   final _userService = GetIt.I.get<UserService>();
   List<GameRoom> roomList = [];
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final ScrollController _scrollController = ScrollController();
   final _passwordController = TextEditingController();
   final _roomIDController = TextEditingController();
@@ -49,11 +52,13 @@ class _RoomListState extends State<RoomSelectionScreen> {
 
     _validJoinSub = _roomService.notifyRoomJoin.stream.listen((room) {
       if (room!.isPlayerObserver(_userService.user!)) {
+        debugPrint("isPlayerObserver");
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const GameScreen()),
         );
       } else {
+        debugPrint("waiting room");
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const WaitingRoomScreen()),
@@ -212,60 +217,65 @@ class _RoomListState extends State<RoomSelectionScreen> {
     ];
 
     return Scaffold(
+      endDrawer: const Drawer(child: SideChatWidget()),
+      key: _scaffoldKey,
       appBar: AppBar(
           title: Text(FlutterI18n.translate(context, "menu_screen.join_game"))),
-      body: Center(
-        child: Card(
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(color: Colors.white70, width: 1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: IntrinsicHeight(
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.vertical,
-                    child: DataTable(
-                      dataRowHeight: _RoomListState.ROW_HEIGHTS,
-                      columns: roomsLabels
-                          .map((label) => DataColumn(
-                                label: Expanded(
-                                  child: Text(label),
-                                ),
-                              ))
-                          .toList(),
-                      rows: roomList
-                          .map((room) => _buildRoomListing(room))
-                          .toList(),
+      body: Stack(children: [
+        Center(
+          child: Card(
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.white70, width: 1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: IntrinsicHeight(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      scrollDirection: Axis.vertical,
+                      child: DataTable(
+                        dataRowHeight: _RoomListState.ROW_HEIGHTS,
+                        columns: roomsLabels
+                            .map((label) => DataColumn(
+                                  label: Expanded(
+                                    child: Text(label),
+                                  ),
+                                ))
+                            .toList(),
+                        rows: roomList
+                            .map((room) => _buildRoomListing(room))
+                            .toList(),
+                      ),
                     ),
                   ),
-                ),
-                IntrinsicWidth(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      controller: _roomIDController,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        hintText: FlutterI18n.translate(
-                            context, "rooms_lobby.id_label"),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.login),
-                          onPressed: () {
-                            _joinRoom(_roomIDController.text);
-                          },
+                  IntrinsicWidth(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        controller: _roomIDController,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          hintText: FlutterI18n.translate(
+                              context, "rooms_lobby.id_label"),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.login),
+                            onPressed: () {
+                              _joinRoom(_roomIDController.text);
+                            },
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
+        ChatButtonWidget(scaffoldKey: _scaffoldKey)
+      ]),
     );
   }
 }

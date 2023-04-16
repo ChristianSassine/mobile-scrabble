@@ -104,8 +104,9 @@ class GameService {
   }
 
   void _endGame() {
-    Navigator.pushReplacement(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
-        MaterialPageRoute(builder: (context) => const EndGameScreen()));
+    Navigator.pushAndRemoveUntil(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
+        MaterialPageRoute(builder: (context) => const EndGameScreen()),
+        (_)=> false);
 
     game = null;
   }
@@ -131,7 +132,7 @@ class GameService {
 
   _sendPlacedLetter(int x, int y, Letter letter) async{
     await Future.delayed(const Duration(milliseconds: 250));
-    
+
     if (_socket.id != null) {
       _socket.emit(
           GameSocketEvent.LetterPlaced.event,

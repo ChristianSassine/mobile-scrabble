@@ -52,13 +52,11 @@ class _MenuScreenState extends State<MenuScreen> {
         break;
       case DropDownOption.UserSettings:
         {
-          // TODO: Add user settings
           Navigator.of(context)
               .push(MaterialPageRoute(
                   builder: (context) => const UserProfileScreen()))
               .then((value) {
             setState(() {});
-            print("RETURNED");
           });
         }
         break;
@@ -81,7 +79,6 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final theme = Theme.of(context);
     final imageUrl = _userService.user?.profilePicture?.key;
 
     return Scaffold(
