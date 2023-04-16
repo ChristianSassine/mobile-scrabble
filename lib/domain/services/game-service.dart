@@ -90,6 +90,8 @@ class GameService {
       observerView = null;
     }
 
+    draggedLetter = null;
+
     notifyGameInfoChange.add(true);
   }
 
@@ -122,6 +124,14 @@ class GameService {
     pendingLetters.add(placement);
     pendingLetters.sort((a, b) => a.x.compareTo(b.x) + a.y.compareTo(b.y));
 
+    draggedLetter = null;
+
+    _sendPlacedLetter(x, y, letter);
+  }
+
+  _sendPlacedLetter(int x, int y, Letter letter) async{
+    await Future.delayed(const Duration(milliseconds: 250));
+    
     if (_socket.id != null) {
       _socket.emit(
           GameSocketEvent.LetterPlaced.event,
@@ -180,8 +190,6 @@ class GameService {
 
   /// @return the removed letter
   Letter? removeLetterFromBoard(int x, int y) {
-    //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
-
     if (isPlacedLetterRemovalValid(x, y)) {
       LetterPlacement placement =
           pendingLetters.firstWhere((placement) => placement.x == x && placement.y == y);
@@ -227,22 +235,20 @@ class GameService {
         "[GAME SERVICE] Add letter to the end of easel: easel[${game!.currentPlayer.easel.getLetterList().length}] = $letter");
     game!.currentPlayer.easel.addLetter(letter);
 
-    //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
+    draggedLetter = null;
   }
 
   void addLetterInEaselAt(int index, Letter letter) {
     game!.currentPlayer.easel.addLetterAt(index, letter);
     debugPrint("[GAME SERVICE] Add letter to easel[$index] = $letter");
 
-    //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
+    draggedLetter = null;
   }
 
   /// @return null if index is out of bound
   Letter? removeLetterFromEaselAt(int index) {
     Letter? removedLetter = game!.currentPlayer.easel.removeLetterAt(index);
     debugPrint("[GAME SERVICE] Remove letter from easel[$index] - $removedLetter");
-
-    //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
 
     return removedLetter;
   }
