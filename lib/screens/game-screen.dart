@@ -128,7 +128,7 @@ class _GameScreenState extends State<GameScreen> {
           child: EaselWidget(
         dragKey: _draggableKey,
       )),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.red,
           child: const Icon(Icons.flag),
