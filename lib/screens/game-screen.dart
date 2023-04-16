@@ -63,76 +63,79 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.green[100],
-      body: Stack(children: [
-        if (MediaQuery.of(context).size.width >
-            MediaQuery.of(context).size.height)
-          Center(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GameInfoBar(
-                draggableKey: _draggableKey,
-              ),
-              Expanded(
-                child: InteractiveViewer(
-                  panEnabled: false,
-                  // Set it to false to prevent panning.
-                  boundaryMargin: EdgeInsets.zero,
-                  minScale: 1,
-                  maxScale: 4,
-                  child: BoardWidget(dragKey: _draggableKey),
+    return WillPopScope(
+      onWillPop: () => _promptAbandonConfirmation(context),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.green[100],
+        body: Stack(children: [
+          if (MediaQuery.of(context).size.width >
+              MediaQuery.of(context).size.height)
+            Center(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GameInfoBar(
+                  draggableKey: _draggableKey,
                 ),
-              ),
-              const SizedBox(
-                  width: 300,
-                  child: SideChatWidget(
-                    embedded: true,
-                  )),
-            ],
-          )),
-        if (MediaQuery.of(context).size.width <
-            MediaQuery.of(context).size.height)
-          Center(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  GameInfoBar(
-                    draggableKey: _draggableKey,
+                Expanded(
+                  child: InteractiveViewer(
+                    panEnabled: false,
+                    // Set it to false to prevent panning.
+                    boundaryMargin: EdgeInsets.zero,
+                    minScale: 1,
+                    maxScale: 4,
+                    child: BoardWidget(dragKey: _draggableKey),
                   ),
-                  const SizedBox(
-                      width: 300,
-                      height: 480,
-                      child: SideChatWidget(embedded: true)),
-                ],
-              ),
-              Expanded(
-                child: InteractiveViewer(
-                  panEnabled: false,
-                  // Set it to false to prevent panning.
-                  boundaryMargin: EdgeInsets.zero,
-                  minScale: 1,
-                  maxScale: 4,
-                  child: BoardWidget(dragKey: _draggableKey),
                 ),
-              ),
-            ],
-          )),
-        const OpponentDraggedLetterWidget()
-      ]),
-      bottomNavigationBar: BottomAppBar(
-          child: EaselWidget(
-        dragKey: _draggableKey,
-      )),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.red,
-          child: const Icon(Icons.flag),
-          onPressed: () => _promptAbandonConfirmation(context)),
+                const SizedBox(
+                    width: 300,
+                    child: SideChatWidget(
+                      embedded: true,
+                    )),
+              ],
+            )),
+          if (MediaQuery.of(context).size.width <
+              MediaQuery.of(context).size.height)
+            Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    GameInfoBar(
+                      draggableKey: _draggableKey,
+                    ),
+                    const SizedBox(
+                        width: 300,
+                        height: 480,
+                        child: SideChatWidget(embedded: true)),
+                  ],
+                ),
+                Expanded(
+                  child: InteractiveViewer(
+                    panEnabled: false,
+                    // Set it to false to prevent panning.
+                    boundaryMargin: EdgeInsets.zero,
+                    minScale: 1,
+                    maxScale: 4,
+                    child: BoardWidget(dragKey: _draggableKey),
+                  ),
+                ),
+              ],
+            )),
+          const OpponentDraggedLetterWidget()
+        ]),
+        bottomNavigationBar: BottomAppBar(
+            child: EaselWidget(
+          dragKey: _draggableKey,
+        )),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartDocked,
+        floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.red,
+            child: const Icon(Icons.flag),
+            onPressed: () => _promptAbandonConfirmation(context)),
+      ),
     );
   }
 }
