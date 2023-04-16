@@ -116,6 +116,17 @@
             "success": "Successful sign up!",
             "failure": "Error while signing up!"
         },
+        "forgot_pass": {
+            "screen_title" : "Forgot Password Screen",
+            "title" : "Forgot Password",
+            "description" : "Enter the username associated with your account. An email with a temporary password will be sent to the email address linked to your account.",
+            "hint" : "Username",
+            "error": "Enter a username",
+            "success": "Email successfully sent",
+            "fail" : "Failed to find the username",
+            "submit" : "Submit",
+            "button": "Forgot Password?"
+        },
         "recaptcha": {
             "error": "Error in captcha verification"
         }

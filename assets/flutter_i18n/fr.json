@@ -116,6 +116,17 @@
             "success": "Succès de création de compte!",
             "failure": "Erreur dans la création du compte!"
         },
+        "forgot_pass": {
+            "screen_title" : "Page Oublier Mot de Passe",
+            "title" : "Oublier Mot de Passe",
+            "description" : "Entrez le nom d'utilisateur associé avec votre compte. Un mot de passe temporaire vous sera envoyer par courriel.",
+            "hint" : "Nom d'utilisateur",
+            "error": "Entrez un nom d'utilisateur",
+            "success": "Succès dans l'envoie du courriel",
+            "fail" : "L'utilisateur n'a pas été trouvé",
+            "submit" : "Envoyer",
+            "button": "Vous avez oublié votre mot de passe?"
+        },
         "recaptcha": {
             "error": "Erreur dans la verification du recaptcha"
         }
