@@ -257,6 +257,8 @@ class GameService {
   Letter? dragLetterFromEasel(int index) {
     debugPrint("[GAME SERVICE] Start drag from easel");
     draggedLetter = removeLetterFromEaselAt(index);
+    
+    GetIt.I.get<ClueService>().resetClues();
 
     if (game!.isCurrentPlayersTurn()) {
       GetIt.I.get<GameSyncService>().startDragSync();
@@ -269,6 +271,8 @@ class GameService {
     debugPrint("[GAME SERVICE] Start drag from board");
     draggedLetter = removeLetterFromBoard(x, y);
 
+    GetIt.I.get<ClueService>().resetClues();
+
     if (game!.isCurrentPlayersTurn()) {
       GetIt.I.get<GameSyncService>().startDragSync();
     }
@@ -277,6 +281,7 @@ class GameService {
   }
 
   void cancelDragLetter() {
+    if(draggedLetter == null) return;
     debugPrint("[GAME SERVICE] Cancel drag");
     addLetterInEasel(draggedLetter!);
     draggedLetter = null;
@@ -286,9 +291,6 @@ class GameService {
   /// @return null if letter is not in easel
   Letter? removeLetterFromEasel(Letter letter) {
     Letter? removedLetter = game!.currentPlayer.easel.removeLetter(letter);
-
-    //TODO: CALL SERVER IMPLEMENTATION FOR SYNC
-
     return removedLetter;
   }
 
@@ -335,6 +337,11 @@ class GameService {
     }
 
     notifyGameError.add(error);
+  }
+
+  void cancelPendingLetters(){
+    pendingLetters.clear();
+    game!.gameboard.notifyBoardChanged.add(true);
   }
 
   void skipTurn() {

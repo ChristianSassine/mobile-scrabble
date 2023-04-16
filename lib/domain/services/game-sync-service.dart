@@ -21,6 +21,10 @@ class GameSyncService {
 
   GameSyncService() {
     _setupSocketListeners();
+
+    _gameService.notifyGameInfoChange.stream.listen((event) {
+      if(event) notifyNewDraggedLetter.add(null);
+    });
   }
 
   _setupSocketListeners() {
@@ -49,9 +53,9 @@ class GameSyncService {
   // final DESKTOP_BOARD_MIDDLE_Y = 545;
   final MOBILE_BOARD_SIZE = 620;
   final MOBILE_BOARD_HORIZONTAL_MIDDLE_X = 625;
-  final MOBILE_BOARD_HORIZONTAL_MIDDLE_Y = 255;
-  final MOBILE_BOARD_VERTICAL_MIDDLE_X = 365;
-  final MOBILE_BOARD_VERTICAL_MIDDLE_Y = 725;
+  final MOBILE_BOARD_HORIZONTAL_MIDDLE_Y = 270;
+  final MOBILE_BOARD_VERTICAL_MIDDLE_X = 380;
+  final MOBILE_BOARD_VERTICAL_MIDDLE_Y = 760;
 
   Coordinate _parseScreenCoordinate(DragInfos dragInfos) {
     int windowWidth = MediaQuery.of(_globalKey.currentContext!).size.width.toInt();
@@ -80,8 +84,8 @@ class GameSyncService {
           (MOBILE_BOARD_SIZE * normalizedY + MOBILE_BOARD_HORIZONTAL_MIDDLE_Y).toInt());
     } else {
       coord = Coordinate(
-          (MOBILE_BOARD_SIZE * normalizedX + MOBILE_BOARD_HORIZONTAL_MIDDLE_X).toInt(),
-          (MOBILE_BOARD_SIZE * normalizedY + MOBILE_BOARD_HORIZONTAL_MIDDLE_Y).toInt());
+          ((MOBILE_BOARD_SIZE + 25) * normalizedX + MOBILE_BOARD_VERTICAL_MIDDLE_X).toInt(),
+          ((MOBILE_BOARD_SIZE + 25) * normalizedY + MOBILE_BOARD_VERTICAL_MIDDLE_Y).toInt());
     }
 
     return coord;

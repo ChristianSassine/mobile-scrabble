@@ -41,6 +41,7 @@ class ClueService {
 
   fetchClues() {
     _socket.emit(GameSocketEvent.ClueCommand.event);
+    _gameService.cancelPendingLetters();
   }
 
   resetClues() {
