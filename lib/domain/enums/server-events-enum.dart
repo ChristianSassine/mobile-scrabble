@@ -1,4 +1,4 @@
-enum ServerError {
+enum ServerEvents {
   RoomSameUser('roomSameUser'),
   RoomNotAvailable('roomNotAvailable'),
   RoomWrongPassword('roomWrongPassword'),
@@ -14,14 +14,14 @@ enum ServerError {
       'An error has ocurred while sending the forgot password email'),
   ;
 
-  const ServerError(this.error);
+  const ServerEvents(this.error);
   final String error;
 
-  static ServerError fromString(String error) {
-    for (ServerError sError in values) {
+  static ServerEvents fromString(String error) {
+    for (ServerEvents sError in values) {
       if (sError.error == error) return sError;
     }
-    return ServerError.NULL;
+    return ServerEvents.NULL;
   }
 
   @override

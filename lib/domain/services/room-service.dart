@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mobile/domain/enums/server-errors-enum.dart';
+import 'package:mobile/domain/enums/server-events-enum.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
@@ -60,7 +60,7 @@ class RoomService {
     _socket.on(
         RoomSocketEvent.ErrorJoining.event,
         (errorMsg) => notifyError
-            .add(parseServerError(ServerError.fromString(errorMsg))));
+            .add(parseServerError(ServerEvents.fromString(errorMsg))));
 
     _socket.on(RoomSocketEvent.KickedFromWaitingRoom.event, (_) {
       currentRoom = null;
@@ -68,13 +68,13 @@ class RoomService {
     });
   }
 
-  String parseServerError(ServerError error) {
+  String parseServerError(ServerEvents error) {
     switch (error) {
-      case ServerError.RoomNotAvailable:
+      case ServerEvents.RoomNotAvailable:
         return "rooms_lobby.errors.not_available";
-      case ServerError.RoomWrongPassword:
+      case ServerEvents.RoomWrongPassword:
         return "rooms_lobby.errors.wrong_password";
-      case ServerError.RoomSameUser:
+      case ServerEvents.RoomSameUser:
         return "rooms_lobby.errors.same_user";
       default:
         return "ERROR";

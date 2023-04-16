@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
-import 'package:mobile/domain/enums/server-errors-enum.dart';
+import 'package:mobile/domain/enums/server-events-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/user-profile-models.dart';
@@ -107,36 +107,36 @@ class UserService {
 
   // Modify username and password
 
-  Future<ServerError> modifyUsername(String newUsername) async {
+  Future<ServerEvents> modifyUsername(String newUsername) async {
     final response =
         await _httpService.modifyUsernameRequest({'newUsername': newUsername});
 
     if (response.statusCode == HttpStatus.ok) {
-      return ServerError.UsernameChangeSucess;
+      return ServerEvents.UsernameChangeSucess;
     } else if (response.statusCode == HttpStatus.conflict) {
-      return ServerError.UsernameExistsError;
+      return ServerEvents.UsernameExistsError;
     } else {
-      return ServerError.UsernameChangeError;
+      return ServerEvents.UsernameChangeError;
     }
   }
 
-  Future<ServerError> modifyPassword(String newPassword) async {
+  Future<ServerEvents> modifyPassword(String newPassword) async {
     final response =
         await _httpService.modifyPasswordRequest({'newPassword': newPassword});
     if (response.statusCode == HttpStatus.ok) {
-      return ServerError.PasswordChangeSucess;
+      return ServerEvents.PasswordChangeSucess;
     } else if (response.statusCode == HttpStatus.conflict) {
-      return ServerError.PasswordSameError;
+      return ServerEvents.PasswordSameError;
     } else {
-      return ServerError.PasswordChangeError;
+      return ServerEvents.PasswordChangeError;
     }
   }
 
-  Future<ServerError> forgotPassword(String username) async {
+  Future<ServerEvents> forgotPassword(String username) async {
     final response = await _httpService.forgotPassword({'username': username});
     if (response.statusCode == HttpStatus.created) {
-      return ServerError.EmailPasswordSuccess;
+      return ServerEvents.EmailPasswordSuccess;
     }
-    return ServerError.EmailPasswordError;
+    return ServerEvents.EmailPasswordError;
   }
 }

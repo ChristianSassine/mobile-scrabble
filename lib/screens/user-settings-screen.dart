@@ -7,7 +7,7 @@ import 'package:mobile/components/avatar-selector-widget.dart';
 import 'package:mobile/components/chat-button-widget.dart';
 import 'package:mobile/components/chat-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
-import 'package:mobile/domain/enums/server-errors-enum.dart';
+import 'package:mobile/domain/enums/server-events-enum.dart';
 import 'package:mobile/domain/models/avatar-data-model.dart';
 import 'package:mobile/domain/services/user-service.dart';
 
@@ -62,16 +62,17 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   }
 
   void _modifyPassword(String newPassword) async {
-    final ServerError response = await _userService.modifyPassword(newPassword);
+    final ServerEvents response =
+        await _userService.modifyPassword(newPassword);
 
-    if (response == ServerError.PasswordChangeSucess) {
+    if (response == ServerEvents.PasswordChangeSucess) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBarFactory.greenSnack(
           FlutterI18n.translate(
               context, "user_settings.modify_password.success"),
         ),
       );
-    } else if (response == ServerError.PasswordSameError) {
+    } else if (response == ServerEvents.PasswordSameError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBarFactory.redSnack(
           FlutterI18n.translate(
@@ -88,16 +89,17 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   }
 
   void _modifyUsername(String newUsername) async {
-    final ServerError response = await _userService.modifyUsername(newUsername);
+    final ServerEvents response =
+        await _userService.modifyUsername(newUsername);
 
-    if (response == ServerError.UsernameChangeSucess) {
+    if (response == ServerEvents.UsernameChangeSucess) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBarFactory.greenSnack(
           FlutterI18n.translate(
               context, "user_settings.modify_username.success"),
         ),
       );
-    } else if (response == ServerError.UsernameExistsError) {
+    } else if (response == ServerEvents.UsernameExistsError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBarFactory.redSnack(
           FlutterI18n.translate(
