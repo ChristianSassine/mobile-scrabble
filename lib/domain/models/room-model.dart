@@ -59,6 +59,25 @@ enum GameDifficulty {
   }
 }
 
+enum GameState {
+  Waiting("waiting"),
+  Playing("playing"),
+  NULL('');
+
+  const GameState(this.value);
+
+  final String value;
+
+  static GameState fromString(String sValue) {
+    for (GameState state in values) {
+      if (state.value == sValue) {
+        return state;
+      }
+    }
+    return NULL;
+  }
+}
+
 enum PlayerType {
   User("user"),
   Bot("bot"),
@@ -85,7 +104,8 @@ class RoomPlayer {
   PlayerType? playerType;
   final bool? isCreator;
 
-  RoomPlayer(this.user, this.roomId, { this.playerType, this.isCreator, this.password});
+  RoomPlayer(this.user, this.roomId,
+      {this.playerType, this.isCreator, this.password});
 
   RoomPlayer.fromJson(json)
       : user = IUser.fromJson(json['user']),
@@ -95,12 +115,12 @@ class RoomPlayer {
         isCreator = json['isCreator'];
 
   Map toJson() => {
-    "user": user.toJson(),
-    "roomId": roomId,
-    "password": password,
-    "playerType": playerType?.value,
-    "isCreator": isCreator,
-  };
+        "user": user.toJson(),
+        "roomId": roomId,
+        "password": password,
+        "playerType": playerType?.value,
+        "isCreator": isCreator,
+      };
 }
 
 class GameRoom {
@@ -110,6 +130,7 @@ class GameRoom {
   final int timer;
   final GameMode gameMode;
   final GameVisibility visibility;
+  final GameState state;
   final String? password;
 
   GameRoom(
@@ -118,6 +139,7 @@ class GameRoom {
       required this.dictionary,
       required this.timer,
       required this.gameMode,
+      this.state = GameState.Waiting,
       required this.visibility,
       this.password});
 
@@ -127,12 +149,21 @@ class GameRoom {
         dictionary = json['dictionary'],
         timer = json['timer'],
         gameMode = GameMode.fromString(json['mode']),
+        state = GameState.fromString(json['state']),
         visibility = GameVisibility.fromString(json['visibility'])!,
         password = json['password'];
 
-  bool containsTwoPlayers () => players.where((element) => element.playerType != PlayerType.Bot).length >= 2;
-  bool isPlayerCreator(IUser player) => players.firstWhere((element) => element.isCreator == true).user.id == player.id;
-  bool isPlayerObserver(IUser player) => players.firstWhere((element) => element.user.id == player.id).playerType == PlayerType.Observer;
+  bool containsTwoPlayers() =>
+      players.where((element) => element.playerType != PlayerType.Bot).length >=
+      2;
+  bool isPlayerCreator(IUser player) =>
+      players.firstWhere((element) => element.isCreator == true).user.id ==
+      player.id;
+  bool isPlayerObserver(IUser player) =>
+      players
+          .firstWhere((element) => element.user.id == player.id)
+          .playerType ==
+      PlayerType.Observer;
 }
 
 class GameCreationQuery {

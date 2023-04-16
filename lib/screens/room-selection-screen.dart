@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
-import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/models/room-model.dart';
+import 'package:mobile/domain/models/user-auth-models.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/game-screen.dart';
@@ -49,13 +48,12 @@ class _RoomListState extends State<RoomSelectionScreen> {
     });
 
     _validJoinSub = _roomService.notifyRoomJoin.stream.listen((room) {
-      if(room!.isPlayerObserver(_userService.user!)) {
+      if (room!.isPlayerObserver(_userService.user!)) {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const GameScreen()),
         );
-      }
-      else {
+      } else {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const WaitingRoomScreen()),
@@ -108,12 +106,16 @@ class _RoomListState extends State<RoomSelectionScreen> {
 
   DataRow _buildRoomListing(GameRoom room) {
     final isRoomLocked = room.visibility == GameVisibility.Locked;
+    final isGameInProgress = room.state == GameState.Playing;
+    final isRoomFull = room.players
+            .where((player) => player.playerType == PlayerType.User)
+            .length ==
+        4;
 
     return DataRow(cells: [
       DataCell(
         Column(
           children: [
-            // TODO: Refactor rows
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -171,20 +173,24 @@ class _RoomListState extends State<RoomSelectionScreen> {
             : const SizedBox(),
       ),
       DataCell(OutlinedButton(
-        onPressed: () => {
-          if (isRoomLocked)
-            {
-              showDialog(
-                      context: context,
-                      builder: (BuildContext context) => _buildPasswordInput())
-                  .then((password) {
-                if (!password.isEmpty) _joinRoom(room.id, password);
-              })
-            }
-          else
-            _joinRoom(room.id)
-        },
-        child: const Icon(Icons.login),
+        onPressed: isRoomFull && !isGameInProgress
+            ? null
+            : () => {
+                  if (isRoomLocked)
+                    {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              _buildPasswordInput()).then((password) {
+                        if (!password.isEmpty) _joinRoom(room.id, password);
+                      })
+                    }
+                  else
+                    _joinRoom(room.id)
+                },
+        child: isGameInProgress
+            ? const Icon(Icons.remove_red_eye)
+            : const Icon(Icons.login),
       )),
     ]);
   }
