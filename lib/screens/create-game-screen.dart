@@ -128,7 +128,6 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                       onChanged: _isPublic
                                           ? (value) {
                                               setState(() {
-                                                print("_isProtected : $value");
                                                 _isProtected = value;
                                                 _formValid = !_isProtected ||
                                                     _roomPasswordController
@@ -144,7 +143,6 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
                                       onChanged: !_isProtected
                                           ? (value) {
                                               setState(() {
-                                                print("_isPublic : $value");
                                                 _isPublic = value;
                                               });
                                             }
