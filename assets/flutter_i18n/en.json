@@ -44,6 +44,7 @@
     },
     "waiting_room": {
         "screen_name": "Waiting room",
+        "id": "room ID",
         "players": "Players",
         "start_game": "Start the game",
         "game": "Game",

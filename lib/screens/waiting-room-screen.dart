@@ -83,7 +83,8 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-            backgroundImage: (player.playerType == PlayerType.Bot && _avatarService.botImageUrl != null)
+            backgroundImage: (player.playerType == PlayerType.Bot &&
+                    _avatarService.botImageUrl != null)
                 ? NetworkImage(_avatarService.botImageUrl!)
                 : player.user.profilePicture?.key != null
                     ? NetworkImage(player.user.profilePicture!.key!)
@@ -134,7 +135,6 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
           title:
               Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
       body: Stack(children: [
-        ChatButtonWidget(scaffoldKey: _scaffoldKey),
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -168,9 +168,14 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
                 child: Text(FlutterI18n.translate(
                     context, "waiting_room.copy_link_button")),
               ),
+              if (_roomService.currentRoom!.visibility ==
+                  GameVisibility.Private)
+                SelectableText(
+                    "${FlutterI18n.translate(context, "waiting_room.id")} : ${_roomService.currentRoom!.id}")
             ],
           ),
         ),
+        ChatButtonWidget(scaffoldKey: _scaffoldKey),
       ]),
       floatingActionButton: Visibility(
         visible: _roomService.currentRoom!.isPlayerCreator(_userService.user!),

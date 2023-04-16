@@ -44,6 +44,7 @@
     },
     "waiting_room": {
         "screen_name": "Salle d'attente",
+        "id": "ID de la salle",
         "players": "Joueurs",
         "start_game": "Démarrer la partie",
         "game": "Partie",
@@ -95,7 +96,7 @@
             "button": "S'identifier",
             "success": "Succès d'identification!",
             "failure": "Erreur lors de l'identification!",
-            "user_taken" : "L'utilisateur est déja connecté!",
+            "user_taken": "L'utilisateur est déja connecté!",
             "button_sign_up": "Créer un nouveau compte"
         },
         "signup": {
@@ -249,6 +250,6 @@
         "place": "Placer",
         "exchange_letter_prompt": "Êtes vous sûr de vouloir échanger ces lettres?",
         "abandon_prompt": "Êtes vous sûr de vouloir abandonner?",
-        "clue": "Incide",
+        "clue": "Incide"
     }
 }
