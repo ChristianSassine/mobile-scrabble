@@ -84,6 +84,9 @@
         }
     },
     "end_game": {
+        "victory": "VICTORY",
+        "defeat": "DEFEAT",
+        "error" : "Error while fetching user data...",
         "screen_name": "End of game",
         "game_ended": "Game ended",
         "return_to_menu": "Return to menu"

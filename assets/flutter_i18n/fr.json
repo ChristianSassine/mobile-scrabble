@@ -84,6 +84,9 @@
         }
     },
     "end_game": {
+        "victory": "VICTOIRE",
+        "defeat": "DEFAITE",
+        "error" : "Une erreur est survenu lors de la récuperation des données...",
         "screen_name": "Fin de la partie",
         "game_ended": "Fin de la partie",
         "return_to_menu": "Retour au menu principale"
@@ -117,8 +120,8 @@
             "failure": "Erreur dans la création du compte!"
         },
         "forgot_pass": {
-            "screen_title" : "Page Oublier Mot de Passe",
-            "title" : "Oublier Mot de Passe",
+            "screen_title" : "Page Oublie de Mot de Passe",
+            "title" : "Oublie de Mot de Passe",
             "description" : "Entrez le nom d'utilisateur associé avec votre compte. Un mot de passe temporaire vous sera envoyer par courriel.",
             "hint" : "Nom d'utilisateur",
             "error": "Entrez un nom d'utilisateur",

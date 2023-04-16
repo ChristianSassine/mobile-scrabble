@@ -21,10 +21,12 @@ class Game {
 
   Game(GameRoom room, IUser currentUser)
       : players = room.players
-            .map<GamePlayer>((roomPlayer) => GamePlayer(Easel(7), 0, roomPlayer))
-            .toList(), timerLength = room.timer {
-    currentPlayer =
-        players.firstWhere((player) => player.player.user.username == currentUser.username);
+            .map<GamePlayer>(
+                (roomPlayer) => GamePlayer(Easel(7), 0, roomPlayer))
+            .toList(),
+        timerLength = room.timer {
+    currentPlayer = players.firstWhere(
+        (player) => player.player.user.username == currentUser.username);
   }
 
   void nextTurn() {
@@ -38,9 +40,12 @@ class Game {
     setActivePlayer(gameInfo.activePlayer);
 
     players.clear();
-    players = gameInfo.players.map((playerInfo) => playerInfo.createGamePlayer()).toList();
-    
-    _roomService.currentRoom!.players = players.map((player) => player.player).toList();
+    players = gameInfo.players
+        .map((playerInfo) => playerInfo.createGamePlayer())
+        .toList();
+
+    _roomService.currentRoom!.players =
+        players.map((player) => player.player).toList();
   }
 
   void setActivePlayer(IUser? newActivePlayer) {
@@ -49,18 +54,19 @@ class Game {
       return;
     }
 
-    int activePlayerIndex =
-        players.indexWhere((player) => player.player.user.username == newActivePlayer.username);
+    int activePlayerIndex = players.indexWhere(
+        (player) => player.player.user.username == newActivePlayer.username);
     if (activePlayerIndex >= 0) {
       activePlayer = players[activePlayerIndex];
     }
   }
 
-  bool isCurrentPlayersTurn(){
-    return activePlayer != null && currentPlayer.player.user.id == activePlayer!.player.user.id;
+  bool isCurrentPlayersTurn() {
+    return activePlayer != null &&
+        currentPlayer.player.user.id == activePlayer!.player.user.id;
   }
 
-  double getTurnProcess(){
+  double getTurnProcess() {
     return min(turnTimer / timerLength, 1);
   }
 }
@@ -77,4 +83,15 @@ class GamePlayer {
     score = playerInfo.score;
     player.playerType = playerInfo.player.playerType;
   }
+}
+
+class GameWinner {
+  String id;
+  String type;
+  int score;
+
+  GameWinner.fromJson(json)
+      : id = json['playerId'],
+        type = json['playerType'],
+        score = json['score'];
 }

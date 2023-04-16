@@ -1,15 +1,18 @@
-import 'dart:math';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
+import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/models/game-command-models.dart';
 import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/models/letter-synchronisation-model.dart';
 import 'package:mobile/domain/models/room-model.dart';
 import 'package:mobile/domain/services/clue-service.dart';
 import 'package:mobile/domain/services/game-sync-service.dart';
+import 'package:mobile/domain/services/http-handler-service.dart';
 import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/end-game-screen.dart';
@@ -29,6 +32,7 @@ class GameService {
   final _socket = GetIt.I.get<Socket>();
   final _userService = GetIt.I.get<UserService>();
   final _roomService = GetIt.I.get<RoomService>();
+  final _httpService = GetIt.I.get<HttpHandlerService>();
 
   Subject<bool> notifyGameInfoChange = PublishSubject();
   Subject<String> notifyGameError = PublishSubject();
@@ -68,7 +72,10 @@ class GameService {
         (data) => _publicViewUpdate(GameInfo.fromJson(data)));
 
     _socket.on(GameSocketEvent.NextTurn.event, (data) => _nextTurn(GameInfo.fromJson(data)));
-    _socket.on(GameSocketEvent.GameEnded.event, (_) => _endGame());
+    _socket.on(GameSocketEvent.GameEnded.event, (data) {
+      final winner = GameWinner.fromJson(data);
+      _endGame(winner);
+    });
     _socket.on(GameSocketEvent.LetterReserveUpdated.event, (letters) {
       if (game == null) return;
       game!.reserveLetterCount =
@@ -103,9 +110,10 @@ class GameService {
     _publicViewUpdate(gameInfo);
   }
 
-  void _endGame() {
+  void _endGame(GameWinner winner) {
+
     Navigator.pushAndRemoveUntil(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
-        MaterialPageRoute(builder: (context) => const EndGameScreen()),
+        MaterialPageRoute(builder: (context) => EndGameScreen(winner: winner,)),
         (_)=> false);
 
     game = null;
@@ -375,6 +383,14 @@ class GameService {
       observerView = player;
       notifyEaselChanged.add(0);
     }
+  }
+
+   Future<UserChatRoom?> fetchWinnerInfo(GameWinner winner) async {
+    final response = await _httpService.getChatUserInfoRequest(winner.id);
+    if (response.statusCode == HttpStatus.ok) {
+      return UserChatRoom.fromJson(jsonDecode(response.body));
+    }
+    return null;
   }
 
   _cannotReplaceBot() {}
