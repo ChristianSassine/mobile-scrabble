@@ -11,7 +11,8 @@ import 'package:mobile/domain/models/chat-models.dart';
 import 'package:mobile/domain/services/chat-service.dart';
 
 class SideChatWidget extends StatefulWidget {
-  const SideChatWidget({Key? key}) : super(key: key);
+  const SideChatWidget({Key? key, this.embedded = false}) : super(key: key);
+  final bool embedded;
 
   @override
   State<SideChatWidget> createState() => _SideChatWidgetState();
@@ -30,7 +31,8 @@ class _SideChatWidgetState extends State<SideChatWidget> {
       child: Navigator(
         onGenerateRoute: (settings) {
           return CupertinoPageRoute(
-              builder: (BuildContext context) => const ChatWidget());
+              builder: (BuildContext context) =>
+                  ChatWidget(embedded: widget.embedded));
         },
       ),
     );
@@ -38,7 +40,8 @@ class _SideChatWidgetState extends State<SideChatWidget> {
 }
 
 class ChatWidget extends StatefulWidget {
-  const ChatWidget({Key? key}) : super(key: key);
+  const ChatWidget({Key? key, required this.embedded}) : super(key: key);
+  final bool embedded;
 
   @override
   State<ChatWidget> createState() => _ChatWidgetState();
@@ -103,7 +106,7 @@ class _ChatWidgetState extends State<ChatWidget>
           SnackBarFactory.redSnack(FlutterI18n.translate(context, error)));
     });
 
-    if (_chatService.currentRoom != null) {
+    if (_chatService.currentRoom != null && !widget.embedded) {
       _chatService.requestJoinRoomSession(_chatService.currentRoom!);
     }
   }
@@ -231,7 +234,7 @@ class _ChatWidgetState extends State<ChatWidget>
               trailing: OutlinedButton(
                 child: Text(FlutterI18n.translate(context, "chat.join_label")),
                 onPressed: () {
-                  _chatService.requestJoinChatRoom(room.name);
+                  _chatService.requestJoinChatRoom(room);
                 },
               ),
             ),

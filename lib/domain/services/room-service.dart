@@ -39,7 +39,7 @@ class RoomService {
 
     _socket.on(RoomSocketEvent.JoinedValidWaitingRoom.event, (data) {
       final gameRoom = GameRoom.fromJson(data);
-      debugPrint("Join Room request accepted");
+      debugPrint("Join GameRoom request accepted");
       _joinRoom(gameRoom);
     });
 
@@ -94,7 +94,7 @@ class RoomService {
   void _joinRoom(GameRoom newRoom) {
     currentRoom = newRoom;
     notifyRoomJoin.add(currentRoom!);
-    debugPrint("Room Joined");
+    debugPrint("GameRoom Joined");
   }
 
   void createRoom(GameCreationQuery creationQuery) {

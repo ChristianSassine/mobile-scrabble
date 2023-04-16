@@ -184,7 +184,6 @@ class ChatService {
 
   void _onNewChatRoomCreated(ChatRoom newRoom) {
     _chatRooms.add(newRoom);
-    debugPrint("New chatRoom received : ${newRoom.name}");
     notifyUpdatedChatrooms.add(true);
   }
 
@@ -198,8 +197,14 @@ class ChatService {
   }
 
   void _joinRoomSession(String roomName, List<ChatMessage> newMessages) {
-    debugPrint("Joining Room session : $roomName");
-    currentRoom = _chatRooms.firstWhere((element) => element.name == roomName);
+    if (!_joinedRooms.contains(roomName)) {
+      return;
+    }
+    currentRoom = _chatRooms.firstWhere((element) => element.name == roomName,
+        orElse: () {
+      debugPrint("ChatRoom not found : $roomName");
+      return _chatRooms[0];
+    });
     messages = newMessages;
     final currentlyRequested = Set();
     for (final message in messages) {
@@ -229,18 +234,19 @@ class ChatService {
 
   void requestLeaveRoomSession() {
     inRoom = false;
+    if (currentRoom == null) return;
     socket.emit(
         ChatRoomSocketEvents.LeaveChatRoomSession.event, currentRoom?.name);
     usersInfo.clear();
   }
 
-  void requestJoinChatRoom(String roomName) {
-    socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, roomName);
+  void requestJoinChatRoom(ChatRoom room) {
+    socket.emit(ChatRoomSocketEvents.JoinChatRoom.event, room.name);
   }
 
   void _joinChatRoom(ChatRoom room) {
     if (!_chatRooms.any((curRoom) => curRoom.name == room.name)) return;
-    debugPrint("Joining Room : ${room.name}");
+    debugPrint("Joining ChatRoom : ${room.name}");
     _joinedRooms.add(room.name);
     notifyUpdatedChatrooms.add(true);
     requestJoinRoomSession(room);
@@ -252,7 +258,6 @@ class ChatService {
   }
 
   void _treatReceivedMessage(String roomName, ChatMessage message) {
-    // TODO: Implement and take into account notifications
     debugPrint("received message from ${message.userId} :  ${message.message}");
     if (roomName == currentRoom?.name && inRoom) {
       if (!usersInfo.containsKey(message.userId))
