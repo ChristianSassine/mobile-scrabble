@@ -257,7 +257,7 @@ class GameService {
   Letter? dragLetterFromEasel(int index) {
     debugPrint("[GAME SERVICE] Start drag from easel");
     draggedLetter = removeLetterFromEaselAt(index);
-    
+
     GetIt.I.get<ClueService>().resetClues();
 
     if (game!.isCurrentPlayersTurn()) {
@@ -340,7 +340,12 @@ class GameService {
   }
 
   void cancelPendingLetters(){
+
+    for (var placement in pendingLetters) {
+      removeLetterFromBoard(placement.x, placement.y);
+    }
     pendingLetters.clear();
+
     game!.gameboard.notifyBoardChanged.add(true);
   }
 
