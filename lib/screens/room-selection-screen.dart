@@ -155,8 +155,12 @@ class _RoomListState extends State<RoomSelectionScreen> {
                 .username
             : "?"),
       ),
-      const DataCell(
-        Text("HARDCODED"),
+      DataCell(
+        Text(FlutterI18n.translate(
+            context,
+            room.state == GameState.Playing
+                ? "rooms_lobby.table.in_progress"
+                : "rooms_lobby.table.waiting")),
       ),
       DataCell(
         Text(room.timer.toString()),
@@ -200,7 +204,7 @@ class _RoomListState extends State<RoomSelectionScreen> {
     final roomsLabels = [
       FlutterI18n.translate(context, "rooms_lobby.table.users"),
       FlutterI18n.translate(context, "rooms_lobby.table.host"),
-      FlutterI18n.translate(context, "rooms_lobby.table.difficulty"),
+      FlutterI18n.translate(context, "rooms_lobby.table.state"),
       FlutterI18n.translate(context, "rooms_lobby.table.timer"),
       FlutterI18n.translate(context, "rooms_lobby.table.dictionary"),
       '',
