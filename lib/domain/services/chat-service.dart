@@ -230,7 +230,7 @@ class ChatService {
   void requestLeaveRoomSession() {
     inRoom = false;
     socket.emit(
-        ChatRoomSocketEvents.LeaveChatRoomSession.event, currentRoom!.name);
+        ChatRoomSocketEvents.LeaveChatRoomSession.event, currentRoom?.name);
     usersInfo.clear();
   }
 
