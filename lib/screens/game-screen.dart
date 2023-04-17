@@ -12,6 +12,7 @@ import 'package:mobile/components/game-info-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/services/game-service.dart';
 import 'package:mobile/screens/end-game-screen.dart';
+import 'package:mobile/screens/menu-screen.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -37,7 +38,7 @@ class _GameScreenState extends State<GameScreen> {
       _gameService.abandonGame();
       await Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const EndGameScreen()),
+          MaterialPageRoute(builder: (context) => MenuScreen(title: FlutterI18n.translate(context, "menu_screen.screen_name"))),
           (_) => false);
     }
   }
