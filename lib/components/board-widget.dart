@@ -151,7 +151,7 @@ class SlotWidget extends StatelessWidget {
         child: Center(
             child: Text(
           FlutterI18n.translate(context, labelKey),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 8),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 8, color: Colors.black),
           textAlign: TextAlign.center,
         )));
   }
@@ -172,7 +172,7 @@ class SlotWidget extends StatelessWidget {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-          title: Text(FlutterI18n.translate(context, "board.letter_prompt.dialog_title")),
+          title: Text(FlutterI18n.translate(context, "board.letter_prompt.dialog_title"), style: const TextStyle(color: Colors.black),),
           content: Form(
               key: formKey,
               child: TextFormField(
@@ -194,7 +194,7 @@ class SlotWidget extends StatelessWidget {
                         Navigator.pop(context);
                       }
                     : null,
-                child: Text(FlutterI18n.translate(context, "board.letter_prompt.confirm")),
+                child: Text(FlutterI18n.translate(context, "board.letter_prompt.confirm"), style: const TextStyle(color: Colors.black)),
               ),
             ),
           ]),

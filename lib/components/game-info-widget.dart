@@ -20,7 +20,8 @@ class GameInfoBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).size.width > MediaQuery.of(context).size.height) {
+    if (MediaQuery.of(context).size.width >
+        MediaQuery.of(context).size.height) {
       return Card(
         color: Colors.green[200],
         child: Column(
@@ -110,7 +111,8 @@ class _GameInfoState extends State<GameInfo> {
                         child: Row(children: [
                           const Icon(Icons.timer),
                           Text(
-                              " ${_gameService.game!.timerLength - _gameService.game!.turnTimer} ${FlutterI18n.translate(context, "game.second")}s")
+                              " ${_gameService.game!.timerLength - _gameService.game!.turnTimer} ${FlutterI18n.translate(context, "game.second")}s",
+                              style: const TextStyle(color: Colors.black))
                         ]),
                       ),
                     ],

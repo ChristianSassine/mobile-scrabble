@@ -83,7 +83,7 @@ class _PlayerInfoState extends State<PlayerInfo> {
                                 : const Icon(CupertinoIcons.profile_circled)),
                         title: Row(
                           children: [
-                            Flexible(child: Text(player.player.user.username)),
+                            Flexible(child: Text(player.player.user.username, style: const TextStyle(color: Colors.black))),
                             const SizedBox(
                               width: 5,
                             ),
@@ -93,7 +93,7 @@ class _PlayerInfoState extends State<PlayerInfo> {
                                   width: 14),
                           ],
                         ),
-                        subtitle: Text("Score: ${player.score}"),
+                        subtitle: Text("Score: ${player.score}", style: const TextStyle(color: Colors.black),),
                         trailing: Visibility(
                             visible: _gameService
                                     .game!.currentPlayer.player.playerType ==

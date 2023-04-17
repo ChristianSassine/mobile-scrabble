@@ -64,6 +64,7 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_gameService.game == null) return SizedBox.shrink();
     return WillPopScope(
       onWillPop: () => _promptAbandonConfirmation(context),
       child: Scaffold(

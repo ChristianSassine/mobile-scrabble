@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/domain/enums/socket-events-enum.dart';
@@ -17,8 +16,9 @@ import 'package:mobile/domain/services/room-service.dart';
 import 'package:mobile/domain/services/user-service.dart';
 import 'package:mobile/screens/end-game-screen.dart';
 import 'package:rxdart/rxdart.dart';
-import '../enums/letter-enum.dart';
 import 'package:socket_io_client/socket_io_client.dart';
+
+import '../enums/letter-enum.dart';
 
 class LetterPlacement {
   final int x, y;
@@ -57,7 +57,8 @@ class GameService {
     _publicViewUpdate(initialGameInfo);
 
     if (game!.currentPlayer.player.playerType == PlayerType.Observer) {
-      observerView = game!.players.firstWhere((element) => element.player.isCreator == true);
+      observerView = game!.players
+          .firstWhere((element) => element.player.isCreator == true);
     }
 
     while (game != null) {
@@ -71,29 +72,38 @@ class GameService {
     _socket.on(RoomSocketEvent.PublicViewUpdate.event,
         (data) => _publicViewUpdate(GameInfo.fromJson(data)));
 
-    _socket.on(GameSocketEvent.NextTurn.event, (data) => _nextTurn(GameInfo.fromJson(data)));
+    _socket.on(GameSocketEvent.NextTurn.event,
+        (data) => _nextTurn(GameInfo.fromJson(data)));
     _socket.on(GameSocketEvent.GameEnded.event, (data) {
       final winner = GameWinner.fromJson(data);
       _endGame(winner);
     });
     _socket.on(GameSocketEvent.LetterReserveUpdated.event, (letters) {
       if (game == null) return;
-      game!.reserveLetterCount =
-          letters.map((letter) => letter['quantity']).toList().reduce((a, b) => a + b);
+      game!.reserveLetterCount = letters
+          .map((letter) => letter['quantity'])
+          .toList()
+          .reduce((a, b) => a + b);
     });
-    _socket.on(GameSocketEvent.PlacementSuccess.event, (_) => _successfulWordPlacement());
-    _socket.on(GameSocketEvent.PlacementFailure.event, (error) => _invalidWordPlacement(error));
-    _socket.on(GameSocketEvent.CannotReplaceBot.event, (_) => _cannotReplaceBot());
+    _socket.on(GameSocketEvent.PlacementSuccess.event,
+        (_) => _successfulWordPlacement());
+    _socket.on(GameSocketEvent.PlacementFailure.event,
+        (error) => _invalidWordPlacement(error));
+    _socket.on(
+        GameSocketEvent.CannotReplaceBot.event, (_) => _cannotReplaceBot());
   }
 
   void _publicViewUpdate(GameInfo gameInfo) {
     if (game == null) return;
 
     game!.update(gameInfo);
-    game!.currentPlayer =
-        game!.players.firstWhere((element) => element.player.user.id == _userService.user!.id);
+    final index = game!.players.indexWhere(
+        (element) => element.player.user.id == _userService.user!.id);
+    if (index < 0) return;
+    game!.currentPlayer = game!.players[index];
 
-    if (observerView != null && game!.currentPlayer.player.playerType == PlayerType.User) {
+    if (observerView != null &&
+        game!.currentPlayer.player.playerType == PlayerType.User) {
       observerView = null;
     }
 
@@ -111,10 +121,13 @@ class GameService {
   }
 
   void _endGame(GameWinner winner) {
-
-    Navigator.pushAndRemoveUntil(GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
-        MaterialPageRoute(builder: (context) => EndGameScreen(winner: winner,)),
-        (_)=> false);
+    Navigator.pushAndRemoveUntil(
+        GetIt.I.get<GlobalKey<NavigatorState>>().currentContext!,
+        MaterialPageRoute(
+            builder: (context) => EndGameScreen(
+                  winner: winner,
+                )),
+        (_) => false);
 
     game = null;
   }
@@ -122,7 +135,8 @@ class GameService {
   void placeLetterOnBoard(int x, int y, Letter letter, bool isStarLetter) {
     if (!game!.isCurrentPlayersTurn()) return;
 
-    debugPrint("[GAME SERVICE] Place letter to the board: board[$x][$y] = $letter");
+    debugPrint(
+        "[GAME SERVICE] Place letter to the board: board[$x][$y] = $letter");
     if (!_isLetterPlacementValid(x, y, letter)) {
       if (draggedLetter != null) cancelDragLetter(); // Wrong move
       return;
@@ -138,14 +152,14 @@ class GameService {
     _sendPlacedLetter(x, y, letter);
   }
 
-  _sendPlacedLetter(int x, int y, Letter letter) async{
+  _sendPlacedLetter(int x, int y, Letter letter) async {
     await Future.delayed(const Duration(milliseconds: 250));
 
     if (_socket.id != null) {
       _socket.emit(
           GameSocketEvent.LetterPlaced.event,
-          SimpleLetterInfos(_roomService.currentRoom!.id, _socket.id!, letter.character,
-              x + y * game!.gameboard.size));
+          SimpleLetterInfos(_roomService.currentRoom!.id, _socket.id!,
+              letter.character, x + y * game!.gameboard.size));
     }
   }
 
@@ -200,8 +214,8 @@ class GameService {
   /// @return the removed letter
   Letter? removeLetterFromBoard(int x, int y) {
     if (isPlacedLetterRemovalValid(x, y)) {
-      LetterPlacement placement =
-          pendingLetters.firstWhere((placement) => placement.x == x && placement.y == y);
+      LetterPlacement placement = pendingLetters
+          .firstWhere((placement) => placement.x == x && placement.y == y);
       pendingLetters.remove(placement);
 
       debugPrint(
@@ -211,8 +225,8 @@ class GameService {
 
       _socket.emit(
           GameSocketEvent.LetterPlaced.event,
-          SimpleLetterInfos(_roomService.currentRoom!.id, _socket.id!, removedLetter!.character,
-              -x + -y * game!.gameboard.size));
+          SimpleLetterInfos(_roomService.currentRoom!.id, _socket.id!,
+              removedLetter!.character, -x + -y * game!.gameboard.size));
 
       if (placement.isStar) {
         removedLetter = Letter.STAR;
@@ -225,18 +239,22 @@ class GameService {
   }
 
   bool isPlacedLetterRemovalValid(int x, int y) {
-    int pendingLetterIndex = pendingLetters.indexWhere((letter) => letter.x == x && letter.y == y);
+    int pendingLetterIndex =
+        pendingLetters.indexWhere((letter) => letter.x == x && letter.y == y);
 
     if (pendingLetterIndex < 0) {
       return false; //Letter not in pending letters
     }
 
     // These are the extremities of the letter placement since the list is sorted
-    return pendingLetterIndex == 0 || pendingLetterIndex == pendingLetters.length - 1;
+    return pendingLetterIndex == 0 ||
+        pendingLetterIndex == pendingLetters.length - 1;
   }
 
   bool isPendingLetter(int x, int y) {
-    return pendingLetters.indexWhere((placement) => placement.x == x && placement.y == y) >= 0;
+    return pendingLetters
+            .indexWhere((placement) => placement.x == x && placement.y == y) >=
+        0;
   }
 
   void addLetterInEasel(Letter letter) {
@@ -257,7 +275,8 @@ class GameService {
   /// @return null if index is out of bound
   Letter? removeLetterFromEaselAt(int index) {
     Letter? removedLetter = game!.currentPlayer.easel.removeLetterAt(index);
-    debugPrint("[GAME SERVICE] Remove letter from easel[$index] - $removedLetter");
+    debugPrint(
+        "[GAME SERVICE] Remove letter from easel[$index] - $removedLetter");
 
     return removedLetter;
   }
@@ -289,7 +308,7 @@ class GameService {
   }
 
   void cancelDragLetter() {
-    if(draggedLetter == null) return;
+    if (draggedLetter == null) return;
     debugPrint("[GAME SERVICE] Cancel drag");
     addLetterInEasel(draggedLetter!);
     draggedLetter = null;
@@ -303,9 +322,11 @@ class GameService {
   }
 
   void confirmWordPlacement() {
-    Coordinate firstCoordonate = Coordinate(pendingLetters[0].x, pendingLetters[0].y);
-    bool? isHorizontal =
-        pendingLetters.length > 1 ? pendingLetters[0].y == pendingLetters[1].y : null;
+    Coordinate firstCoordonate =
+        Coordinate(pendingLetters[0].x, pendingLetters[0].y);
+    bool? isHorizontal = pendingLetters.length > 1
+        ? pendingLetters[0].y == pendingLetters[1].y
+        : null;
     List<String> letters = List.generate(
         pendingLetters.length,
         (index) => pendingLetters[index].isStar
@@ -347,8 +368,7 @@ class GameService {
     notifyGameError.add(error);
   }
 
-  void cancelPendingLetters(){
-
+  void cancelPendingLetters() {
     for (var placement in pendingLetters) {
       removeLetterFromBoard(placement.x, placement.y);
     }
@@ -372,7 +392,8 @@ class GameService {
   }
 
   void exchangeLetters(List<Letter> lettersToExchange) {
-    List<String> sLetters = lettersToExchange.map((letter) => letter.character).toList();
+    List<String> sLetters =
+        lettersToExchange.map((letter) => letter.character).toList();
     _socket.emit(GameSocketEvent.Exchange.event, [sLetters]);
   }
 
@@ -385,7 +406,7 @@ class GameService {
     }
   }
 
-   Future<UserChatRoom?> fetchWinnerInfo(GameWinner winner) async {
+  Future<UserChatRoom?> fetchWinnerInfo(GameWinner winner) async {
     final response = await _httpService.getChatUserInfoRequest(winner.id);
     if (response.statusCode == HttpStatus.ok) {
       return UserChatRoom.fromJson(jsonDecode(response.body));
@@ -393,5 +414,7 @@ class GameService {
     return null;
   }
 
-  _cannotReplaceBot() {}
+  _cannotReplaceBot() {
+    debugPrint("Replace refused");
+  }
 }

@@ -39,6 +39,7 @@ class LetterWidget extends StatelessWidget {
                   points != 0 ? points.toString() : "",
                   style: TextStyle(
                     fontSize: 0.21 * widgetSize,
+                    color: Colors.black
                   ),
                 ),
               ),

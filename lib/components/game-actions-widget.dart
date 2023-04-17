@@ -121,6 +121,7 @@ class _GameActionsState extends State<GameActions> {
 
   @override
   Widget build(BuildContext context) {
+    if (_gameService.game == null) return const SizedBox.shrink();
     Widget skipButton = ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
         onPressed:

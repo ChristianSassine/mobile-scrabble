@@ -45,10 +45,10 @@ class _LetterReserveState extends State<LetterReserve> {
   _promptExchangeConfirmation(context) async {
     if (await confirm(
       context,
-      textOK: Text(FlutterI18n.translate(context, "form.yes")),
-      textCancel: Text(FlutterI18n.translate(context, "form.no")),
-      title: Text(FlutterI18n.translate(context, "game.exchange_letter_prompt")),
-      content: Text(lettersToExchange.toString(), style: TextStyle(fontSize: 20)),
+      textOK: Text(FlutterI18n.translate(context, "form.yes"), style: const TextStyle(color: Colors.black)),
+      textCancel: Text(FlutterI18n.translate(context, "form.no"), style: const TextStyle(color: Colors.black)),
+      title: Text(FlutterI18n.translate(context, "game.exchange_letter_prompt"), style: const TextStyle(color: Colors.black)),
+      content: Text(lettersToExchange.toString(), style: TextStyle(fontSize: 20, color: Colors.black)),
     )) {
       _gameService.exchangeLetters(lettersToExchange);
     } else {
@@ -80,10 +80,10 @@ class _LetterReserveState extends State<LetterReserve> {
                             ? Column(children: [
                                 Text(
                                   FlutterI18n.translate(context, "game.reserve"),
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),
                                 ),
                                 const SizedBox(height: 5),
-                                Text("${_gameService.game!.reserveLetterCount.toString()} ${FlutterI18n.translate(context, "game.letter")}s")
+                                Text("${_gameService.game!.reserveLetterCount.toString()} ${FlutterI18n.translate(context, "game.letter")}s", style: const TextStyle(color: Colors.black))
                               ])
                             : (lettersToExchange.isEmpty)
                                 ? Column(children: [
@@ -94,7 +94,7 @@ class _LetterReserveState extends State<LetterReserve> {
                                       height: 2,
                                     ),
                                     if (lettersToExchange.isNotEmpty)
-                                      Text("${lettersToExchange.length.toString()} ${FlutterI18n.translate(context, "game.letter")}s")
+                                      Text("${lettersToExchange.length.toString()} ${FlutterI18n.translate(context, "game.letter")}s", style: const TextStyle(color: Colors.black))
                                   ])
                                 : Column(
                                     children: [
@@ -105,7 +105,7 @@ class _LetterReserveState extends State<LetterReserve> {
                                         height: 2,
                                       ),
                                       if (lettersToExchange.isNotEmpty)
-                                        Text("${lettersToExchange.length.toString()} ${FlutterI18n.translate(context, "game.letter")}s")
+                                        Text("${lettersToExchange.length.toString()} ${FlutterI18n.translate(context, "game.letter")}s", style: const TextStyle(color: Colors.black))
                                     ],
                                   )))));
       },
