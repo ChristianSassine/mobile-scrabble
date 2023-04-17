@@ -27,8 +27,9 @@ class HighScores extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
-                  FlutterI18n.translate(context, "menu_screen.high_scores.error"))); // TODO: Translate
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBarFactory.redSnack(FlutterI18n.translate(context,
+                      "menu_screen.high_scores.error"))); // TODO: Translate
               return const SizedBox();
             }
             return IntrinsicHeight(
@@ -37,7 +38,8 @@ class HighScores extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      FlutterI18n.translate(context, "menu_screen.high_scores.title"),
+                      FlutterI18n.translate(
+                          context, "menu_screen.high_scores.title"),
                       style: theme.textTheme.displayMedium,
                     ),
                     DataTable(
@@ -45,21 +47,24 @@ class HighScores extends StatelessWidget {
                         columns: [
                           DataColumn(
                               label: Text(
-                            FlutterI18n.translate(context, "menu_screen.high_scores.label_score"),
+                            FlutterI18n.translate(
+                                context, "menu_screen.high_scores.label_score"),
                             textAlign: TextAlign.center,
                           )),
                           DataColumn(
                               label: Text(
-                                FlutterI18n.translate(context, "menu_screen.high_scores.label_player"),
+                            FlutterI18n.translate(context,
+                                "menu_screen.high_scores.label_player"),
                             textAlign: TextAlign.center,
                           )),
                         ],
                         rows: (jsonDecode(snapshot.data!.body) as List<dynamic>)
-                            .map((e) => HighScore.fromJson(e)) // Transform data to models
+                            .map((e) => HighScore.fromJson(
+                                e)) // Transform data to models
                             .map(
                               (e) => DataRow(cells: [
                                 DataCell(Text(
-                                  "${e.score}",
+                                  "${e.ranking}",
                                   textAlign: TextAlign.center,
                                 )),
                                 DataCell(Text(e.username))
@@ -72,9 +77,7 @@ class HighScores extends StatelessWidget {
             );
           }
           return const SizedBox(
-              height: 200,
-              width: 200,
-              child: CircularProgressIndicator());
+              height: 200, width: 200, child: CircularProgressIndicator());
         },
       ),
     );

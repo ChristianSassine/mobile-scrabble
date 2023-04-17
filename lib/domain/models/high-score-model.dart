@@ -1,25 +1,15 @@
 class HighScore {
-  final String _id;
   final String username;
-  final String type;
-  final int score;
-  final int position;
+  final int ranking;
 
-  HighScore(this._id, this.username, this.type, this.score, this.position);
+  HighScore(this.username, this.ranking);
 
   HighScore.fromJson(json)
-      : _id = json['_id'],
-        username = json['username'],
-        type = json['type'],
-        score = json['score'],
-        position = json['position'];
+      : username = json['username'],
+        ranking = json['ranking'];
 
-  Map toJson() =>
-      {
-        "_id": _id,
+  Map toJson() => {
         "username": username,
-        "type": type,
-        "score" : score,
-        "position" : position,
+        "ranking": ranking,
       };
 }
