@@ -57,50 +57,61 @@ class _PlayerInfoState extends State<PlayerInfo> {
                   child: SizedBox(
                     width: 260,
                     child: Stack(children: [
-                      if (_gameService.game!.activePlayer?.player.user.id == player.player.user.id)
+                      if (_gameService.game!.activePlayer?.player.user.id ==
+                          player.player.user.id)
                         Card(
                           color: Colors.blue[200]?.withOpacity(0.8),
                           child: SizedBox(
-                            width: 260 * (1 - _gameService.game!.getTurnProcess()),
+                            width:
+                                260 * (1 - _gameService.game!.getTurnProcess()),
                             height: 65,
                           ),
                         ),
                       ListTile(
                         leading: CircleAvatar(
-                            backgroundImage: (player.player.playerType == PlayerType.Bot && _avatarService.botImageUrl != null)
+                            backgroundImage: (player.player.playerType ==
+                                        PlayerType.Bot &&
+                                    _avatarService.botImageUrl != null)
                                 ? NetworkImage(_avatarService.botImageUrl!)
                                 : player.player.user.profilePicture?.key != null
-                                    ? NetworkImage(player.player.user.profilePicture!.key!)
+                                    ? NetworkImage(
+                                        player.player.user.profilePicture!.key!)
                                     : null,
-                            child: player.player.user.profilePicture?.key != null
+                            child: player.player.user.profilePicture?.key !=
+                                    null
                                 ? null
                                 : const Icon(CupertinoIcons.profile_circled)),
                         title: Row(
                           children: [
-                            Text(player.player.user.username),
+                            Flexible(child: Text(player.player.user.username)),
                             const SizedBox(
                               width: 5,
                             ),
                             if (player.player.isCreator == true)
-                              const Image(image: AssetImage("assets/images/crown.png"), width: 14),
+                              const Image(
+                                  image: AssetImage("assets/images/crown.png"),
+                                  width: 14),
                           ],
                         ),
                         subtitle: Text("Score: ${player.score}"),
                         trailing: Visibility(
-                            visible: _gameService.game!.currentPlayer.player.playerType ==
+                            visible: _gameService
+                                    .game!.currentPlayer.player.playerType ==
                                 PlayerType.Observer,
                             child: RawMaterialButton(
-                              onPressed:
-                                  player.player.user.id == _gameService.observerView?.player.user.id
-                                      ? null
-                                      : () => _gameService.switchToPlayerView(player),
+                              onPressed: player.player.user.id ==
+                                      _gameService.observerView?.player.user.id
+                                  ? null
+                                  : () =>
+                                      _gameService.switchToPlayerView(player),
                               elevation: 0,
-                              fillColor:
-                                  player.player.user.id == _gameService.observerView?.player.user.id
-                                      ? Colors.grey.withOpacity(0.5)
-                                      : Colors.transparent,
+                              fillColor: player.player.user.id ==
+                                      _gameService.observerView?.player.user.id
+                                  ? Colors.grey.withOpacity(0.5)
+                                  : Colors.transparent,
                               shape: const CircleBorder(),
-                              constraints: BoxConstraints.tight(const Size.fromRadius(20)),
+                              constraints: BoxConstraints.tight(
+                                  const Size.fromRadius(20)),
                               child: Icon(
                                   player.player.playerType == PlayerType.User
                                       ? Icons.visibility
