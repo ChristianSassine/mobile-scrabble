@@ -218,7 +218,7 @@ class _ChatboxState extends State<Chatbox> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: _userService.user?.id == message.userId
                     ? [
-                        Text(message.date),
+                        Flexible(child: Text(message.date)),
                         IntrinsicWidth(
                           child: Row(
                             children: [
@@ -268,10 +268,7 @@ class _ChatboxState extends State<Chatbox> {
                             ],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(message.date),
-                        )
+                        Flexible(child: Text(message.date))
                       ],
               ),
             ),
