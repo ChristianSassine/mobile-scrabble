@@ -126,6 +126,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
       appBar: AppBar(
         title: Text(FlutterI18n.translate(
             context, "user_settings.labels.user_settings")),
+        actions: const [SizedBox()],
       ),
       body: Stack(children: [
         Center(

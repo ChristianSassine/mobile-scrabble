@@ -78,6 +78,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(FlutterI18n.translate(context, "user_profile.title")),
+        actions: const [SizedBox()],
       ),
       body: Stack(children: [
         Center(

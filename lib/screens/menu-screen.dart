@@ -218,11 +218,14 @@ class _FooterState extends State<Footer> {
         children: [
           Positioned(
               right: 0,
-              child: Row(
-                children: const [
-                  Icon(Icons.language),
-                  LanguageDropdown(),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: const [
+                    Icon(Icons.language),
+                    LanguageDropdown(),
+                  ],
+                ),
               )),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

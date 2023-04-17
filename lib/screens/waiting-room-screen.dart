@@ -132,8 +132,9 @@ class _WaitingRoomState extends State<WaitingRoomScreen> {
       endDrawer: const Drawer(child: SideChatWidget()),
       key: _scaffoldKey,
       appBar: AppBar(
-          title:
-              Text(FlutterI18n.translate(context, "waiting_room.screen_name"))),
+        title: Text(FlutterI18n.translate(context, "waiting_room.screen_name")),
+        actions: const [SizedBox()],
+      ),
       body: Stack(children: [
         Center(
           child: Column(

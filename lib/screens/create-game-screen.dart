@@ -95,6 +95,7 @@ class _GameCreationScreenState extends State<GameCreationScreen> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
+        actions: const [SizedBox()],
       ),
       body: Stack(children: [
         ChatButtonWidget(scaffoldKey: _scaffoldKey),

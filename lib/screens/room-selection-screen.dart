@@ -220,7 +220,9 @@ class _RoomListState extends State<RoomSelectionScreen> {
       endDrawer: const Drawer(child: SideChatWidget()),
       key: _scaffoldKey,
       appBar: AppBar(
-          title: Text(FlutterI18n.translate(context, "menu_screen.join_game"))),
+        title: Text(FlutterI18n.translate(context, "menu_screen.join_game")),
+        actions: const [SizedBox()],
+      ),
       body: Stack(children: [
         Center(
           child: Card(
