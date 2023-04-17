@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/components/chat-button-widget.dart';
+import 'package:mobile/components/chat-widget.dart';
 import 'package:mobile/domain/classes/snackbar-factory.dart';
 import 'package:mobile/domain/models/game-model.dart';
 import 'package:mobile/domain/services/avatar-service.dart';
@@ -19,6 +21,7 @@ class EndGameScreen extends StatefulWidget {
 }
 
 class _EndGameScreenState extends State<EndGameScreen> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _gameService = GetIt.I.get<GameService>();
   final _avatarService = GetIt.I.get<AvatarService>();
   final _userService = GetIt.I.get<UserService>();
@@ -37,8 +40,8 @@ class _EndGameScreenState extends State<EndGameScreen> {
       }
       _gameService.fetchWinnerInfo(widget.winner!).then((info) {
         if (info == null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBarFactory.redSnack(FlutterI18n.translate(context, "end_game.error")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBarFactory.redSnack(
+              FlutterI18n.translate(context, "end_game.error")));
           return;
         }
         setState(() {
@@ -67,7 +70,12 @@ class _EndGameScreenState extends State<EndGameScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
                   child: Text(
                     FlutterI18n.translate(
-                        context,  FlutterI18n.translate(context, isVictorius ? "end_game.victory" : "end_game.defeat")),
+                        context,
+                        FlutterI18n.translate(
+                            context,
+                            isVictorius
+                                ? "end_game.victory"
+                                : "end_game.defeat")),
                     style: theme.textTheme.displayLarge!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: isVictorius ? Colors.green : Colors.red),
@@ -75,17 +83,18 @@ class _EndGameScreenState extends State<EndGameScreen> {
                 ),
                 Text(
                   _username == null ? "..." : _username!,
-                  style: theme.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CircleAvatar(
-                      backgroundImage:
-                          (_imageUrl != null) ? NetworkImage(_imageUrl!) : null,
-                      child: (_imageUrl != null)
-                          ? null
-                          : const Icon(CupertinoIcons.profile_circled),
+                    backgroundImage:
+                        (_imageUrl != null) ? NetworkImage(_imageUrl!) : null,
                     radius: 35,
+                    child: (_imageUrl != null)
+                        ? null
+                        : const Icon(CupertinoIcons.profile_circled),
                   ),
                 ),
                 Text(
@@ -100,38 +109,44 @@ class _EndGameScreenState extends State<EndGameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(child: _buildHeader()),
-                  SizedBox(
-                      width: 250,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ElevatedButton(
-                              onPressed: () => Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MenuScreen(
-                                          title: FlutterI18n.translate(context,
-                                              "menu_screen.screen_name"))),
-                                  (_) => false),
-                              child: Text(FlutterI18n.translate(
-                                  context, "end_game.return_to_menu")))
-                        ],
-                      )),
-                ],
+      endDrawer: const Drawer(child: SideChatWidget()),
+      key: _scaffoldKey,
+      body: Stack(children: [
+        Center(
+          child: SingleChildScrollView(
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(child: _buildHeader()),
+                    SizedBox(
+                        width: 250,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ElevatedButton(
+                                onPressed: () => Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MenuScreen(
+                                            title: FlutterI18n.translate(
+                                                context,
+                                                "menu_screen.screen_name"))),
+                                    (_) => false),
+                                child: Text(FlutterI18n.translate(
+                                    context, "end_game.return_to_menu")))
+                          ],
+                        )),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
+        ChatButtonWidget(scaffoldKey: _scaffoldKey)
+      ]),
     );
   }
 }
