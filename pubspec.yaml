@@ -20,7 +20,7 @@ dependencies:
     flutter_dotenv: ^5.0.2
     provider: ^6.0.5
     http: ^0.13.5
-    flutter_i18n: ^0.32.1
+    flutter_i18n: ^0.33.0
     image_picker: ^0.8.7
     confirm_dialog: ^1.0.1
     webview_flutter: ^4.0.7
