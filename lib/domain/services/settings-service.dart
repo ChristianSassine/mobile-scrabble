@@ -27,7 +27,7 @@ class SettingsService {
   // Language Settings
 
   // Default config
-  Locale currentLocale = const Locale("fr");
+  Locale currentLocale = const Locale("en");
 
   void switchLocale(context, Locale newLocale) {
     currentLocale = newLocale;
