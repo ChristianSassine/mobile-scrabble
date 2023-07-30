@@ -25,10 +25,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 Future<void> setup() async {
   final getIt = GetIt.instance;
-  String envFile = kDebugMode ? 'development.env' : 'production.env';
-
-  // kDebugMode = APK, so hardcoding it for now
-  envFile = 'production.env';
+  String envFile = 'production.env';
 
   await dotenv.load(fileName: envFile);
   var serverAddress = dotenv.env["SERVER_URL"];
@@ -112,7 +109,7 @@ class _PolyScrabbleState extends State<PolyScrabble> {
       themeMode:
           _settingsService.isDynamic ? ThemeMode.system : ThemeMode.light,
       debugShowCheckedModeBanner: false,
-      home: const LoginScreen(title: 'PolyScrabble 101 - Prototype'),
+      home: const LoginScreen(title: 'PolyScrabble 101'),
       localizationsDelegates: [
         FlutterI18nDelegate(
           translationLoader: FileTranslationLoader(
