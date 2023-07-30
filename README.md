@@ -6,7 +6,7 @@ Mobile client for an online interactive Scrabble game.
 
 The mobile client of an interactive online multiplayer Scrabble student project. The client supports **user accounts**, **recaptcha**, **profile pictures**, **dark/light themes with os integration**, **private and public game matchs**, **chat channels** and many more features.
 
-⚠️**Attention**: as this is a student project, some of the servers like the server that stores profile pictures has been taken down. As such some features, like profile pictures might not work. If creating an account doesn't work, you can use the user **mobileUser** with **helloWorld** as password.
+⚠️**Attention**: as this is a student project, some of the servers like the server that stores profile pictures has been taken down. As such, some features like profile pictures might not work. If creating an account doesn't work, you can use the user **mobileUser** with **helloWorld** as password.
 
 ## Getting Started
 
