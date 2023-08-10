@@ -23,5 +23,11 @@ The mobile client of an interactive online multiplayer Scrabble student project.
 
 * Install Flutter by following the [official documentation
 ](https://docs.flutter.dev/get-started/install)
-* Clone the repository with the following command: `git clone https://github.com/ChristianSassine/mobile-scrabble.git`
-* Use the following command in the repository: `flutter build apk --split-per-abi`
+* Clone the repository with the following command:
+```
+git clone https://github.com/ChristianSassine/mobile-scrabble.git
+```
+* Use the following command in the repository:
+```
+flutter build apk --split-per-abi
+```
